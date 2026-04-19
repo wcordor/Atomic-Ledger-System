@@ -20,7 +20,7 @@ public class TransferController {
             Account from = accountRepo.findById(request.getOutAccId()).orElseThrow(() -> new RuntimeException("Sender not found"));
             Account to = accountRepo.findById(request.getInAccId()).orElseThrow(() -> new RuntimeException("Receiver not found"));
 
-            transferService.transferMoney(from, to, request.getAmt());
+            transferService.transferMoney(to, from, request.getAmt());
             return "Transfer processed successfully";
         } catch (InsufficientFundsException e) {
             return "ERROR: " + e.getMessage();

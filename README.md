@@ -2,13 +2,13 @@
 A full-stack financial ledger implementing atomic operations and persistence.
 
 ## Project Structure
-- **/backend**: Java Spring Boot API (Spring Data JPA, PostgreSQL)
-- **/android-client**: Android Mobile App (OkHttp, Java)
+* **/backend**: Java Spring Boot API (Spring Data JPA, PostgreSQL)
+* **/android-client**: Android Mobile App (OkHttp, Java)
 
 ## How to Run
 1. Start PostgreSQL.
 2. Run backend: `./gradlew bootRun` inside /backend.
-3. Run Android Emulator and point to the host IP (10.0.2.2 or WSL IP).
+3. Run Android Emulator and point to the host IP (your specific Host IP or WSL IP).
 
 ## Latest Update: Hardware Integration & Concurrency
 
@@ -22,3 +22,7 @@ The application now utilizes the device's physical **Accelerometer** to trigger 
 
 #### Hardware Interfacing:
 * **SensorManager**: Interfaces with the OS to register/unregister listeners for the `TYPE_ACCELEROMETER` sensor.
+
+#### Data Persistence & ACID Compliance:
+* **Relational Mapping**: Uses Hibernate/JPA to map Java objects to a PostgreSQL schema, ensuring data survives server restarts.
+* **Atomicity**: Transactional logic ensures that ledger entries are "all-or-nothing," preventing partial data corruption during hardware-triggered events.

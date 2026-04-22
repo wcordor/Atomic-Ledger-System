@@ -22,21 +22,21 @@ public class S1Application {
 	public CommandLineRunner demo(UserRepo uRepo, AccountRepo aRepo, TransferService service) {
 		return (args) -> {
 
-			User user1 = new User("Cristiano", "Ronaldo");
-			User user2 = new User("LeBron", "James");
-			User user3 = new User("Terence", "Crawford");
+			User user1 = new User("John", "Smith");
+			User user2 = new User("Bernard", "Jones");
+			User user3 = new User("Deborah", "Adams");
 
-			Account acc1 = new Account("Savings", new BigDecimal("778675419.92"), "SAR");
-			Account acc2 = new Account("Checking", new BigDecimal("187625888.93"), "SAR");
+			Account acc1 = new Account("Savings", new BigDecimal("9121.45"), "GBP");
+			Account acc2 = new Account("Checking", new BigDecimal("2500.00"), "GBP");
 
 			acc1.setUser(user1);
 			acc2.setUser(user1);
 			user1.addAccount(acc1);
 			user1.addAccount(acc2);
 
-			Account acc3 = new Account("Investment", new BigDecimal("752998229.30"), "USD");
-			Account acc4 = new Account("Savings", new BigDecimal("330123953.55"), "USD");
-			Account acc5 = new Account("Checking", new BigDecimal("101293620.49"), "USD");
+			Account acc3 = new Account("Investment", new BigDecimal("90956.02"), "USD");
+			Account acc4 = new Account("Savings", new BigDecimal("15643.98"), "USD");
+			Account acc5 = new Account("Checking", new BigDecimal("6500.00"), "USD");
 		
 			acc3.setUser(user2);
 			acc4.setUser(user2);
@@ -45,8 +45,8 @@ public class S1Application {
 			user2.addAccount(acc4);
 			user2.addAccount(acc5);
 			
-			Account acc6 = new Account("Savings", new BigDecimal("41127855.16"), "USD");
-			Account acc7 = new Account("Checking", new BigDecimal("10355628.89"), "USD");
+			Account acc6 = new Account("Savings", new BigDecimal("12255.68"), "USD");
+			Account acc7 = new Account("Checking", new BigDecimal("3000.00"), "USD");
 
 			acc6.setUser(user3);
 			acc7.setUser(user3);
@@ -71,10 +71,10 @@ public class S1Application {
 			});
 			logger.info("");
 
-			logger.info("Accounts found with findByLastName('Ronaldo'):");
+			logger.info("Accounts found with findByLastName('Smith'):");
 			logger.info("---------------------------------------");
-			aRepo.findByUserLastName("Ronaldo").forEach(cr7 -> {
-				logger.info(cr7.toString());
+			aRepo.findByUserLastName("Smith").forEach(smith -> {
+				logger.info(smith.toString());
 			});
 			logger.info("");
 
@@ -85,23 +85,55 @@ public class S1Application {
 			});
 			logger.info("");
 			
-			BigDecimal beforeTransfer = aRepo.findById(acc7.getId()).get().getBalance();			
+			BigDecimal beforeTransferOut = aRepo.findById(acc5.getId()).get().getBalance();
+			BigDecimal beforeTransferIn = aRepo.findById(acc7.getId()).get().getBalance();
+			String currencyOut = aRepo.findById(acc5.getId()).get().getCurrency();
+			String currencyIn = aRepo.findById(acc7.getId()).get().getCurrency();	
 			try {
-				logger.info("Money Transfer"); // to be updated
+				logger.info("B. Jones transfer 1,000.00 USD to D. Adams"); 
 				logger.info("------------------------------------------");	
-				logger.info("Balance before transfer: {}", beforeTransfer);			
-				service.transferMoney(acc1, acc7, new BigDecimal("752998229.30"));				
+				logger.info(String.format("Balances before transfer: B. Jones - %,.2f %s, D. Adams - %,.2f %s",
+				beforeTransferOut, currencyOut, beforeTransferIn, currencyIn));			
+				service.transferMoney(acc7, acc5, new BigDecimal("1000.00"));				
 				logger.info("");
 			} catch (InsufficientFundsException e) {
 				logger.error("ERROR: " + e.getMessage());
 			}
 
-			BigDecimal afterTransfer = aRepo.findById(acc7.getId()).get().getBalance();
-			BigDecimal inBalance = aRepo.findById(acc1.getId()).get().getBalance();
-			logger.info("Verification of rollback: Acc1 balance - " + inBalance + ", Acc7 balance - " + afterTransfer);
+			BigDecimal afterTransferOut = aRepo.findById(acc5.getId()).get().getBalance();
+			BigDecimal afterTransferIn = aRepo.findById(acc7.getId()).get().getBalance();
+			logger.info(String.format("Balances after transfer: B. Jones - %,.2f %s, D. Adams - %,.2f %s",
+			afterTransferOut, currencyOut, afterTransferIn, currencyIn));
+			if (afterTransferOut.compareTo(new BigDecimal("5500.00")) == 0
+			&& afterTransferIn.compareTo(new BigDecimal("4000.00")) == 0) {
+				logger.info("************************");
+				logger.info("Transaction successfull.");
+				logger.info("************************");
+			}
 
-			if (beforeTransfer.equals(afterTransfer)) {
-				logger.info("ATOMICITY PROVEN: Rollback successfull.");
+			BigDecimal beforeTransferFrom = aRepo.findById(acc7.getId()).get().getBalance();
+			BigDecimal beforeTransferTo = aRepo.findById(acc5.getId()).get().getBalance();
+			try {
+				logger.info("D. Adams transfer 6,000.00 USD to B. Jones"); 
+				logger.info("------------------------------------------");	
+				logger.info(String.format("Balances before transfer: D. Adams - %,.2f %s, B. Jones - %,.2f %s",
+				beforeTransferFrom, currencyOut, beforeTransferTo, currencyIn));		
+				service.transferMoney(acc7, acc5, new BigDecimal("6000.00"));				
+				logger.info("");
+			} catch (InsufficientFundsException e) {
+				logger.error("ERROR: " + e.getMessage());
+			}
+
+			BigDecimal afterTransferFrom = aRepo.findById(acc7.getId()).get().getBalance();
+			BigDecimal afterTransferTo = aRepo.findById(acc5.getId()).get().getBalance();
+			logger.info(String.format("Balances after transfer: B. Jones - %,.2f %s, D. Adams - %,.2f %s",
+			afterTransferFrom, currencyOut, afterTransferTo, currencyIn));
+
+			if (beforeTransferFrom.compareTo(afterTransferFrom) == 0
+			&& beforeTransferTo.compareTo(afterTransferTo) == 0) {
+				logger.info("*********************");
+				logger.info("Rollback successfull.");
+				logger.info("*********************");
 			}
 		};
 	}

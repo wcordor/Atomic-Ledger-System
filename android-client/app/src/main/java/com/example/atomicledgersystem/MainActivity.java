@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -24,13 +25,20 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private SensorManager sensorManager;
     private float accelerationThreshold = 12.0f;
+    private boolean triggerFailure = false;
 
     OkHttpClient client = new OkHttpClient();
 
     public void postJson() throws IOException {
-        String json = "{\"outAccId\":7,"
-                + "\"inAccId\":1,"
-                + "\"amt\":\"75299.30\"}";
+        BigDecimal amount = triggerFailure ? new BigDecimal("1000000.00")
+                : new BigDecimal("10.00");
+
+        String json = "{\"outAccId\":5,"
+                + "\"inAccId\":7,"
+                + "\"amt\":\"" + amount + "\""
+                + "}";
+
+        triggerFailure = !triggerFailure;
 
         RequestBody body = RequestBody.create(
                 json, MediaType.parse("application/json"));
@@ -52,7 +60,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 android.util.Log.i("TRANSFER_TEST", "Server Response: " + jsonData);
 
                 runOnUiThread(() -> {
-                    Toast.makeText(MainActivity.this, "Last Sync: Success", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, String.format("Attempting %,.2f USD "
+                            + "transfer from B. Jones to D. Adams...", amount),
+                            Toast.LENGTH_SHORT).show();
                 });
             }
         });

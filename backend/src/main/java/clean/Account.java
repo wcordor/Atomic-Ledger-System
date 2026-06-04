@@ -16,6 +16,9 @@ public class Account {
 
     private String name;
 
+    @Version
+    private Integer version;
+
     protected Account() {}
 
     public Account(String name, BigDecimal balance, String currency) {

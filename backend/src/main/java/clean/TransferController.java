@@ -1,5 +1,6 @@
 package clean;
 
+import org.springframework.dao.PessimisticLockingFailureException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,8 +25,10 @@ public class TransferController {
             return "Transfer processed successfully";
         } catch (InsufficientFundsException e) {
             return "ERROR: " + e.getMessage();
+        } catch (PessimisticLockingFailureException e) {
+            return "ERROR: Could not acquire lock on accounts. Please try again.";
         } catch (Exception e) {
-            return "An unexpected error occured.";
+            return "An unexpected error occurred.";
         }
     }
 

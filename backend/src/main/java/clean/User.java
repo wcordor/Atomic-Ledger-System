@@ -16,6 +16,9 @@ public class User {
     private String firstName;
     private String lastName;
 
+    @Version
+    private Integer version;
+
     protected User() {}
 
     public User(String firstName, String lastName) {

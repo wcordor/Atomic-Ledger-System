@@ -55,3 +55,21 @@ From `backend/src/main/resources/application.properties`:
 - Add proper authentication and input validation.
 - Replace `create-drop` with a more stable migration strategy.
 - Add more user-facing UI and account management features.
+
+### android-client — student final project
+
+Short student final-project Android app demonstrating posting transfer requests to the backend.
+
+- **Tech:** Java, Android SDK, Gradle (Kotlin DSL)
+- **Status:** Individual student project — created for a class final and unmaintained.
+
+How to run:
+- Open the `android-client` folder in Android Studio and run the `app` module.
+- Or build from the command line:
+  cd android-client
+  ./gradlew assembleDebug
+
+Notes:
+- Update the backend host URL in `android-client/app/src/main/java/com/example/atomicledgersystem/MainActivity.java` if your backend runs on a different host.
+- Kept for historical/reference purposes only; not actively maintained.
+

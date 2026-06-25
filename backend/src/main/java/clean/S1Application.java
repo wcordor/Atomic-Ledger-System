@@ -5,11 +5,13 @@ import java.math.BigDecimal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
+@EnableRetry
 public class S1Application {
 
 	private static final Logger logger = LoggerFactory.getLogger(S1Application.class);
@@ -94,7 +96,7 @@ public class S1Application {
 				logger.info("------------------------------------------");	
 				logger.info(String.format("Balances before transfer: B. Jones - %,.2f %s, D. Adams - %,.2f %s",
 				beforeTransferOut, currencyOut, beforeTransferIn, currencyIn));			
-				service.transferMoney(acc7, acc5, new BigDecimal("1000.00"));				
+				service.transferMoney(acc7.getId(), acc5.getId(), new BigDecimal("1000.00"));				
 				logger.info("");
 			} catch (InsufficientFundsException e) {
 				logger.error("ERROR: " + e.getMessage());
@@ -118,7 +120,7 @@ public class S1Application {
 				logger.info("------------------------------------------");	
 				logger.info(String.format("Balances before transfer: D. Adams - %,.2f %s, B. Jones - %,.2f %s",
 				beforeTransferFrom, currencyOut, beforeTransferTo, currencyIn));		
-				service.transferMoney(acc7, acc5, new BigDecimal("6000.00"));				
+				service.transferMoney(acc7.getId(), acc5.getId(), new BigDecimal("6000.00"));				
 				logger.info("");
 			} catch (InsufficientFundsException e) {
 				logger.error("ERROR: " + e.getMessage());

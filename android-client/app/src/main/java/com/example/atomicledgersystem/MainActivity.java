@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Button testBtn = findViewById(R.id.button);
         testBtn.setOnClickListener(v -> {
             try {
-                postJson(); // Calling your existing logic
+                postJson(); // Call existing logic
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -93,11 +93,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         float y = event.values[1];
         float z = event.values[2];
 
-        // The OS Requirement: Magnitude Calculation
+        // Operating Systems Sensor Requirement: Magnitude Calculation
         double magnitude = Math.sqrt(x * x + y * y + z * z);
 
         if (magnitude > accelerationThreshold) {
-            // Trigger your Atomic Ledger sync or refresh here!
+            // Trigger Atomic Ledger sync or refresh here
             try {
                 postJson();
             } catch (IOException e) {

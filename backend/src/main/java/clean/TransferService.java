@@ -2,6 +2,7 @@ package clean;
 
 import java.math.BigDecimal;
 
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -15,21 +16,22 @@ public class TransferService {
         this.accountRepo = accountRepo;
     }
 
+    @Retryable(retryFor = { RuntimeException.class }, maxAttempts = 3)
     @Transactional(rollbackOn = { InsufficientFundsException.class })
-    public void transferMoney(Account in, Account out, BigDecimal amt) throws InsufficientFundsException {
+    public void transferMoney(Long inId, Long outId, BigDecimal amt) throws InsufficientFundsException {
 
-        BigDecimal outBalance = out.getBalance().subtract(amt);
+        BigDecimal outBalance = accountRepo.findWithLockingById(outId).get().getBalance().subtract(amt);
         if (outBalance.signum() == -1) {
             throw new InsufficientFundsException("Not enough funds to make transaction, canceling transaction.");
         }
         else {
-            BigDecimal inBalance = in.getBalance().add(amt);
+            BigDecimal inBalance = accountRepo.findWithLockingById(inId).get().getBalance().add(amt);
             
-            out.setBalance(outBalance);
-            in.setBalance(inBalance);
+            accountRepo.findWithLockingById(outId).get().setBalance(outBalance);
+            accountRepo.findWithLockingById(inId).get().setBalance(inBalance);
             
-            accountRepo.save(in);
-            accountRepo.save(out);
+            accountRepo.save(accountRepo.findWithLockingById(inId).get());
+            accountRepo.save(accountRepo.findWithLockingById(outId).get());
         }
 
     }

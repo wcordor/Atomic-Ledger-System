@@ -1,28 +1,57 @@
-# Atomic-Ledger-System
-A full-stack financial ledger implementing atomic operations and persistence.
+# Atomic Ledger System
+A compact full-stack demo that connects a Java Spring Boot backend with an Android client to model financial transfers safely and reliably.
 
-## Project Structure
-* **/backend**: Java Spring Boot API (Spring Data JPA, PostgreSQL)
-* **/android-client**: Android Mobile App (OkHttp, Java)
+## What this project demonstrates
+- A backend API that persists users, accounts, and transfer operations in PostgreSQL.
+- A mobile client that sends transfer requests and can trigger activity from the device accelerometer.
+- Transaction safety and rollback behavior for failed transfers.
+- Clear separation between backend business logic and client-side networking/UI concerns.
 
-## How to Run
+## Project structure
+- `backend`: Spring Boot service with REST controller, JPA repositories, and transfer business logic.
+- `android-client`: Android app with a single activity that posts transfer requests.
+
+## How to run
 1. Start PostgreSQL.
-2. Run backend: `./gradlew bootRun` inside /backend.
-3. Run Android Emulator and point to the host IP (your specific Host IP or WSL IP).
+2. In `backend`, run:
+   ```bash
+   ./gradlew bootRun
+   ```
+3. Run the Android app from `android-client`.
+   - The app is currently configured to call `http://172.25.216.231:8080/transfer`.
+   - Update the URL in `android-client/app/src/main/java/com/example/atomicledgersystem/MainActivity.java` if your backend uses a different host.
 
-## Latest Update: Hardware Integration & Concurrency
+## Backend details
+- `backend/src/main/java/clean/S1Application.java` seeds sample users and accounts at startup.
+- `backend/src/main/java/clean/TransferController.java` exposes a POST `/transfer` endpoint.
+- `backend/src/main/java/clean/TransferService.java` performs the transfer with:
+  - `@Transactional(rollbackOn = InsufficientFundsException.class)` for atomic rollback
+  - `@Retryable(retryFor = RuntimeException.class, maxAttempts = 3)` for transient error handling
+  - optimistic locking through `AccountRepo.findWithLockingById`
+- `backend/src/main/java/clean/TransferRequest.java` expects JSON with `outAccId`, `inAccId`, and `amt`.
 
-### Shake-to-Sync Feature
-The application now utilizes the device's physical **Accelerometer** to trigger a ledger synchronization. This demonstrates the interaction between the Android OS hardware abstraction layer and the application logic.
+## Android client details
+- `android-client/app/src/main/java/com/example/atomicledgersystem/MainActivity.java` registers an accelerometer listener.
+- When movement magnitude exceeds `12.0f`, it posts a transfer request to the backend.
+- The client alternates between a normal transfer amount (`10.00`) and a forced failure amount (`1000000.00`).
+- `OkHttp` is used for network requests, and UI updates are performed on the main thread via `runOnUiThread(...)`.
 
-#### Technical Implementation:
-* **Vector Magnitude Algorithm**: Calculates movement intensity using $$\sqrt{x^2 + y^2 + z^2}$$to ensure the sync only triggers above a$$12 \text{ m/s}^2$$ threshold.
-* **Asynchronous I/O**: Network requests are handled via `OkHttp` callbacks, preventing the Main UI thread from blocking (Deadlock avoidance).
-* **Thread Synchronization**: Implements `runOnUiThread` to safely pass data from the background network thread to the UI thread, satisfying OS concurrency requirements.
+## Configuration
+From `backend/src/main/resources/application.properties`:
+- `spring.datasource.url=jdbc:postgresql://localhost:5432/postgres`
+- `spring.datasource.username=postgres`
+- `spring.datasource.password=my-password`
+- `spring.jpa.hibernate.ddl-auto=create-drop`
+- `spring.jpa.show-sql=true`
+- `server.address=0.0.0.0`
 
-#### Hardware Interfacing:
-* **SensorManager**: Interfaces with the OS to register/unregister listeners for the `TYPE_ACCELEROMETER` sensor.
+## Notes
+- The backend uses `create-drop`, so the database schema and sample data are recreated on each start.
+- The current mobile app setup is best suited for local development or demo purposes.
+- The system is intentionally simple and focused on illustrating transactional transfer behavior, not production-ready security or validation.
 
-#### Data Persistence & ACID Compliance:
-* **Relational Mapping**: Uses Hibernate/JPA to map Java objects to a PostgreSQL schema, ensuring data survives server restarts.
-* **Atomicity**: Transactional logic ensures that ledger entries are "all-or-nothing," preventing partial data corruption during hardware-triggered events.
+## Potential improvements
+- Move the backend URL out of the Android app and into configuration.
+- Add proper authentication and input validation.
+- Replace `create-drop` with a more stable migration strategy.
+- Add more user-facing UI and account management features.

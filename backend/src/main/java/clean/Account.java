@@ -109,39 +109,4 @@ public class Account {
         return true;
     }
 
-    /*@Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-        //result = prime * result + ((version == null) ? 0 : version.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (!(obj instanceof Account))
-            return false;
-        Account other = (Account) obj;
-        if (!(other instanceof Account))
-            return false;
-        if (getId() == null) {
-            if (other.getId() != null)
-                return false;
-        } else if (!getId().equals(other.getId()))
-            return false;
-        if (version == null) {
-            if (other.version != null)
-                return false;
-        } else if (!version.equals(other.version))
-            return false;
-        return true;
-    }*/
-
-    
-
 }

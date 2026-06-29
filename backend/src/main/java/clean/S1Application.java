@@ -109,7 +109,7 @@ public class S1Application {
 			if (afterTransferOut.compareTo(new BigDecimal("5500.00")) == 0
 			&& afterTransferIn.compareTo(new BigDecimal("4000.00")) == 0) {
 				logger.info("************************");
-				logger.info("Transaction successfull.");
+				logger.info("Transaction successful.");
 				logger.info("************************");
 			}
 
@@ -134,7 +134,7 @@ public class S1Application {
 			if (beforeTransferFrom.compareTo(afterTransferFrom) == 0
 			&& beforeTransferTo.compareTo(afterTransferTo) == 0) {
 				logger.info("*********************");
-				logger.info("Rollback successfull.");
+				logger.info("Rollback successful.");
 				logger.info("*********************");
 			}
 		};

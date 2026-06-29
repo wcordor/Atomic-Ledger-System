@@ -10,8 +10,6 @@ import jakarta.persistence.LockModeType;
 
 public interface AccountRepo extends JpaRepository<Account, Long> {
     
-    /*@Lock(LockModeType.PESSIMISTIC_WRITE)
-    @QueryHints({@QueryHint(name = "jakarta.persistence.lock.timeout", value = "10000")}) // 10s timeout*/
     @Lock(LockModeType.OPTIMISTIC_FORCE_INCREMENT)
     Optional<Account> findWithLockingById(Long id);
 

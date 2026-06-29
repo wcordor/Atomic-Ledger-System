@@ -55,6 +55,21 @@ From `backend/src/main/resources/application.properties`:
 - `spring.jpa.show-sql=true`
 - `server.address=0.0.0.0`
 
+### macOS (Homebrew) Troubleshooting
+
+If you installed PostgreSQL via Homebrew on a Mac, Homebrew defaults to using your system username as the primary role. When starting the application, you may encounter the following error:
+`FATAL: role "postgres" does not exist`
+
+To fix this, log into your local PostgreSQL instance via terminal and create the missing superuser role:
+
+```bash
+# Log into your default local database
+psql postgres
+
+# Create the postgres superuser role
+CREATE ROLE postgres WITH SUPERUSER LOGIN;
+```
+
 ## Notes
 
 - The backend uses `create-drop`, so the database schema and sample data are recreated on each start.

@@ -17,7 +17,9 @@ This log serves as a comprehensive technical record of all architectural hurdles
 ## Technical Insights & Lessons Learned
 
 ### 1. Architectural Boundary Separation
+
 Passing database entities directly into asynchronous workers (`CompletableFuture`) introduces severe transaction-detachment issues. Always pass entity primary keys (`Long id`) across thread boundaries and allow the receiving, `@Transactional`-managed service method to resolve the data within its own active persistence context.
 
 ### 2. Asserting Non-Deterministic Systems
+
 When validating concurrent behavior under scarcity (e.g., draining an account simultaneously), hardcoded state assertions are anti-patterns. Tests must accommodate all mathematically sound race-condition paths governed by the underlying thread scheduler, ensuring invariants are met without demanding a single, rigid execution sequence.

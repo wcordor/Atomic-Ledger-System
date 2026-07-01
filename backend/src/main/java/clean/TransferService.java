@@ -18,20 +18,20 @@ public class TransferService {
 
     @Retryable(retryFor = { RuntimeException.class }, maxAttempts = 3)
     @Transactional(rollbackOn = { InsufficientFundsException.class })
-    public void transferMoney(Long inId, Long outId, BigDecimal amt) throws InsufficientFundsException {
+    public void transferMoney(Long toId, Long fromId, BigDecimal amt) throws InsufficientFundsException {
 
-        BigDecimal outBalance = accountRepo.findWithLockingById(outId).get().getBalance().subtract(amt);
-        if (outBalance.signum() == -1) {
+        BigDecimal outgoingBal = accountRepo.findWithLockingById(fromId).get().getBalance().subtract(amt);
+        if (outgoingBal.signum() == -1) {
             throw new InsufficientFundsException("Not enough funds to make transaction, canceling transaction.");
         }
         else {
-            BigDecimal inBalance = accountRepo.findWithLockingById(inId).get().getBalance().add(amt);
+            BigDecimal incomingBal = accountRepo.findWithLockingById(toId).get().getBalance().add(amt);
             
-            accountRepo.findWithLockingById(outId).get().setBalance(outBalance);
-            accountRepo.findWithLockingById(inId).get().setBalance(inBalance);
+            accountRepo.findWithLockingById(fromId).get().setBalance(outgoingBal);
+            accountRepo.findWithLockingById(toId).get().setBalance(incomingBal);
             
-            accountRepo.save(accountRepo.findWithLockingById(inId).get());
-            accountRepo.save(accountRepo.findWithLockingById(outId).get());
+            accountRepo.save(accountRepo.findWithLockingById(toId).get());
+            accountRepo.save(accountRepo.findWithLockingById(fromId).get());
         }
 
     }

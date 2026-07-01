@@ -56,6 +56,12 @@ class CleanApplicationTests {
 
 		user2 = new User("Account", "Owner II");
 		ur.save(user2);
+
+		/*user2 = new User("Account", "Owner II");
+		acc2.setUser(user2);
+		user2.addAccount(acc2);
+		ur.save(user2);
+		ar.save(acc2); */
 	}
 
 	@Test

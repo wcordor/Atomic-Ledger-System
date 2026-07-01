@@ -1,10 +1,13 @@
 package clean;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "accounts")
 public class Account {
     
     private BigDecimal balance;
@@ -30,6 +33,9 @@ public class Account {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Transaction> transactions = new ArrayList<>();
 
     @Override
     public String toString() {

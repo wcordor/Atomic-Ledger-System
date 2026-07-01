@@ -31,7 +31,7 @@ public class Account {
     }
 
     @ManyToOne
-    @JoinColumn(name = "user_id"/*, nullable = false*/)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)

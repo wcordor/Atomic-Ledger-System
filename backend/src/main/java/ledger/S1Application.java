@@ -1,4 +1,4 @@
-package clean;
+package ledger;
 
 import java.math.BigDecimal;
 
@@ -95,8 +95,9 @@ public class S1Application {
 				logger.info("B. Jones transfer 1,000.00 USD to D. Adams"); 
 				logger.info("------------------------------------------");	
 				logger.info(String.format("Balances before transfer: B. Jones - %,.2f %s, D. Adams - %,.2f %s",
-				beforeTransferOut, currencyOut, beforeTransferIn, currencyIn));			
-				service.transferMoney(acc7.getId(), acc5.getId(), new BigDecimal("1000.00"));				
+				beforeTransferOut, currencyOut, beforeTransferIn, currencyIn));
+				Transaction transaction = new Transaction((Account) null, (Account) null, null, null, null);
+				service.transferMoney(acc7.getId(), acc5.getId(), new BigDecimal("1000.00"), "USD", transaction);				
 				logger.info("");
 			} catch (InsufficientFundsException e) {
 				logger.error("ERROR: " + e.getMessage());
@@ -119,8 +120,9 @@ public class S1Application {
 				logger.info("D. Adams transfer 6,000.00 USD to B. Jones"); 
 				logger.info("------------------------------------------");	
 				logger.info(String.format("Balances before transfer: D. Adams - %,.2f %s, B. Jones - %,.2f %s",
-				beforeTransferFrom, currencyOut, beforeTransferTo, currencyIn));		
-				service.transferMoney(acc7.getId(), acc5.getId(), new BigDecimal("6000.00"));				
+				beforeTransferFrom, currencyOut, beforeTransferTo, currencyIn));
+				Transaction transaction2 = new Transaction((Account) null, (Account) null, null, null, null);
+				service.transferMoney(acc7.getId(), acc5.getId(), new BigDecimal("6000.00"), "USD", transaction2);				
 				logger.info("");
 			} catch (InsufficientFundsException e) {
 				logger.error("ERROR: " + e.getMessage());

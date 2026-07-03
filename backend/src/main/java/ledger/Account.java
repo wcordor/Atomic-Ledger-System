@@ -1,4 +1,4 @@
-package clean;
+package ledger;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class Account {
 
     protected Account() {}
 
-    public Account(String name, BigDecimal balance, String currency) {
+    public Account(String name, BigDecimal balance, String currency/*, User user */) {
         this.name = name;
         this.balance = balance;
         this.currency = currency;
@@ -34,13 +34,16 @@ public class Account {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Transaction> transactions = new ArrayList<>();
+    @OneToMany(mappedBy = "sender", fetch = FetchType.EAGER, cascade = CascadeType.MERGE, orphanRemoval = true)
+    private List<Transaction> sent = new ArrayList<>();
+
+    @OneToMany(mappedBy = "receiver", fetch = FetchType.EAGER, cascade = CascadeType.MERGE, orphanRemoval = true)
+    private List<Transaction> received = new ArrayList<>();
 
     @Override
     public String toString() {
         String userName = (user != null) ? user.getFirstName() + " " + user.getLastName() : "No Owner";
-        return String.format("Account[name=%s, id=%d, user=%s, balance=%,.2f %s]", name, id, userName,
+        return String.format("Account[name=%s, id=%d, owner=%s, balance=%,.2f %s]", name, id, userName,
         balance, currency);
     }
 
@@ -74,6 +77,20 @@ public class Account {
 
     public void setCurrency(String currency) {
         this.currency = currency;
+    }
+
+    public void addTransaction(Transaction transaction) {
+        if (transaction.getSender() == this) {
+            sent.add(transaction);
+        } else if (transaction.getReceiver() == this) {
+            received.add(transaction);
+        }
+    }
+
+    public List<Transaction> getTransactions() {
+        List<Transaction> transactions = new ArrayList<>(sent);
+        transactions.addAll(received);
+        return transactions;
     }
 
     public User getUser() {

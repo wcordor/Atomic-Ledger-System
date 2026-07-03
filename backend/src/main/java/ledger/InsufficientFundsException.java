@@ -1,4 +1,4 @@
-package clean;
+package ledger;
 
 public class InsufficientFundsException extends Exception {
     public InsufficientFundsException(String message) {

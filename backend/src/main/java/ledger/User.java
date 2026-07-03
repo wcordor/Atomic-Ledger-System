@@ -1,4 +1,4 @@
-package clean;
+package ledger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "acc_user")
+@Table(name = "users")
 public class User {
     
     @Id
@@ -26,7 +26,7 @@ public class User {
         this.lastName = lastName;
     }
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.MERGE, orphanRemoval = true)
     private List<Account> accounts = new ArrayList<>();
 
     @Override
@@ -59,7 +59,7 @@ public class User {
     }
 
     public void addAccount(Account account) {
-        accounts.add(account);
+        this.accounts.add(account);
         account.setUser(this);
     }
 

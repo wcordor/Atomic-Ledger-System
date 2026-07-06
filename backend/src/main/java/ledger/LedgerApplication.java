@@ -25,28 +25,39 @@ public class LedgerApplication {
 		return (args) -> {
 
 			User user1 = new User("John", "Smith");
-			User user2 = new User("Bernard", "Jones");
-			User user3 = new User("Deborah", "Adams");
 
 			Account acc1 = new Account("Savings", new BigDecimal("9121.45"), "GBP");
 			Account acc2 = new Account("Checking", new BigDecimal("2500.00"), "GBP");
-
+			
 			acc1.setUser(user1);
 			acc2.setUser(user1);
 			user1.addAccount(acc1);
 			user1.addAccount(acc2);
 
+			uRepo.save(user1);
+			aRepo.save(acc1);
+			aRepo.save(acc2);
+
+			User user2 = new User("Bernard", "Jones");
+
 			Account acc3 = new Account("Investment", new BigDecimal("90956.02"), "USD");
 			Account acc4 = new Account("Savings", new BigDecimal("15643.98"), "USD");
 			Account acc5 = new Account("Checking", new BigDecimal("6500.00"), "USD");
-		
+
 			acc3.setUser(user2);
 			acc4.setUser(user2);
 			acc5.setUser(user2);
 			user2.addAccount(acc3);
 			user2.addAccount(acc4);
 			user2.addAccount(acc5);
-			
+
+			uRepo.save(user2);
+			aRepo.save(acc3);
+			aRepo.save(acc4);
+			aRepo.save(acc5);
+
+			User user3 = new User("Deborah", "Adams");
+
 			Account acc6 = new Account("Savings", new BigDecimal("12255.68"), "USD");
 			Account acc7 = new Account("Checking", new BigDecimal("3000.00"), "USD");
 
@@ -55,39 +66,39 @@ public class LedgerApplication {
 			user3.addAccount(acc6);
 			user3.addAccount(acc7);
 
-			uRepo.save(user1);
-			uRepo.save(user2);
 			uRepo.save(user3);
-			aRepo.save(acc1);
-			aRepo.save(acc2);
-			aRepo.save(acc3);
-			aRepo.save(acc4);
-			aRepo.save(acc5);
 			aRepo.save(acc6);
 			aRepo.save(acc7);
 
-			logger.info("Users found with findAll():");
-			logger.info("---------------------------------------");
+			logger.info("List of Preloaded Users:");
+			logger.info("------------------------");
 			uRepo.findAll().forEach(user -> {
 				logger.info(user.toString());
 			});
 			logger.info("");
 
-			logger.info("Accounts found with findByLastName('Smith'):");
-			logger.info("---------------------------------------");
-			aRepo.findByUserLastName("Smith").forEach(smith -> {
-				logger.info(smith.toString());
+			logger.info("List of Preloaded Accounts:");
+			logger.info("---------------------------");
+			aRepo.findAll().forEach(acc -> {
+				logger.info(acc.toString());
 			});
 			logger.info("");
 
-			logger.info("Accounts found with findByCurrency('USD'):");
-			logger.info("------------------------------------------");
+			logger.info("Accounts that use USD:");
+			logger.info("----------------------");
 			aRepo.findByCurrency("USD").forEach(usd -> {
 				logger.info(usd.toString());
 			});
 			logger.info("");
+
+			logger.info("Accounts that use GBP:");
+			logger.info("----------------------");
+			aRepo.findByCurrency("GBP").forEach(gbp -> {
+				logger.info(gbp.toString());
+			});
+			logger.info("");
 			
-			BigDecimal beforeTransferOut = aRepo.findById(acc5.getId()).get().getBalance();
+			/*BigDecimal beforeTransferOut = aRepo.findById(acc5.getId()).get().getBalance();
 			BigDecimal beforeTransferIn = aRepo.findById(acc7.getId()).get().getBalance();
 			String currencyOut = aRepo.findById(acc5.getId()).get().getCurrency();
 			String currencyIn = aRepo.findById(acc7.getId()).get().getCurrency();	
@@ -138,7 +149,7 @@ public class LedgerApplication {
 				logger.info("*********************");
 				logger.info("Rollback successful.");
 				logger.info("*********************");
-			}
+			}*/
 		};
 	}
 

@@ -1,5 +1,8 @@
 package ledger;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
+
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
@@ -21,6 +24,6 @@ public class TransactionModelAssembler implements RepresentationModelAssembler<T
                 linkTo(methodOn(TransactionController.class).cancel(transaction.getId())).withRel("cancel")
             );
         }
-        return EntityModel.of(transaction);
+        return transactionModel;
     }
 }

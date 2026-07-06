@@ -19,9 +19,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @SpringBootTest
-class CleanApplicationTests {
+class LedgerApplicationTests {
 
-	private static final Logger logger = LoggerFactory.getLogger(CleanApplicationTests.class);
+	private static final Logger logger = LoggerFactory.getLogger(LedgerApplicationTests.class);
 
 	@Autowired
 	private AccountRepo ar;

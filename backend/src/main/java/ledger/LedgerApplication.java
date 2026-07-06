@@ -12,12 +12,12 @@ import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 @EnableRetry
-public class S1Application {
+public class LedgerApplication {
 
-	private static final Logger logger = LoggerFactory.getLogger(S1Application.class);
+	private static final Logger logger = LoggerFactory.getLogger(LedgerApplication.class);
 
 	public static void main(String[] args) {
-		SpringApplication.run(S1Application.class, args);
+		SpringApplication.run(LedgerApplication.class, args);
 	}
 
 	@Bean

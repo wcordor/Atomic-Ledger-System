@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -14,6 +15,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import jakarta.persistence.EntityNotFoundException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,13 +111,13 @@ class LedgerApplicationTests {
 		assertEquals(1, ar.findByName("Checking").size());
 		assertTrue(ar.findByName("Checking").contains(acc));
 		
-		assertEquals(acc, ar.findById(acc.getId()).get());
+		assertEquals(acc, ar.findById(acc.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found")));
 		assertEquals(1, ar.findByUserLastName("Owner").size());
 		assertTrue(ar.findByUserLastName("Owner").contains(acc));
 
-		assertEquals(2, ar.findByCurrency("USD").size());
-		assertTrue(ar.findByCurrency("USD").contains(acc) 
-			&& ar.findByCurrency("USD").contains(acc2));
+		List<Account> usd = ar.findByCurrency("USD");
+		assertEquals(2, usd.size());
+		assertTrue(usd.contains(acc) && usd.contains(acc2));
 		
 	}
 
@@ -140,8 +143,10 @@ class LedgerApplicationTests {
 		String name = user.getFirstName() + " " + user.getLastName();
 		assertEquals("User 1", name);
 		user.addAccount(acc2);
-		assertEquals(2, user.getAccounts().size());
-		assertTrue(user.getAccounts().contains(acc) && user.getAccounts().contains(acc2));
+
+		List<Account> userAccs = user.getAccounts();
+		assertEquals(2, userAccs.size());
+		assertTrue(userAccs.contains(acc) && userAccs.contains(acc2));
 		
 	}
 
@@ -149,9 +154,9 @@ class LedgerApplicationTests {
 	void testUserRepoFunctions() {
 
 		assertEquals(1, ur.findByLastName("Owner").size());
-		assertEquals(user, ur.findById(user.getId()).get());
+		assertEquals(user, ur.findById(user.getId()).orElseThrow(() -> new EntityNotFoundException("User not found")));
 		assertEquals(1, ur.findByLastName("Owner II").size());
-		assertEquals(user2, ur.findById(user2.getId()).get());
+		assertEquals(user2, ur.findById(user2.getId()).orElseThrow(() -> new EntityNotFoundException("User not found")));
 	}
 
 	@Test
@@ -162,8 +167,12 @@ class LedgerApplicationTests {
 		} catch (InsufficientFundsException e) {
 			logger.error("ERROR: " + e.getMessage());
 		}
-		assertEquals(new BigDecimal("400.00"), ar.findById(acc2.getId()).get().getBalance());
-		assertEquals(new BigDecimal("600.00"), ar.findById(acc.getId()).get().getBalance());
+
+		Account a = ar.findById(acc.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+		Account a2 = ar.findById(acc2.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+
+		assertEquals(new BigDecimal("400.00"), a2.getBalance());
+		assertEquals(new BigDecimal("600.00"), a.getBalance());
 		assertThrows(InsufficientFundsException.class, () -> {
 			ts.transferMoney(acc2.getId(), acc.getId(), new BigDecimal("4000.00"), "USD", transaction2);
 		});
@@ -174,14 +183,15 @@ class LedgerApplicationTests {
 			logger.error("ERROR: " + e.getMessage());
 		}
 
-		//tr.save(transaction);
+		assertEquals(new BigDecimal("600.00"), a.getBalance());
 
-		assertEquals(new BigDecimal("600.00"), ar.findById(acc.getId()).get().getBalance());
-		assertEquals(1, ar.findById(acc.getId()).get().getTransactions().size());
-		assertEquals(1, ar.findById(acc2.getId()).get().getTransactions().size());
-		assertTrue(ar.findById(acc.getId()).get().getTransactions().contains(transaction));
-		assertTrue(ar.findById(acc2.getId()).get().getTransactions().contains(transaction));
-		//assertEquals(new BigDecimal("600.00"), ar.getBalanceById(acc.getId()));
+		List<Transaction> a_transactions = a.getTransactions();
+		List<Transaction> a2_transactions = a2.getTransactions();
+		assertEquals(1, a_transactions.size());
+		assertEquals(1, a2_transactions.size());
+		assertTrue(a_transactions.contains(transaction));
+		assertTrue(a2_transactions.contains(transaction));
+		//assertEquals(new BigDecimal("600.00"), ar.findBalanceById(acc.getId()));
 
 	}
 

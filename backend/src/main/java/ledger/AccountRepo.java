@@ -1,6 +1,5 @@
 package ledger;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,5 +17,4 @@ public interface AccountRepo extends JpaRepository<Account, Long> {
     Account findById(long id);
     List<Account> findByUserLastName(String lastName);
     List<Account> findByCurrency(String currency);
-    BigDecimal getBalanceById(long id);
 }

@@ -4,7 +4,7 @@ plugins {
 	id("io.spring.dependency-management") version "1.1.7"
 }
 
-group = "com.example"
+group = "ledger"
 version = "0.0.1-SNAPSHOT"
 
 java {
@@ -26,6 +26,7 @@ dependencies {
     runtimeOnly("org.postgresql:postgresql")
 	implementation("org.springframework.boot:spring-boot-starter-aspectj")
 	implementation("org.springframework.retry:spring-retry:2.0.12")
+	implementation("org.springframework.boot:spring-boot-starter-hateoas")
 }
 
 tasks.withType<Test> {

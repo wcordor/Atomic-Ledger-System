@@ -75,7 +75,6 @@ class LedgerApplicationTests {
 		tr.save(transaction2);
 		tr.save(transaction3);
 
-		//Account a2FromRepo = ar.findById(acc2.getId()).get();
 	}
 
 	@Test
@@ -191,7 +190,6 @@ class LedgerApplicationTests {
 		assertEquals(1, a2_transactions.size());
 		assertTrue(a_transactions.contains(transaction));
 		assertTrue(a2_transactions.contains(transaction));
-		//assertEquals(new BigDecimal("600.00"), ar.findBalanceById(acc.getId()));
 
 	}
 
@@ -210,17 +208,21 @@ class LedgerApplicationTests {
 			logger.error("ERROR: " + e.getMessage());
 		}
 
-		assertEquals(ar.findById(acc2.getId()).get(), transaction.getReceiver());
-		assertEquals(ar.findById(acc.getId()).get(), transaction.getSender());
+		Account a = ar.findById(acc.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+		Account a2 = ar.findById(acc2.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+
+		assertEquals(a2, transaction.getReceiver());
+		assertEquals(a, transaction.getSender());
 		assertEquals(new BigDecimal("600.00"), transaction.getAmount());
 		assertEquals("USD", transaction.getCurrency());
 		assertEquals(Status.SUCCESSFUL, transaction.getStatus());
-		assertEquals(2, transaction.getAccounts().size());
-		assertTrue(transaction.getAccounts().contains(ar.findById(acc2.getId()).get()) 
-		&& transaction.getAccounts().contains(ar.findById(acc.getId()).get()));
 
-		assertEquals(new BigDecimal("600.00"), ar.findById(acc2.getId()).get().getBalance());
-		assertEquals(new BigDecimal("400.00"), ar.findById(acc.getId()).get().getBalance());
+		List<Account> accList = transaction.getAccounts();
+		assertEquals(2, accList.size());
+		assertTrue(accList.contains(a) && accList.contains(a2));
+
+		assertEquals(new BigDecimal("600.00"), a2.getBalance());
+		assertEquals(new BigDecimal("400.00"), a.getBalance());
 
 		assertNotNull(transaction2.getId());
 		assertEquals(null, transaction2.getSender());
@@ -235,14 +237,15 @@ class LedgerApplicationTests {
 			logger.error("ERROR: " + e.getMessage());
 		}
 
-		assertEquals(ar.findById(acc2.getId()).get(), transaction2.getReceiver());
-		assertEquals(ar.findById(acc.getId()).get(), transaction2.getSender());
+		assertEquals(a2, transaction2.getReceiver());
+		assertEquals(a, transaction2.getSender());
 		assertEquals(new BigDecimal("500.00"), transaction2.getAmount());
 		assertEquals("USD", transaction2.getCurrency());
 		assertEquals(Status.FAILED, transaction2.getStatus());
-		assertEquals(2, transaction2.getAccounts().size());
-		assertTrue(transaction2.getAccounts().contains(ar.findById(acc2.getId()).get()) 
-		&& transaction2.getAccounts().contains(ar.findById(acc.getId()).get()));
+
+		List<Account> accList2 = transaction2.getAccounts();
+		assertEquals(2, accList2.size());
+		assertTrue(accList2.contains(a2) && accList2.contains(a));
 	}
 
 	@Test
@@ -280,8 +283,11 @@ class LedgerApplicationTests {
 		assertTrue(future2.isDone());
 		assertTrue(future3.isDone());
 
-		assertEquals(new BigDecimal("200.00"), ar.findById(acc.getId()).get().getBalance());
-		assertEquals(new BigDecimal("800.00"), ar.findById(acc2.getId()).get().getBalance());
+		Account a = ar.findById(acc.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+		Account a2 = ar.findById(acc2.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+
+		assertEquals(new BigDecimal("200.00"), a.getBalance());
+		assertEquals(new BigDecimal("800.00"), a2.getBalance());
 
 	}
 
@@ -327,11 +333,14 @@ class LedgerApplicationTests {
 
 		assertEquals(true, failedThread.get());
 
-		assertTrue(new BigDecimal("100.00").compareTo(ar.findById(acc.getId()).get().getBalance()) == 0 
-		|| new BigDecimal("200.00").compareTo(ar.findById(acc.getId()).get().getBalance()) == 0);
+		Account a = ar.findById(acc.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+		Account a2 = ar.findById(acc2.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
 
-		assertTrue(new BigDecimal("900.00").compareTo(ar.findById(acc2.getId()).get().getBalance()) == 0 
-		|| new BigDecimal("800.00").compareTo(ar.findById(acc2.getId()).get().getBalance()) == 0);
+		assertTrue(new BigDecimal("100.00").compareTo(a.getBalance()) == 0 
+		|| new BigDecimal("200.00").compareTo(a.getBalance()) == 0);
+
+		assertTrue(new BigDecimal("900.00").compareTo(a2.getBalance()) == 0 
+		|| new BigDecimal("800.00").compareTo(a2.getBalance()) == 0);
 	}
 
 }

@@ -97,25 +97,32 @@ public class LedgerApplication {
 				logger.info(gbp.toString());
 			});
 			logger.info("");
-			
-			/*BigDecimal beforeTransferOut = aRepo.findById(acc5.getId()).get().getBalance();
-			BigDecimal beforeTransferIn = aRepo.findById(acc7.getId()).get().getBalance();
-			String currencyOut = aRepo.findById(acc5.getId()).get().getCurrency();
-			String currencyIn = aRepo.findById(acc7.getId()).get().getCurrency();	
+
+			Account bj_checking = aRepo.findById(acc5.getId()).orElseThrow(() -> new RuntimeException("Account not found"));
+			Account da_checking = aRepo.findById(acc7.getId()).orElseThrow(() -> new RuntimeException("Account not found"));
+
+			BigDecimal beforeTransferOut = bj_checking.getBalance();
+			BigDecimal beforeTransferIn = da_checking.getBalance();
+			String currencyOut = bj_checking.getCurrency();
+			String currencyIn = da_checking.getCurrency();
 			try {
 				logger.info("B. Jones transfer 1,000.00 USD to D. Adams"); 
 				logger.info("------------------------------------------");	
 				logger.info(String.format("Balances before transfer: B. Jones - %,.2f %s, D. Adams - %,.2f %s",
 				beforeTransferOut, currencyOut, beforeTransferIn, currencyIn));
 				Transaction transaction = new Transaction((Account) null, (Account) null, null, null, null);
-				service.transferMoney(acc7.getId(), acc5.getId(), new BigDecimal("1000.00"), "USD", transaction);				
+				service.transferMoney(da_checking.getId(), bj_checking.getId(), new BigDecimal("1000.00"), "USD", transaction);				
 				logger.info("");
 			} catch (InsufficientFundsException e) {
 				logger.error("ERROR: " + e.getMessage());
 			}
 
-			BigDecimal afterTransferOut = aRepo.findById(acc5.getId()).get().getBalance();
-			BigDecimal afterTransferIn = aRepo.findById(acc7.getId()).get().getBalance();
+			// FIXME: Account balance must returned automatically
+			bj_checking = aRepo.findById(acc5.getId()).orElseThrow(() -> new RuntimeException("Account not found"));
+			da_checking = aRepo.findById(acc7.getId()).orElseThrow(() -> new RuntimeException("Account not found"));
+
+			BigDecimal afterTransferOut = bj_checking.getBalance();
+			BigDecimal afterTransferIn = da_checking.getBalance();
 			logger.info(String.format("Balances after transfer: B. Jones - %,.2f %s, D. Adams - %,.2f %s",
 			afterTransferOut, currencyOut, afterTransferIn, currencyIn));
 			if (afterTransferOut.compareTo(new BigDecimal("5500.00")) == 0
@@ -125,7 +132,7 @@ public class LedgerApplication {
 				logger.info("************************");
 			}
 
-			BigDecimal beforeTransferFrom = aRepo.findById(acc7.getId()).get().getBalance();
+			/*BigDecimal beforeTransferFrom = aRepo.findById(acc7.getId()).get().getBalance();
 			BigDecimal beforeTransferTo = aRepo.findById(acc5.getId()).get().getBalance();
 			try {
 				logger.info("D. Adams transfer 6,000.00 USD to B. Jones"); 
@@ -149,7 +156,7 @@ public class LedgerApplication {
 				logger.info("*********************");
 				logger.info("Rollback successful.");
 				logger.info("*********************");
-			}*/
+			}//*/
 		};
 	}
 

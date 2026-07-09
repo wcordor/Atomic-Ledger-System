@@ -116,15 +116,15 @@ public class LedgerApplication {
 			Account bj_checking = aRepo.findById(acc5.getId()).orElseThrow(() -> new RuntimeException("Account not found"));
 			Account da_checking = aRepo.findById(acc7.getId()).orElseThrow(() -> new RuntimeException("Account not found"));
 
-			BigDecimal beforeTransferOut = bj_checking.getBalance();
-			BigDecimal beforeTransferIn = da_checking.getBalance();
-			String currencyOut = bj_checking.getCurrency();
-			String currencyIn = da_checking.getCurrency();
+			BigDecimal bj_checkingBal = bj_checking.getBalance();
+			BigDecimal da_checkingBal = da_checking.getBalance();
+			String bj_checkingCurrency = bj_checking.getCurrency();
+			String da_checkingCurrency = da_checking.getCurrency();
 			try {
 				logger.info("B. Jones transfer 1,000.00 USD to D. Adams"); 
 				logger.info("------------------------------------------");	
 				logger.info(String.format("Balances before transfer: B. Jones - %,.2f %s, D. Adams - %,.2f %s",
-				beforeTransferOut, currencyOut, beforeTransferIn, currencyIn));
+				bj_checkingBal, bj_checkingCurrency, da_checkingBal, da_checkingCurrency));
 				Transaction transaction = new Transaction((Account) null, (Account) null, null, null, null);
 				service.transferMoney(da_checking.getId(), bj_checking.getId(), new BigDecimal("1000.00"), "USD", transaction);				
 				logger.info("");
@@ -135,38 +135,36 @@ public class LedgerApplication {
 			bj_checking = aRepo.findById(acc5.getId()).orElseThrow(() -> new RuntimeException("Account not found"));
 			da_checking = aRepo.findById(acc7.getId()).orElseThrow(() -> new RuntimeException("Account not found"));
 
-			BigDecimal afterTransferOut = bj_checking.getBalance();
-			BigDecimal afterTransferIn = da_checking.getBalance();
+			bj_checkingBal = bj_checking.getBalance();
+			da_checkingBal = da_checking.getBalance();
 			logger.info(String.format("Balances after transfer: B. Jones - %,.2f %s, D. Adams - %,.2f %s",
-			afterTransferOut, currencyOut, afterTransferIn, currencyIn));
-			if (afterTransferOut.compareTo(new BigDecimal("5500.00")) == 0
-			&& afterTransferIn.compareTo(new BigDecimal("4000.00")) == 0) {
+			bj_checkingBal, bj_checkingCurrency, da_checkingBal, da_checkingCurrency));
+			if (bj_checkingBal.compareTo(new BigDecimal("5500.00")) == 0
+			&& da_checkingBal.compareTo(new BigDecimal("4000.00")) == 0) {
 				logger.info("************************");
 				logger.info("Transaction successful.");
 				logger.info("************************");
 			}
 
-			/*BigDecimal beforeTransferFrom = aRepo.findById(acc7.getId()).get().getBalance();
-			BigDecimal beforeTransferTo = aRepo.findById(acc5.getId()).get().getBalance();
 			try {
 				logger.info("D. Adams transfer 6,000.00 USD to B. Jones"); 
 				logger.info("------------------------------------------");	
 				logger.info(String.format("Balances before transfer: D. Adams - %,.2f %s, B. Jones - %,.2f %s",
-				beforeTransferFrom, currencyOut, beforeTransferTo, currencyIn));
+				da_checkingBal, da_checkingCurrency, bj_checkingBal, bj_checkingCurrency));
 				Transaction transaction2 = new Transaction((Account) null, (Account) null, null, null, null);
-				service.transferMoney(acc7.getId(), acc5.getId(), new BigDecimal("6000.00"), "USD", transaction2);				
+				service.transferMoney(bj_checking.getId(), da_checking.getId(), new BigDecimal("6000.00"), "USD", transaction2);				
 				logger.info("");
 			} catch (InsufficientFundsException e) {
 				logger.error("ERROR: " + e.getMessage());
 			}
 
-			BigDecimal afterTransferFrom = aRepo.findById(acc7.getId()).get().getBalance();
-			BigDecimal afterTransferTo = aRepo.findById(acc5.getId()).get().getBalance();
-			logger.info(String.format("Balances after transfer: B. Jones - %,.2f %s, D. Adams - %,.2f %s",
-			afterTransferFrom, currencyOut, afterTransferTo, currencyIn));
+			BigDecimal da_checkingBal_rolledBack = da_checking.getBalance();
+			BigDecimal bj_checkingBal_rolledBack = bj_checking.getBalance();
+			logger.info(String.format("Balances after transfer: D. Adams - %,.2f %s, B. Jones - %,.2f %s",
+				da_checkingBal_rolledBack, da_checkingCurrency, bj_checkingBal_rolledBack, bj_checkingCurrency));
 
-			if (beforeTransferFrom.compareTo(afterTransferFrom) == 0
-			&& beforeTransferTo.compareTo(afterTransferTo) == 0) {
+			if (da_checkingBal_rolledBack.compareTo(da_checkingBal) == 0
+			&& bj_checkingBal_rolledBack.compareTo(bj_checkingBal) == 0) {
 				logger.info("*********************");
 				logger.info("Rollback successful.");
 				logger.info("*********************");

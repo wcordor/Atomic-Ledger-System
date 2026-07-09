@@ -1,6 +1,7 @@
 package ledger;
 
 import java.math.BigDecimal;
+import java.util.concurrent.CompletableFuture;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,6 +70,20 @@ public class LedgerApplication {
 			uRepo.save(user3);
 			aRepo.save(acc6);
 			aRepo.save(acc7);
+
+			User user4 = new User("Mary", "Johnson");
+
+			Account acc8 = new Account("Savings", new BigDecimal("30383.59"), "USD");
+			Account acc9 = new Account("Checking", new BigDecimal("9340.11"), "USD");
+
+			acc8.setUser(user4);
+			acc9.setUser(user4);
+			user4.addAccount(acc8);
+			user4.addAccount(acc9);
+
+			uRepo.save(user4);
+			aRepo.save(acc8);
+			aRepo.save(acc9);
 
 			logger.info("List of Preloaded Users:");
 			logger.info("------------------------");
@@ -155,7 +170,61 @@ public class LedgerApplication {
 				logger.info("*********************");
 				logger.info("Rollback successful.");
 				logger.info("*********************");
-			}//*/
+			}
+
+			Account mj_checking = aRepo.findById(acc9.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+			logger.info("B. Jones transfer 2,000 USD, D. Adams transfer 1,000 USD both to M. Johnson simultaneously");
+			logger.info("------------------------------------------------------------------------------------------");
+			logger.info(String.format("Balances before transfers: M. Johnson - %,.2f %s, B. Jones - %,.2f %s, D. Adams - %,.2f %s" + "",
+				mj_checking.getBalance(), mj_checking.getCurrency(), bj_checking.getBalance(), bj_checking.getCurrency(),
+				da_checking.getBalance(), da_checking.getCurrency()));
+
+			final Long bj_checkingId = bj_checking.getId();
+			final Long mj_checkingId = mj_checking.getId();
+			final Long da_checkingId = da_checking.getId();
+			
+			CompletableFuture<Void> future1 = CompletableFuture.runAsync(() -> {
+				try {
+					Transaction transaction3 = new Transaction((Account) null, (Account) null, null, null, null);
+					service.transferMoney(mj_checkingId, bj_checkingId, new BigDecimal("2000.00"), "USD", transaction3);
+				} catch (InsufficientFundsException e) {
+					logger.error("ERROR: " + e.getMessage());
+				}
+			});
+
+			CompletableFuture<Void> future2 = CompletableFuture.runAsync(() -> {
+				try {
+					Transaction transaction4 = new Transaction((Account) null, (Account) null, null, null, null);
+					service.transferMoney(mj_checkingId, da_checkingId, new BigDecimal("1000.00"), "USD", transaction4);
+				} catch (InsufficientFundsException e) {
+						logger.error("ERROR: " + e.getMessage());
+				}
+			});
+
+			CompletableFuture<Void> combinedFuture = CompletableFuture.allOf(future1, future2);
+			combinedFuture.join();
+
+			aRepo.flush();
+
+			bj_checking = aRepo.findById(acc5.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+			mj_checking = aRepo.findById(acc9.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+			da_checking = aRepo.findById(acc7.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+
+			BigDecimal mj_checkingBal = mj_checking.getBalance();
+			bj_checkingBal = bj_checking.getBalance();
+			da_checkingBal = da_checking.getBalance();
+
+			
+			logger.info(String.format("Balances after transfers: M. Johnson - %,.2f %s, B. Jones - %,.2f %s, D. Adams - %,.2f %s" + "",
+				mj_checkingBal, mj_checking.getCurrency(), bj_checkingBal, bj_checkingCurrency,
+				da_checkingBal, da_checkingCurrency));
+			if (mj_checkingBal.compareTo(new BigDecimal("12340.11")) == 0 && bj_checkingBal.compareTo(new BigDecimal("3500.00")) == 0
+			&& da_checkingBal.compareTo(new BigDecimal("3000.00")) == 0) {
+				logger.info("************************");
+				logger.info("Concurrent transactions successful.");
+				logger.info("************************");
+			}
+			// show transactions next
 		};
 	}
 

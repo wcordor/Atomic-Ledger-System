@@ -21,8 +21,8 @@ public class TransferService {
     public void transferMoney(Long receiverId, Long senderId, BigDecimal amt, String currency, 
         Transaction transaction) throws InsufficientFundsException {
 
-        Account receiver = accountRepo.findById(receiverId).orElseThrow(() -> new RuntimeException("Receiver account not found"));
-        Account sender = accountRepo.findById(senderId).orElseThrow(() -> new RuntimeException("Sender account not found"));
+        Account receiver = accountRepo.findWithLockingById(receiverId).orElseThrow(() -> new RuntimeException("Receiver account not found"));
+        Account sender = accountRepo.findWithLockingById(senderId).orElseThrow(() -> new RuntimeException("Sender account not found"));
 
         transaction.setReceiver(receiver);
         transaction.setSender(sender);
@@ -33,19 +33,19 @@ public class TransferService {
         receiver.addTransaction(transaction);
         sender.addTransaction(transaction);
 
-        BigDecimal senderBal = accountRepo.findWithLockingById(senderId).get().getBalance().subtract(amt);
+        BigDecimal senderBal = sender.getBalance().subtract(amt);
         if (senderBal.signum() == -1) {
             transaction.setStatus(Status.FAILED);
             throw new InsufficientFundsException("Not enough funds to make transaction, canceling transaction.");
         }
         else {
-            BigDecimal receiverBal = accountRepo.findWithLockingById(receiverId).get().getBalance().add(amt);
+            BigDecimal receiverBal = receiver.getBalance().add(amt);
             
-            accountRepo.findWithLockingById(senderId).get().setBalance(senderBal);
-            accountRepo.findWithLockingById(receiverId).get().setBalance(receiverBal);
+            sender.setBalance(senderBal);
+            receiver.setBalance(receiverBal);
             
-            accountRepo.save(accountRepo.findWithLockingById(receiverId).get());
-            accountRepo.save(accountRepo.findWithLockingById(senderId).get());
+            accountRepo.save(receiver);
+            accountRepo.save(sender);
             transaction.setStatus(Status.SUCCESSFUL);
         }
 

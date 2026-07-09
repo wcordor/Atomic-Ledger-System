@@ -7,6 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.retry.annotation.EnableRetry;
+
+import jakarta.persistence.EntityNotFoundException;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -113,8 +116,8 @@ public class LedgerApplication {
 			});
 			logger.info("");
 
-			Account bj_checking = aRepo.findById(acc5.getId()).orElseThrow(() -> new RuntimeException("Account not found"));
-			Account da_checking = aRepo.findById(acc7.getId()).orElseThrow(() -> new RuntimeException("Account not found"));
+			Account bj_checking = aRepo.findById(acc5.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+			Account da_checking = aRepo.findById(acc7.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
 
 			BigDecimal bj_checkingBal = bj_checking.getBalance();
 			BigDecimal da_checkingBal = da_checking.getBalance();
@@ -132,8 +135,8 @@ public class LedgerApplication {
 				logger.error("ERROR: " + e.getMessage());
 			}
 
-			bj_checking = aRepo.findById(acc5.getId()).orElseThrow(() -> new RuntimeException("Account not found"));
-			da_checking = aRepo.findById(acc7.getId()).orElseThrow(() -> new RuntimeException("Account not found"));
+			bj_checking = aRepo.findById(acc5.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+			da_checking = aRepo.findById(acc7.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
 
 			bj_checkingBal = bj_checking.getBalance();
 			da_checkingBal = da_checking.getBalance();

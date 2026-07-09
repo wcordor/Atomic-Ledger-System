@@ -117,7 +117,6 @@ public class LedgerApplication {
 				logger.error("ERROR: " + e.getMessage());
 			}
 
-			// FIXME: Account balance must returned automatically
 			bj_checking = aRepo.findById(acc5.getId()).orElseThrow(() -> new RuntimeException("Account not found"));
 			da_checking = aRepo.findById(acc7.getId()).orElseThrow(() -> new RuntimeException("Account not found"));
 

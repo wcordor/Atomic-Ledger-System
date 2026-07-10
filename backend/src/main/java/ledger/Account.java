@@ -34,10 +34,10 @@ public class Account {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "sender", fetch = FetchType.EAGER, cascade = CascadeType.MERGE, orphanRemoval = true)
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.MERGE, orphanRemoval = true)
     private List<Transaction> sent = new ArrayList<>();
 
-    @OneToMany(mappedBy = "receiver", fetch = FetchType.EAGER, cascade = CascadeType.MERGE, orphanRemoval = true)
+    @OneToMany(mappedBy = "receiver", cascade = CascadeType.MERGE, orphanRemoval = true)
     private List<Transaction> received = new ArrayList<>();
 
     @Override

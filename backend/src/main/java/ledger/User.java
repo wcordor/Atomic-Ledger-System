@@ -26,7 +26,7 @@ public class User {
         this.lastName = lastName;
     }
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.MERGE, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE, orphanRemoval = true)
     private List<Account> accounts = new ArrayList<>();
 
     @Override

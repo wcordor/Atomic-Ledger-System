@@ -2,6 +2,8 @@ package ledger;
 
 import java.math.BigDecimal;
 
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +18,8 @@ public class TransferService {
         this.accountRepo = accountRepo;
     }
 
-    @Retryable(retryFor = { RuntimeException.class }, maxAttempts = 3)
+    @Retryable(retryFor = { ObjectOptimisticLockingFailureException.class }, maxAttempts = 20,
+         backoff = @Backoff(delay = 50, maxDelay = 150, multiplier = 2.0))
     @Transactional(rollbackOn = { InsufficientFundsException.class })
     public void transferMoney(Long receiverId, Long senderId, BigDecimal amt, String currency/*, 
         Transaction transaction*/) throws InsufficientFundsException {

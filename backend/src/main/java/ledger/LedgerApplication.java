@@ -1,6 +1,8 @@
 package ledger;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import org.slf4j.Logger;
@@ -174,37 +176,47 @@ public class LedgerApplication {
 			}
 
 			Account mj_checking = aRepo.findById(acc9.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
-			logger.info("B. Jones transfer 2,000 USD, D. Adams transfer 1,000 USD both to M. Johnson simultaneously");
-			logger.info("------------------------------------------------------------------------------------------");
-			logger.info(String.format("Balances before transfers: M. Johnson - %,.2f %s, B. Jones - %,.2f %s, D. Adams - %,.2f %s" + "",
-				mj_checking.getBalance(), mj_checking.getCurrency(), bj_checking.getBalance(), bj_checking.getCurrency(),
-				da_checking.getBalance(), da_checking.getCurrency()));
+			
+			logger.info("40 simultaneous transactions");
+			logger.info("----------------------------");
+			logger.info("Balances before transfers:");
+			logger.info("");
+			logger.info(String.format("M. Johnson - %,.2f %s", mj_checking.getBalance(), mj_checking.getCurrency()));
+			logger.info(String.format("B. Jones - %,.2f %s", bj_checking.getBalance(), bj_checking.getCurrency()));
+			logger.info(String.format("D. Adams - %,.2f %s", da_checking.getBalance(), da_checking.getCurrency()));
+			logger.info("");
+
+			List<CompletableFuture<Void>> futures = new ArrayList<>();
 
 			final Long bj_checkingId = bj_checking.getId();
 			final Long mj_checkingId = mj_checking.getId();
 			final Long da_checkingId = da_checking.getId();
-			
-			CompletableFuture<Void> future1 = CompletableFuture.runAsync(() -> {
-				try {
-					Transaction transaction3 = new Transaction((Account) null, (Account) null, null, null, null);
-					service.transferMoney(mj_checkingId, bj_checkingId, new BigDecimal("2000.00"), "USD", transaction3);
-				} catch (InsufficientFundsException e) {
-					logger.error("ERROR: " + e.getMessage());
-				}
-			});
 
-			CompletableFuture<Void> future2 = CompletableFuture.runAsync(() -> {
-				try {
-					Transaction transaction4 = new Transaction((Account) null, (Account) null, null, null, null);
-					service.transferMoney(mj_checkingId, da_checkingId, new BigDecimal("1000.00"), "USD", transaction4);
-				} catch (InsufficientFundsException e) {
+			for (int i = 0; i < 20; i++) {
+				CompletableFuture<Void> future1 = CompletableFuture.runAsync(() -> {
+					try {
+						service.transferMoney(mj_checkingId, bj_checkingId, new BigDecimal("200.00"), "USD");
+					} catch (InsufficientFundsException e) {
 						logger.error("ERROR: " + e.getMessage());
-				}
-			});
+					}
+				});
+				futures.add(future1);
 
-			CompletableFuture<Void> combinedFuture = CompletableFuture.allOf(future1, future2);
-			combinedFuture.join();
+				CompletableFuture<Void> future2 = CompletableFuture.runAsync(() -> {
+					try {
+						service.transferMoney(mj_checkingId, da_checkingId, new BigDecimal("100.00"), "USD");
+					} catch (InsufficientFundsException e) {
+						logger.error("ERROR: " + e.getMessage());
+					}
+				});
+				futures.add(future2);
 
+			}
+
+			logger.info("Optimistic Locking active. Retries ongoing...");
+			logger.info("");
+
+			CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
 			aRepo.flush();
 
 			bj_checking = aRepo.findById(acc5.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));

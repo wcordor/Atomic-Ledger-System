@@ -131,8 +131,7 @@ public class LedgerApplication {
 				logger.info(String.format("Balances before transfer: B. Jones - %,.2f %s, D. Adams - %,.2f %s",
 				bj_checkingBal, bj_checkingCurrency, da_checkingBal, da_checkingCurrency));
 				Transaction transaction = new Transaction((Account) null, (Account) null, null, null, null);
-				service.transferMoney(da_checking.getId(), bj_checking.getId(), new BigDecimal("1000.00"), "USD", transaction);				
-				logger.info("");
+				service.transferMoney(da_checking.getId(), bj_checking.getId(), new BigDecimal("1000.00"), "USD"/*, transaction*/);
 			} catch (InsufficientFundsException e) {
 				logger.error("ERROR: " + e.getMessage());
 			}
@@ -157,7 +156,7 @@ public class LedgerApplication {
 				logger.info(String.format("Balances before transfer: D. Adams - %,.2f %s, B. Jones - %,.2f %s",
 				da_checkingBal, da_checkingCurrency, bj_checkingBal, bj_checkingCurrency));
 				Transaction transaction2 = new Transaction((Account) null, (Account) null, null, null, null);
-				service.transferMoney(bj_checking.getId(), da_checking.getId(), new BigDecimal("6000.00"), "USD", transaction2);				
+				service.transferMoney(bj_checking.getId(), da_checking.getId(), new BigDecimal("6000.00"), "USD"/*, transaction2*/);				
 				logger.info("");
 			} catch (InsufficientFundsException e) {
 				logger.error("ERROR: " + e.getMessage());

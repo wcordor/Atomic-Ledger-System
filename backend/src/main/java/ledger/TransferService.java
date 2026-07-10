@@ -18,24 +18,24 @@ public class TransferService {
 
     @Retryable(retryFor = { RuntimeException.class }, maxAttempts = 3)
     @Transactional(rollbackOn = { InsufficientFundsException.class })
-    public void transferMoney(Long receiverId, Long senderId, BigDecimal amt, String currency, 
-        Transaction transaction) throws InsufficientFundsException {
+    public void transferMoney(Long receiverId, Long senderId, BigDecimal amt, String currency/*, 
+        Transaction transaction*/) throws InsufficientFundsException {
 
         Account receiver = accountRepo.findWithLockingById(receiverId).orElseThrow(() -> new RuntimeException("Receiver account not found"));
         Account sender = accountRepo.findWithLockingById(senderId).orElseThrow(() -> new RuntimeException("Sender account not found"));
 
-        transaction.setReceiver(receiver);
+        /*transaction.setReceiver(receiver);
         transaction.setSender(sender);
         transaction.setAmount(amt);
         transaction.setCurrency(currency);
         transaction.setStatus(Status.PENDING);
 
         receiver.addTransaction(transaction);
-        sender.addTransaction(transaction);
+        sender.addTransaction(transaction);*/
 
         BigDecimal senderBal = sender.getBalance().subtract(amt);
         if (senderBal.signum() == -1) {
-            transaction.setStatus(Status.FAILED);
+            //transaction.setStatus(Status.FAILED);
             throw new InsufficientFundsException("Not enough funds to make transaction, canceling transaction.");
         }
         else {
@@ -46,7 +46,7 @@ public class TransferService {
             
             accountRepo.save(receiver);
             accountRepo.save(sender);
-            transaction.setStatus(Status.SUCCESSFUL);
+            //transaction.setStatus(Status.SUCCESSFUL);
         }
 
     }

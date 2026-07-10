@@ -90,6 +90,7 @@ public class LedgerApplication {
 			aRepo.save(acc8);
 			aRepo.save(acc9);
 
+			logger.info("");
 			logger.info("List of Preloaded Users:");
 			logger.info("------------------------");
 			uRepo.findAll().forEach(user -> {
@@ -148,6 +149,7 @@ public class LedgerApplication {
 				logger.info("************************");
 				logger.info("Transaction successful.");
 				logger.info("************************");
+				logger.info("");
 			}
 
 			try {
@@ -172,6 +174,7 @@ public class LedgerApplication {
 				logger.info("*********************");
 				logger.info("Rollback successful.");
 				logger.info("*********************");
+				logger.info("");
 			}
 
 			Account mj_checking = aRepo.findById(acc9.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
@@ -226,17 +229,18 @@ public class LedgerApplication {
 			bj_checkingBal = bj_checking.getBalance();
 			da_checkingBal = da_checking.getBalance();
 
-			
-			logger.info(String.format("Balances after transfers: M. Johnson - %,.2f %s, B. Jones - %,.2f %s, D. Adams - %,.2f %s" + "",
-				mj_checkingBal, mj_checking.getCurrency(), bj_checkingBal, bj_checkingCurrency,
-				da_checkingBal, da_checkingCurrency));
-			if (mj_checkingBal.compareTo(new BigDecimal("12340.11")) == 0 && bj_checkingBal.compareTo(new BigDecimal("3500.00")) == 0
-			&& da_checkingBal.compareTo(new BigDecimal("3000.00")) == 0) {
-				logger.info("************************");
+			logger.info("Balances after transfers:");
+			logger.info("");
+			logger.info(String.format("M. Johnson - %,.2f %s", mj_checkingBal, mj_checking.getCurrency()));
+			logger.info(String.format("B. Jones - %,.2f %s", bj_checkingBal, bj_checking.getCurrency()));
+			logger.info(String.format("D. Adams - %,.2f %s", da_checkingBal, da_checking.getCurrency()));
+			if (mj_checkingBal.compareTo(new BigDecimal("15340.11")) == 0
+			&& bj_checkingBal.compareTo(new BigDecimal("1500.00")) == 0
+			&& da_checkingBal.compareTo(new BigDecimal("2000.00")) == 0) {
+				logger.info("***********************************");
 				logger.info("Concurrent transactions successful.");
-				logger.info("************************");
+				logger.info("***********************************");
 			}
-			// show transactions next
 		};
 	}
 

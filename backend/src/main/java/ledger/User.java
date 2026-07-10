@@ -31,7 +31,7 @@ public class User {
 
     @Override
     public String toString() {
-        return String.format("user[name=%s %s, id=%d, # of accounts=%d]", firstName, lastName, id, accounts.size());
+        return String.format("user[name=%s %s, id=%d]", firstName, lastName, id);
     }
 
     public Long getId() {

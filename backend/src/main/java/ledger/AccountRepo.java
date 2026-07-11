@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Query;
 
 import jakarta.persistence.LockModeType;
 
@@ -17,4 +18,6 @@ public interface AccountRepo extends JpaRepository<Account, Long> {
     Account findById(long id);
     List<Account> findByUserLastName(String lastName);
     List<Account> findByCurrency(String currency);
+    /*@Query("SELECT DISTINCT sent FROM Account a LEFT JOIN FETCH a.received")
+    List<Transaction> findTransactions(Long id);*/
 }

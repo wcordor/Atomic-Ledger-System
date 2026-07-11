@@ -27,7 +27,7 @@ public class LedgerApplication {
 	}
 
 	@Bean
-	public CommandLineRunner demo(UserRepo uRepo, AccountRepo aRepo, TransferService service) {
+	public CommandLineRunner demo(UserRepo uRepo, AccountRepo aRepo, TransferService service, TransferRetryListener retryListener) {
 		return (args) -> {
 
 			User user1 = new User("John", "Smith");
@@ -240,6 +240,8 @@ public class LedgerApplication {
 				logger.info("***********************************");
 				logger.info("Concurrent transactions successful.");
 				logger.info("***********************************");
+				logger.info("Total retries: " + retryListener.getAndResetRetries());
+				
 			}
 		};
 	}

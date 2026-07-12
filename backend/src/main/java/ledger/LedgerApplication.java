@@ -134,7 +134,9 @@ public class LedgerApplication {
 				Transaction transaction = new Transaction((Account) null, (Account) null, null, null, null);
 				service.transferMoney(da_checking.getId(), bj_checking.getId(), new BigDecimal("1000.00"), "USD"/*, transaction*/);
 			} catch (InsufficientFundsException e) {
+				logger.info("");
 				logger.error("ERROR: " + e.getMessage());
+				logger.info("");
 			}
 
 			bj_checking = aRepo.findById(acc5.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
@@ -161,7 +163,9 @@ public class LedgerApplication {
 				service.transferMoney(bj_checking.getId(), da_checking.getId(), new BigDecimal("6000.00"), "USD"/*, transaction2*/);				
 				logger.info("");
 			} catch (InsufficientFundsException e) {
+				logger.info("");
 				logger.error("ERROR: " + e.getMessage());
+				logger.info("");
 			}
 
 			BigDecimal da_checkingBal_rolledBack = da_checking.getBalance();
@@ -199,7 +203,9 @@ public class LedgerApplication {
 					try {
 						service.transferMoney(mj_checkingId, bj_checkingId, new BigDecimal("200.00"), "USD");
 					} catch (InsufficientFundsException e) {
+						logger.info("");
 						logger.error("ERROR: " + e.getMessage());
+						logger.info("");
 					}
 				});
 				futures.add(future1);
@@ -208,7 +214,9 @@ public class LedgerApplication {
 					try {
 						service.transferMoney(mj_checkingId, da_checkingId, new BigDecimal("100.00"), "USD");
 					} catch (InsufficientFundsException e) {
+						logger.info("");
 						logger.error("ERROR: " + e.getMessage());
+						logger.info("");
 					}
 				});
 				futures.add(future2);

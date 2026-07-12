@@ -22,7 +22,7 @@ public class TransferService {
 
     @Retryable(retryFor = { ObjectOptimisticLockingFailureException.class }, maxAttempts = 20,
          backoff = @Backoff(delay = 50, maxDelay = 150, multiplier = 2.0), listeners = "transferRetryListener")
-    @Transactional(rollbackFor = { InsufficientFundsException.class }, propagation = Propagation.REQUIRES_NEW)
+    @Transactional(rollbackFor = { InsufficientFundsException.class })
     public void transferMoney(Long receiverId, Long senderId, BigDecimal amt, String currency/*, 
         Transaction transaction*/) throws InsufficientFundsException {
 

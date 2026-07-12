@@ -13,9 +13,11 @@ import jakarta.transaction.Transactional;
 public class TransferService {
 
     private final AccountRepo accountRepo;
+    private final TransactionRepo transactionRepo;
 
-    public TransferService(AccountRepo accountRepo) {
+    public TransferService(AccountRepo accountRepo, TransactionRepo transactionRepo) {
         this.accountRepo = accountRepo;
+        this.transactionRepo = transactionRepo;
     }
 
     @Retryable(retryFor = { ObjectOptimisticLockingFailureException.class }, maxAttempts = 20,
@@ -27,18 +29,21 @@ public class TransferService {
         Account receiver = accountRepo.findWithLockingById(receiverId).orElseThrow(() -> new RuntimeException("Receiver account not found"));
         Account sender = accountRepo.findWithLockingById(senderId).orElseThrow(() -> new RuntimeException("Sender account not found"));
 
-        /*transaction.setReceiver(receiver);
+        Transaction transaction = new Transaction((Account) null, (Account) null, null, null, null);
+
+        transaction.setReceiver(receiver);
         transaction.setSender(sender);
         transaction.setAmount(amt);
         transaction.setCurrency(currency);
         transaction.setStatus(Status.PENDING);
 
         receiver.addTransaction(transaction);
-        sender.addTransaction(transaction);*/
+        sender.addTransaction(transaction);
 
         BigDecimal senderBal = sender.getBalance().subtract(amt);
         if (senderBal.signum() == -1) {
-            //transaction.setStatus(Status.FAILED);
+            transaction.setStatus(Status.FAILED);
+            transactionRepo.save(transaction);
             throw new InsufficientFundsException("Not enough funds to make transaction, canceling transaction.");
         }
         else {
@@ -49,7 +54,8 @@ public class TransferService {
             
             accountRepo.save(receiver);
             accountRepo.save(sender);
-            //transaction.setStatus(Status.SUCCESSFUL);
+            transaction.setStatus(Status.SUCCESSFUL);
+            transactionRepo.save(transaction);
         }
 
     }

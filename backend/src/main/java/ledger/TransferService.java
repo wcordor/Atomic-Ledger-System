@@ -6,8 +6,8 @@ import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.transaction.Transactional;
 
 @Service
 public class TransferService {
@@ -22,7 +22,7 @@ public class TransferService {
 
     @Retryable(retryFor = { ObjectOptimisticLockingFailureException.class }, maxAttempts = 20,
          backoff = @Backoff(delay = 50, maxDelay = 150, multiplier = 2.0), listeners = "transferRetryListener")
-    @Transactional(rollbackOn = { InsufficientFundsException.class })
+    @Transactional(rollbackFor = { InsufficientFundsException.class }, propagation = Propagation.REQUIRES_NEW)
     public void transferMoney(Long receiverId, Long senderId, BigDecimal amt, String currency/*, 
         Transaction transaction*/) throws InsufficientFundsException {
 

@@ -168,9 +168,6 @@ class LedgerApplicationTests {
 	@Test
 	void testMoneyTransfers() {
 		// acc balance: $1,000, acc2 balance: $0
-
-		//Account a = ar.findById(acc.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
-		//Account a2 = ar.findById(acc2.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
 		
 		try {
 			ts.transferMoney(a2.getId(), a.getId(), new BigDecimal("400.00"), "USD"/*, transaction*/);

@@ -2,7 +2,9 @@ package ledger;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.*;
 
@@ -35,10 +37,10 @@ public class Account {
     private User user;
 
     @OneToMany(mappedBy = "sender", orphanRemoval = true)
-    private List<Transaction> sent = new ArrayList<>();
+    private Set<Transaction> sent = new HashSet<>();
 
     @OneToMany(mappedBy = "receiver", orphanRemoval = true)
-    private List<Transaction> received = new ArrayList<>();
+    private Set<Transaction> received = new HashSet<>();
 
     @Override
     public String toString() {

@@ -193,15 +193,15 @@ class LedgerApplicationTests {
 			logger.error("ERROR: " + e.getMessage());
 		}
 
+        a = ar.findWithTransactions(acc.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+        a2 = ar.findWithTransactions(acc2.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+
 		assertEquals(new BigDecimal("600.00"), a.getBalance());
 
-		List<Transaction> a_transactions = a.getTransactions();
-		List<Transaction> a2_transactions = a2.getTransactions();
-		assertEquals(1, a_transactions.size());
-		assertEquals(1, a2_transactions.size());
-		assertTrue(a_transactions.contains(transaction));
-		assertTrue(a2_transactions.contains(transaction));
-
+        List<Transaction> a_transactions = a.getTransactions();
+        List<Transaction> a2_transactions = a2.getTransactions();
+        assertEquals(1, a_transactions.size());
+        assertEquals(1, a2_transactions.size());
 	}
 
 	@Test

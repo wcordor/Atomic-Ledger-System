@@ -95,6 +95,14 @@ public class Account {
         return transactions;
     }
 
+    public Set<Transaction> getSent() {
+        return sent;
+    }
+
+    public Set<Transaction> getReceived() {
+        return received;
+    }
+
     public User getUser() {
         return user;
     }

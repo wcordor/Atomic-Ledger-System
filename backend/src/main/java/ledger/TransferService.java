@@ -7,6 +7,7 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import jakarta.persistence.EntityNotFoundException;
 
 
 @Service
@@ -26,8 +27,8 @@ public class TransferService {
     public void transferMoney(Long receiverId, Long senderId, BigDecimal amt, String currency/*, 
         Transaction transaction*/) throws InsufficientFundsException {
 
-        Account receiver = accountRepo.findWithLockingById(receiverId).orElseThrow(() -> new RuntimeException("Receiver account not found"));
-        Account sender = accountRepo.findWithLockingById(senderId).orElseThrow(() -> new RuntimeException("Sender account not found"));
+        Account receiver = getAccountWithTransactionLists(receiverId);
+        Account sender = getAccountWithTransactionLists(senderId);
 
         Transaction transaction = new Transaction((Account) null, (Account) null, null, null, null);
 
@@ -58,6 +59,13 @@ public class TransferService {
             transactionRepo.save(transaction);
         }
 
+    }
+
+    public Account getAccountWithTransactionLists(Long id) {
+        Account account = accountRepo.findWithLockingById(id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+        account.getSent().size();
+        account.getReceived().size();
+        return account;
     }
     
 }

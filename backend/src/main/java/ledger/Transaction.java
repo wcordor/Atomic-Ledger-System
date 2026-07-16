@@ -46,10 +46,8 @@ public class Transaction {
 
     @Override
     public String toString() {
-        return String.format("Transaction[id=%d, to %s, from %s, amount=%,.2f %s, status=%s, timestamp=%s]",
-            id, receiver.getUser().getFirstName() + " " + receiver.getUser().getLastName(),
-            sender.getUser().getFirstName() + " " + sender.getUser().getLastName(),
-            amount, currency, status, timestamp);
+        return String.format("Transaction[ID: %d, Receiver ID: %d, Sender ID: %d, Amount: %,.2f %s, Status: %s, Timestamp: %s]",
+            id, receiver.getId(), sender.getId(), amount, currency, status, timestamp);
     }
 
     public Long getId() {

@@ -119,8 +119,8 @@ public class LedgerApplication {
 			});
 			logger.info("");
 
-			Account bj_checking = aRepo.findById(acc5.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
-			Account da_checking = aRepo.findById(acc7.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+			Account bj_checking = aRepo.findWithTransactions(acc5.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+			Account da_checking = aRepo.findWithTransactions(acc7.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
 
 			BigDecimal bj_checkingBal = bj_checking.getBalance();
 			BigDecimal da_checkingBal = da_checking.getBalance();
@@ -138,8 +138,8 @@ public class LedgerApplication {
 				logger.info("");
 			}
 
-			bj_checking = aRepo.findById(acc5.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
-			da_checking = aRepo.findById(acc7.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+			bj_checking = aRepo.findWithTransactions(acc5.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+			da_checking = aRepo.findWithTransactions(acc7.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
 
 			bj_checkingBal = bj_checking.getBalance();
 			da_checkingBal = da_checking.getBalance();
@@ -152,6 +152,10 @@ public class LedgerApplication {
 				logger.info("************************");
 				logger.info("");
 			}
+
+			Transaction transaction = bj_checking.getTransactions().get(0);
+			logger.info("Transaction Info:");
+			logger.info(transaction.toString());
 
 			try {
 				logger.info("D. Adams transfer 6,000.00 USD to B. Jones"); 
@@ -180,7 +184,7 @@ public class LedgerApplication {
 				logger.info("");
 			}
 
-			Account mj_checking = aRepo.findById(acc9.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+			Account mj_checking = aRepo.findWithTransactions(acc9.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
 			
 			logger.info("40 simultaneous transactions");
 			logger.info("----------------------------");
@@ -227,9 +231,9 @@ public class LedgerApplication {
 			CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
 			aRepo.flush();
 
-			bj_checking = aRepo.findById(acc5.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
-			mj_checking = aRepo.findById(acc9.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
-			da_checking = aRepo.findById(acc7.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+			bj_checking = aRepo.findWithTransactions(acc5.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+			mj_checking = aRepo.findWithTransactions(acc9.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+			da_checking = aRepo.findWithTransactions(acc7.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
 
 			BigDecimal mj_checkingBal = mj_checking.getBalance();
 			bj_checkingBal = bj_checking.getBalance();
@@ -246,7 +250,9 @@ public class LedgerApplication {
 				logger.info("***********************************");
 				logger.info("Concurrent transactions successful.");
 				logger.info("***********************************");
-				logger.info("Total retries: " + retryListener.getAndResetRetries());
+				logger.info("Account " + mj_checkingId + " total transactions: " + mj_checking.getTransactions().size());
+				logger.info("Account " + bj_checkingId + " total transactions: " + bj_checking.getTransactions().size());
+				logger.info("Account " + da_checkingId + " total transactions: " + da_checking.getTransactions().size());
 				
 			}
 		};

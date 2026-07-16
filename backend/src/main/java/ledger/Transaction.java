@@ -57,23 +57,21 @@ public class Transaction {
     }
 
     public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Account getSender() {
-        return sender;
+        if (this.id == null) {
+            this.id = id;
+        }
     }
 
     public void setSender(Account sender) {
-        this.sender = sender;
-    }
-
-    public Account getReceiver() {
-        return receiver;
+        if (this.sender == null) {
+            this.sender = sender;
+        }
     }
 
     public void setReceiver(Account receiver) {
-        this.receiver = receiver;
+        if (this.receiver == null) {
+            this.receiver = receiver;
+        }
     }
 
     public BigDecimal getAmount() {
@@ -81,7 +79,9 @@ public class Transaction {
     }
 
     public void setAmount(BigDecimal amount) {
-        this.amount = amount;
+        if (this.amount == null) {
+            this.amount = amount;
+        }
     }
 
     public String getCurrency() {
@@ -89,7 +89,9 @@ public class Transaction {
     }
 
     public void setCurrency(String currency) {
-        this.currency = currency;
+        if (this.currency == null) {
+            this.currency = currency;
+        }
     }
 
     public Status getStatus() {
@@ -97,7 +99,17 @@ public class Transaction {
     }
 
     public void setStatus(Status status) {
-        this.status = status;
+        if (this.status != Status.SUCCESSFUL && this.status != Status.FAILED) {
+            this.status = status;
+        }
+    }
+
+    public Long getSenderId() {
+        return sender.getId();
+    }
+
+    public Long getReceiverId() {
+        return receiver.getId();
     }
 
     public List<Account> getAccounts() {

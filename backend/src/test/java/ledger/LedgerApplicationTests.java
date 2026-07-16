@@ -46,9 +46,6 @@ class LedgerApplicationTests {
 	Account a2;
 	User user;
 	User user2;
-	Transaction transaction;
-	Transaction transaction2;
-	Transaction transaction3;
 
 	@BeforeEach
 	void setUp() {
@@ -71,13 +68,6 @@ class LedgerApplicationTests {
 		user2.addAccount(acc2);
 		ur.save(user2);
 		ar.save(acc2);
-
-		transaction = new Transaction((Account) null, (Account) null, (BigDecimal) null, (String) null, (Status) null);
-		transaction2 = new Transaction((Account) null, (Account) null, (BigDecimal) null, (String) null, (Status) null);
-		transaction3 = new Transaction((Account) null, (Account) null, (BigDecimal) null, (String) null, (Status) null);
-		tr.save(transaction);
-		tr.save(transaction2);
-		tr.save(transaction3);
 
 		a = ar.findById(acc.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
 		a2 = ar.findById(acc2.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
@@ -197,63 +187,32 @@ class LedgerApplicationTests {
 
         List<Transaction> a_transactions = a.getTransactions();
         List<Transaction> a2_transactions = a2.getTransactions();
+
+		Transaction transaction = a_transactions.get(0);
+		assertNotNull(transaction.getId());
         assertEquals(1, a_transactions.size());
         assertEquals(1, a2_transactions.size());
-	}
-
-	@Test
-	void testTransactionFunctions() {
-		assertNotNull(transaction.getId());
-		assertEquals(null, transaction.getSender());
-		assertEquals(null, transaction.getReceiver());
-		assertEquals(null, transaction.getAmount());
-		assertEquals(null, transaction.getCurrency());
-		assertEquals(null, transaction.getStatus());
-
-		try {
-			ts.transferMoney(acc2.getId(), acc.getId(), new BigDecimal("600.00"), "USD"/*, transaction*/);
-		} catch (InsufficientFundsException e) {
-			logger.error("ERROR: " + e.getMessage());
-		}
-
-		Account a = ar.findById(acc.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
-		Account a2 = ar.findById(acc2.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
-
-		assertEquals(a2, transaction.getReceiver());
-		assertEquals(a, transaction.getSender());
-		assertEquals(new BigDecimal("600.00"), transaction.getAmount());
+		assertTrue(a_transactions.contains(transaction) && a2_transactions.contains(transaction));
+		assertEquals(a.getId(), transaction.getSenderId());
+		assertEquals(a2.getId(), transaction.getReceiverId());
+		transaction.setId(99999L);
+		assertFalse(99999L == transaction.getId());
+		transaction.setReceiver(a);
+		transaction.setSender(a2);
+		assertEquals(a2.getId(), transaction.getReceiverId());
+		assertEquals(a.getId(), transaction.getSenderId());
+		assertEquals(new BigDecimal("400.00"), transaction.getAmount());
+		transaction.setAmount(new BigDecimal("9000000.00"));
+		assertEquals(new BigDecimal("400.00"), transaction.getAmount());
+		assertEquals("USD", transaction.getCurrency());
+		transaction.setCurrency("GBP");
 		assertEquals("USD", transaction.getCurrency());
 		assertEquals(Status.SUCCESSFUL, transaction.getStatus());
+		transaction.setStatus(Status.FAILED);
+		assertEquals(Status.SUCCESSFUL, transaction.getStatus());
 
-		List<Account> accList = transaction.getAccounts();
-		assertEquals(2, accList.size());
-		assertTrue(accList.contains(a) && accList.contains(a2));
-
-		assertEquals(new BigDecimal("600.00"), a2.getBalance());
-		assertEquals(new BigDecimal("400.00"), a.getBalance());
-
-		assertNotNull(transaction2.getId());
-		assertEquals(null, transaction2.getSender());
-		assertEquals(null, transaction2.getReceiver());
-		assertEquals(null, transaction2.getAmount());
-		assertEquals(null, transaction2.getCurrency());
-		assertEquals(null, transaction2.getStatus());
-
-		try {
-			ts.transferMoney(acc2.getId(), acc.getId(), new BigDecimal("500.00"), "USD"/*, transaction2*/);
-		} catch (InsufficientFundsException e) {
-			logger.error("ERROR: " + e.getMessage());
-		}
-
-		assertEquals(a2, transaction2.getReceiver());
-		assertEquals(a, transaction2.getSender());
-		assertEquals(new BigDecimal("500.00"), transaction2.getAmount());
-		assertEquals("USD", transaction2.getCurrency());
-		assertEquals(Status.FAILED, transaction2.getStatus());
-
-		List<Account> accList2 = transaction2.getAccounts();
-		assertEquals(2, accList2.size());
-		assertTrue(accList2.contains(a2) && accList2.contains(a));
+		List<Account> transactionAccs = transaction.getAccounts();
+		assertEquals(2, transactionAccs.size());
 	}
 
 	@Test

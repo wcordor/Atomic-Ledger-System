@@ -82,9 +82,9 @@ public class Account {
     }
 
     public void addTransaction(Transaction transaction) {
-        if (transaction.getSender() == this) {
+        if (transaction.getSenderId() == this.id) {
             sent.add(transaction);
-        } else if (transaction.getReceiver() == this) {
+        } else if (transaction.getReceiverId() == this.id) {
             received.add(transaction);
         }
     }

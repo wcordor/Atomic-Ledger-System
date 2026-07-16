@@ -223,7 +223,6 @@ public class LedgerApplication {
 
 			}
 
-			logger.info("Optimistic Locking active. Retries ongoing...");
 			logger.info("");
 
 			CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();

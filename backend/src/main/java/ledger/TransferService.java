@@ -21,8 +21,8 @@ public class TransferService {
         this.transactionRepo = transactionRepo;
     }
 
-    @Retryable(retryFor = { ObjectOptimisticLockingFailureException.class }, maxAttempts = 20,
-         backoff = @Backoff(delay = 50, maxDelay = 150, multiplier = 2.0), listeners = "transferRetryListener")
+    @Retryable(retryFor = { ObjectOptimisticLockingFailureException.class }, maxAttempts = 3,
+         backoff = @Backoff(delay = 50, maxDelay = 150, multiplier = 2.0))
     @Transactional(rollbackFor = { InsufficientFundsException.class })
     public void transferMoney(Long receiverId, Long senderId, BigDecimal amt, String currency/*, 
         Transaction transaction*/) throws InsufficientFundsException {

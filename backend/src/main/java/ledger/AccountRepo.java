@@ -13,7 +13,7 @@ import jakarta.persistence.LockModeType;
 
 public interface AccountRepo extends JpaRepository<Account, Long> {
     
-    @Lock(LockModeType.OPTIMISTIC_FORCE_INCREMENT)
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<Account> findWithLockingById(Long id);
 
     List<Account> findByName(String name);

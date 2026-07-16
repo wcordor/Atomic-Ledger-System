@@ -170,6 +170,7 @@ class LedgerApplicationTests {
 
 		assertEquals(new BigDecimal("400.00"), a2.getBalance());
 		assertEquals(new BigDecimal("600.00"), a.getBalance());
+		
 		assertThrows(InsufficientFundsException.class, () -> {
 			ts.transferMoney(acc2.getId(), acc.getId(), new BigDecimal("4000.00"), "USD"/*, transaction2*/);
 		});
@@ -211,8 +212,9 @@ class LedgerApplicationTests {
 		transaction.setStatus(Status.FAILED);
 		assertEquals(Status.SUCCESSFUL, transaction.getStatus());
 
-		List<Account> transactionAccs = transaction.getAccounts();
-		assertEquals(2, transactionAccs.size());
+		List<Long> transactionAccIds = transaction.getAccountIds();
+		assertEquals(2, transactionAccIds.size());
+		assertTrue(transactionAccIds.contains(a.getId()) && transactionAccIds.contains(a2.getId()));
 	}
 
 	@Test

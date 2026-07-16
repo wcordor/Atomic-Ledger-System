@@ -112,15 +112,15 @@ public class Transaction {
         return receiver.getId();
     }
 
-    public List<Account> getAccounts() {
-        List<Account> accounts = new ArrayList<>();
+    public List<Long> getAccountIds() {
+        List<Long> accountIds = new ArrayList<>();
         if (sender != null) {
-            accounts.add(sender);
+            accountIds.add(sender.getId());
         }
         if (receiver != null) {
-            accounts.add(receiver);
+            accountIds.add(receiver.getId());
         }
-        return accounts;
+        return accountIds;
     }
 
     @Override

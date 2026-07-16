@@ -127,12 +127,11 @@ public class LedgerApplication {
 			String bj_checkingCurrency = bj_checking.getCurrency();
 			String da_checkingCurrency = da_checking.getCurrency();
 			try {
-				logger.info("B. Jones transfer 1,000.00 USD to D. Adams"); 
-				logger.info("------------------------------------------");	
-				logger.info(String.format("Balances before transfer: B. Jones - %,.2f %s, D. Adams - %,.2f %s",
-				bj_checkingBal, bj_checkingCurrency, da_checkingBal, da_checkingCurrency));
-				Transaction transaction = new Transaction((Account) null, (Account) null, null, null, null);
-				service.transferMoney(da_checking.getId(), bj_checking.getId(), new BigDecimal("1000.00"), "USD"/*, transaction*/);
+				logger.info("Account " + bj_checking.getId() + " (B. Jones) transfer 1,000.00 USD to Account " + da_checking.getId() + " (D. Adams)"); 
+				logger.info("------------------------------------------------------------------");
+				logger.info(String.format("Balances before transfer: Account %d - %,.2f %s, Account %d - %,.2f %s",
+				bj_checking.getId(), bj_checkingBal, bj_checkingCurrency, da_checking.getId(), da_checkingBal, da_checkingCurrency));
+				service.transferMoney(da_checking.getId(), bj_checking.getId(), new BigDecimal("1000.00"), "USD");
 			} catch (InsufficientFundsException e) {
 				logger.info("");
 				logger.error("ERROR: " + e.getMessage());

@@ -143,13 +143,13 @@ public class LedgerApplication {
 
 			bj_checkingBal = bj_checking.getBalance();
 			da_checkingBal = da_checking.getBalance();
-			logger.info(String.format("Balances after transfer: B. Jones - %,.2f %s, D. Adams - %,.2f %s",
-			bj_checkingBal, bj_checkingCurrency, da_checkingBal, da_checkingCurrency));
+			logger.info(String.format("Balances before transfer: Account %d - %,.2f %s, Account %d - %,.2f %s",
+				bj_checking.getId(), bj_checkingBal, bj_checkingCurrency, da_checking.getId(), da_checkingBal, da_checkingCurrency));
 			if (bj_checkingBal.compareTo(new BigDecimal("5500.00")) == 0
 			&& da_checkingBal.compareTo(new BigDecimal("4000.00")) == 0) {
-				logger.info("************************");
+				logger.info("***********************");
 				logger.info("Transaction successful.");
-				logger.info("************************");
+				logger.info("***********************");
 				logger.info("");
 			}
 
@@ -158,12 +158,11 @@ public class LedgerApplication {
 			logger.info(transaction.toString());
 
 			try {
-				logger.info("D. Adams transfer 6,000.00 USD to B. Jones"); 
-				logger.info("------------------------------------------");	
-				logger.info(String.format("Balances before transfer: D. Adams - %,.2f %s, B. Jones - %,.2f %s",
-				da_checkingBal, da_checkingCurrency, bj_checkingBal, bj_checkingCurrency));
-				Transaction transaction2 = new Transaction((Account) null, (Account) null, null, null, null);
-				service.transferMoney(bj_checking.getId(), da_checking.getId(), new BigDecimal("6000.00"), "USD"/*, transaction2*/);				
+				logger.info("Account " + da_checking.getId() + " (D. Adams) transfer 6,000.00 USD to Account " + bj_checking.getId() + " (B. Jones)"); 
+				logger.info("------------------------------------------------------------------");	
+				logger.info(String.format("Balances before transfer: Account %d - %,.2f %s, Account %d - %,.2f %s",
+				da_checking.getId(), da_checkingBal, da_checkingCurrency, bj_checking.getId(), bj_checkingBal, bj_checkingCurrency));
+				service.transferMoney(bj_checking.getId(), da_checking.getId(), new BigDecimal("6000.00"), "USD");				
 				logger.info("");
 			} catch (InsufficientFundsException e) {
 				logger.info("");
@@ -173,26 +172,27 @@ public class LedgerApplication {
 
 			BigDecimal da_checkingBal_rolledBack = da_checking.getBalance();
 			BigDecimal bj_checkingBal_rolledBack = bj_checking.getBalance();
-			logger.info(String.format("Balances after transfer: D. Adams - %,.2f %s, B. Jones - %,.2f %s",
-				da_checkingBal_rolledBack, da_checkingCurrency, bj_checkingBal_rolledBack, bj_checkingCurrency));
+			logger.info(String.format("Balances before transfer: Account %d - %,.2f %s, Account %d - %,.2f %s",
+				da_checking.getId(), da_checkingBal, da_checkingCurrency, bj_checking.getId(), bj_checkingBal, bj_checkingCurrency));
 
 			if (da_checkingBal_rolledBack.compareTo(da_checkingBal) == 0
 			&& bj_checkingBal_rolledBack.compareTo(bj_checkingBal) == 0) {
-				logger.info("*********************");
+				logger.info("********************");
 				logger.info("Rollback successful.");
-				logger.info("*********************");
+				logger.info("********************");
 				logger.info("");
 			}
 
 			Account mj_checking = aRepo.findWithTransactions(acc9.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
 			
-			logger.info("40 simultaneous transactions");
-			logger.info("----------------------------");
+			logger.info("40 simultaneous transactions from Account " + bj_checking.getId() + " (B. Jones) and Account " + da_checking.getId());
+			logger.info("(D. Adams), to Account " + mj_checking.getId() + " (M. Johnson)");
+			logger.info("--------------------------------------------------------------------");
 			logger.info("Balances before transfers:");
 			logger.info("");
-			logger.info(String.format("M. Johnson - %,.2f %s", mj_checking.getBalance(), mj_checking.getCurrency()));
-			logger.info(String.format("B. Jones - %,.2f %s", bj_checking.getBalance(), bj_checking.getCurrency()));
-			logger.info(String.format("D. Adams - %,.2f %s", da_checking.getBalance(), da_checking.getCurrency()));
+			logger.info(String.format("Account %d - %,.2f %s", mj_checking.getId(), mj_checking.getBalance(), mj_checking.getCurrency()));
+			logger.info(String.format("Account %d - %,.2f %s", bj_checking.getId(), bj_checking.getBalance(), bj_checking.getCurrency()));
+			logger.info(String.format("Account %d - %,.2f %s", da_checking.getId(), da_checking.getBalance(), da_checking.getCurrency()));
 			logger.info("");
 
 			List<CompletableFuture<Void>> futures = new ArrayList<>();
@@ -241,9 +241,9 @@ public class LedgerApplication {
 
 			logger.info("Balances after transfers:");
 			logger.info("");
-			logger.info(String.format("M. Johnson - %,.2f %s", mj_checkingBal, mj_checking.getCurrency()));
-			logger.info(String.format("B. Jones - %,.2f %s", bj_checkingBal, bj_checking.getCurrency()));
-			logger.info(String.format("D. Adams - %,.2f %s", da_checkingBal, da_checking.getCurrency()));
+			logger.info(String.format("Account %d - %,.2f %s", mj_checking.getId(), mj_checking.getBalance(), mj_checking.getCurrency()));
+			logger.info(String.format("Account %d - %,.2f %s", bj_checking.getId(), bj_checking.getBalance(), bj_checking.getCurrency()));
+			logger.info(String.format("Account %d - %,.2f %s", da_checking.getId(), da_checking.getBalance(), da_checking.getCurrency()));
 			if (mj_checkingBal.compareTo(new BigDecimal("15340.11")) == 0
 			&& bj_checkingBal.compareTo(new BigDecimal("1500.00")) == 0
 			&& da_checkingBal.compareTo(new BigDecimal("2000.00")) == 0) {

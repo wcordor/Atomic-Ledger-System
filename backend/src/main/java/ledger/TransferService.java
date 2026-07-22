@@ -63,7 +63,8 @@ public class TransferService {
     }
 
     public Account getAccountWithTransactionLists(Long id) {
-        Account account = accountRepo.findWithLockingById(id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+        Account account = accountRepo.findWithLockingById(id)
+        .orElseThrow(() -> new EntityNotFoundException("Account not found"));
         account.getSent().size();
         account.getReceived().size();
         return account;

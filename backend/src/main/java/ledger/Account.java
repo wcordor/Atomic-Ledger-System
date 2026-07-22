@@ -28,8 +28,10 @@ public class Account {
 
     public Account(User user, String name, BigDecimal initialDeposit, String currency) {
         this.name = name;
-        this.balance = balance;
+        balance = initialDeposit;
         this.currency = currency;
+        this.user = user;
+        this.user.addAccount(this);
     }
 
     @ManyToOne

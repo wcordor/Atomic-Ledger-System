@@ -24,8 +24,8 @@ public class TransferService {
     @Retryable(retryFor = { PessimisticLockingFailureException.class }, maxAttempts = 3,
          backoff = @Backoff(delay = 50, maxDelay = 150, multiplier = 2.0))
     @Transactional(rollbackFor = { InsufficientFundsException.class })
-    public void transferMoney(Long receiverId, Long senderId, BigDecimal amt, String currency/*, 
-        Transaction transaction*/) throws InsufficientFundsException {
+    public void transferMoney(Long receiverId, Long senderId, BigDecimal amount, String currency) 
+    throws InsufficientFundsException {
 
         Account receiver = getAccountWithTransactionLists(receiverId);
         Account sender = getAccountWithTransactionLists(senderId);
@@ -34,21 +34,21 @@ public class TransferService {
 
         transaction.setReceiver(receiver);
         transaction.setSender(sender);
-        transaction.setAmount(amt);
+        transaction.setAmount(amount);
         transaction.setCurrency(currency);
         transaction.setStatus(Status.PENDING);
 
         receiver.addTransaction(transaction);
         sender.addTransaction(transaction);
 
-        BigDecimal senderBal = sender.getBalance().subtract(amt);
+        BigDecimal senderBal = sender.getBalance().subtract(amount);
         if (senderBal.signum() == -1) {
             transaction.setStatus(Status.FAILED);
             transactionRepo.save(transaction);
             throw new InsufficientFundsException("Not enough funds to make transaction, canceling transaction.");
         }
         else {
-            BigDecimal receiverBal = receiver.getBalance().add(amt);
+            BigDecimal receiverBal = receiver.getBalance().add(amount);
             
             // FIXME: debit() and credit() here
             withdraw(senderId, senderBal);

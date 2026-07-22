@@ -27,7 +27,7 @@ public class LedgerApplication {
 	}
 
 	@Bean
-	public CommandLineRunner demo(UserRepo uRepo, AccountRepo aRepo, TransferService service, TransferRetryListener retryListener) {
+	public CommandLineRunner demo(UserRepo uRepo, AccountRepo aRepo, TransferService service) {
 		return (args) -> {
 
 			User user1 = new User("John", "Smith");

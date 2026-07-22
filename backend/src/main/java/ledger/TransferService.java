@@ -50,8 +50,9 @@ public class TransferService {
         else {
             BigDecimal receiverBal = receiver.getBalance().add(amt);
             
-            sender.setBalance(senderBal);
-            receiver.setBalance(receiverBal);
+            // FIXME: debit() and credit() here
+            withdraw(senderId, senderBal);
+            deposit(receiverId, receiverBal);
             
             accountRepo.save(receiver);
             accountRepo.save(sender);

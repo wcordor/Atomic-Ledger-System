@@ -56,7 +56,9 @@ public class Account {
     }
 
     public void setId(Long id) {
-        this.id = id;
+        if (this.id == null) {
+            this.id = id;
+        }
     }
 
     public String getName() {
@@ -110,7 +112,9 @@ public class Account {
     }
 
     public void setUser(User user) {
-        this.user = user;
+        if (this.user == null) {
+            this.user = user;
+        }
     }
 
     @Override

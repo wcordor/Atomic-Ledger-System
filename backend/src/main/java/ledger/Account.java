@@ -26,7 +26,7 @@ public class Account {
 
     protected Account() {}
 
-    public Account(String name, BigDecimal balance, String currency/*, User user */) {
+    public Account(User user, String name, BigDecimal initialDeposit, String currency) {
         this.name = name;
         this.balance = balance;
         this.currency = currency;

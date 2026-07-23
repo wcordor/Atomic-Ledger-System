@@ -1,4 +1,4 @@
-package ledger;
+package com.github.wcordor.ledger;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

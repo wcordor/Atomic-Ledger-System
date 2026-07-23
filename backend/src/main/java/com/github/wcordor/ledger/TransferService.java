@@ -1,4 +1,4 @@
-package ledger;
+package com.github.wcordor.ledger;
 
 import java.math.BigDecimal;
 
@@ -7,6 +7,7 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import jakarta.persistence.EntityNotFoundException;
 
 

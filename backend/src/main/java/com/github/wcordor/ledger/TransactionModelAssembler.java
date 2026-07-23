@@ -1,4 +1,4 @@
-package ledger;
+package com.github.wcordor.ledger;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 

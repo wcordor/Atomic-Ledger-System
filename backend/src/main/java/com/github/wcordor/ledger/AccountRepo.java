@@ -1,4 +1,4 @@
-package ledger;
+package com.github.wcordor.ledger;
 
 import java.util.List;
 import java.util.Optional;

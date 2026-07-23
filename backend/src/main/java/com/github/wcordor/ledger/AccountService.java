@@ -1,4 +1,4 @@
-package ledger;
+package com.github.wcordor.ledger;
 
 import java.math.BigDecimal;
 

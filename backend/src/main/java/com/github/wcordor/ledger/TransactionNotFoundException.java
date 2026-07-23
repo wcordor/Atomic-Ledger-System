@@ -1,4 +1,4 @@
-package ledger;
+package com.github.wcordor.ledger;
 
 public class TransactionNotFoundException extends RuntimeException {
 

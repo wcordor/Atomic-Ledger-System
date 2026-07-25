@@ -113,6 +113,14 @@ public class Account {
         }
     }
 
+    public void credit(BigDecimal amount) {
+        balance = balance.add(amount);
+    }
+
+    public void debit(BigDecimal amount) {
+        balance = balance.subtract(amount);
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;

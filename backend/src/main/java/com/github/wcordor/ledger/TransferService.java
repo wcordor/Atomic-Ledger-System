@@ -49,12 +49,9 @@ public class TransferService {
             throw new InsufficientFundsException("Not enough funds to make transaction, canceling transaction.");
         }
         else {
-            BigDecimal receiverBal = receiver.getBalance().add(amount);
-            
-            // FIXME: debit() and credit() here
-            withdraw(senderId, senderBal);
-            deposit(receiverId, receiverBal);
-            
+            sender.debit(amount);
+            receiver.credit(amount);
+
             accountRepo.save(receiver);
             accountRepo.save(sender);
             transaction.setStatus(Status.SUCCESSFUL);

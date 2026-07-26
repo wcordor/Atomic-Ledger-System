@@ -5,6 +5,8 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.github.wcordor.ledger.ledger.Account;
+
 import jakarta.persistence.*;
 
 @Entity

@@ -1,8 +1,12 @@
-package com.github.wcordor.ledger;
+package com.github.wcordor.ledger.ledger;
 
 import java.math.BigDecimal;
 
 import org.springframework.stereotype.Service;
+
+import com.github.wcordor.ledger.AccountRepo;
+import com.github.wcordor.ledger.User;
+import com.github.wcordor.ledger.UserRepo;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -17,7 +21,7 @@ public class AccountService {
         this.userRepo = userRepo;
     }
 
-    public Account createAccount(/*User user*/Long userId, String name, BigDecimal initialDeposit, String currency) {
+    public Account createAccount(Long userId, String name, BigDecimal initialDeposit, String currency) {
         User user = userRepo.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found"));
         Account account = new Account(user, name, initialDeposit, currency);
         accountRepo.save(account);

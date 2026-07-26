@@ -88,8 +88,8 @@ class LedgerApplicationTests {
 		acc.setCurrency("GBP");
 		assertEquals("GBP", acc.getCurrency());
 		acc.setUser(user2);
-		assertFalse(user2.equals(acc.getUser()));
-		assertTrue(user.equals(acc.getUser()));
+		assertEquals(user2, acc.getUser());
+		assertEquals(user, acc.getUser());
 
 	}
 
@@ -153,7 +153,7 @@ class LedgerApplicationTests {
 		// acc balance: $1,000, acc2 balance: $0
 		
 		try {
-			ts.transferMoney(acc2.getId(), acc.getId(), new BigDecimal("400.00"), "USD"/*, transaction*/);
+			ts.transferMoney(acc2.getId(), acc.getId(), new BigDecimal("400.00"), "USD");
 		} catch (InsufficientFundsException e) {
 			logger.error("ERROR: " + e.getMessage());
 		}

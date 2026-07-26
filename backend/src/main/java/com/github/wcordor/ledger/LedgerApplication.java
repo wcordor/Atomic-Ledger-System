@@ -33,7 +33,7 @@ public class LedgerApplication {
 	public CommandLineRunner demo(UserRepo uRepo, AccountRepo aRepo, TransferService service) {
 		return (args) -> {
 
-			/*User user1 = new User("John", "Smith");
+			User user1 = new User("John", "Smith");
 
 			Account acc1 = new Account("Savings", new BigDecimal("9121.45"), "GBP");
 			Account acc2 = new Account("Checking", new BigDecimal("2500.00"), "GBP");
@@ -257,7 +257,7 @@ public class LedgerApplication {
 				logger.info("Account " + bj_checkingId + " total transactions: " + bj_checking.getTransactions().size());
 				logger.info("Account " + da_checkingId + " total transactions: " + da_checking.getTransactions().size());
 				
-			}*/
+			}
 		};
 	}
 

@@ -1,10 +1,13 @@
-package com.github.wcordor.ledger;
+package com.github.wcordor.ledger.ledger;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import com.github.wcordor.ledger.Transaction;
+import com.github.wcordor.ledger.User;
 
 import jakarta.persistence.*;
 
@@ -26,7 +29,7 @@ public class Account {
 
     protected Account() {}
 
-    public Account(User user, String name, BigDecimal initialDeposit, String currency) {
+    Account(User user, String name, BigDecimal initialDeposit, String currency) {
         this.name = name;
         balance = initialDeposit;
         this.currency = currency;
@@ -113,11 +116,11 @@ public class Account {
         }
     }
 
-    public void credit(BigDecimal amount) {
+    void credit(BigDecimal amount) {
         balance = balance.add(amount);
     }
 
-    public void debit(BigDecimal amount) {
+    void debit(BigDecimal amount) {
         balance = balance.subtract(amount);
     }
 

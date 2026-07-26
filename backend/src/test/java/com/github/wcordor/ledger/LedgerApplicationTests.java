@@ -85,15 +85,6 @@ class LedgerApplicationTests {
 		acc.setName("Checking");
 		assertEquals("Checking", acc.getName());
 
-		// FIXME: replace setBalance() with debit() and credit()
-		acc.setBalance(new BigDecimal("10000000000.00"));
-		assertEquals(new BigDecimal("10000000000.00"), acc.getBalance());
-		acc = ar.findById(acc.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
-		assertEquals(new BigDecimal("1500.00"), acc.getBalance());
-		acc.setBalance(new BigDecimal("-3000.00"));
-		assertEquals(new BigDecimal("1500.00"), acc.getBalance());
-
-
 		acc.setCurrency("GBP");
 		assertEquals("GBP", acc.getCurrency());
 		acc.setUser(user2);

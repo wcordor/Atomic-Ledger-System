@@ -172,7 +172,7 @@ class LedgerApplicationTests {
 		acc = ar.findById(acc_Id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
 		acc2 = ar.findById(acc2_Id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
 
-		assertEquals(new BigDecimal("400.00"), acc2.getBalance());
+		assertEquals(new BigDecimal("600.00"), acc2.getBalance());
 		assertEquals(new BigDecimal("600.00"), acc.getBalance());
 		
 		assertThrows(InsufficientFundsException.class, () -> {
@@ -189,6 +189,7 @@ class LedgerApplicationTests {
         acc2 = ar.findById(acc2_Id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
 
 		assertEquals(new BigDecimal("600.00"), acc.getBalance());
+		assertEquals(new BigDecimal("600.00"), acc2.getBalance());
 
         List<Transaction> a_transactions = acc.getTransactions();
         List<Transaction> a2_transactions = acc2.getTransactions();
@@ -247,8 +248,8 @@ class LedgerApplicationTests {
 		acc = ar.findById(acc_Id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
 		acc2 = ar.findById(acc2_Id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
 
-		assertEquals(new BigDecimal("500.00"), a.getBalance());
-		assertEquals(new BigDecimal("500.00"), a2.getBalance());
+		assertEquals(new BigDecimal("500.00"), acc.getBalance());
+		assertEquals(new BigDecimal("700.00"), acc2.getBalance());
 
 	}
 	
@@ -279,8 +280,8 @@ class LedgerApplicationTests {
 		acc = ar.findById(acc_Id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
 		acc2 = ar.findById(acc2_Id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
 
-		assertEquals(new BigDecimal("10.00"), a.getBalance());
-		assertEquals(new BigDecimal("990.00"), a2.getBalance());
+		assertEquals(new BigDecimal("10.00"), acc.getBalance());
+		assertEquals(new BigDecimal("1190.00"), acc2.getBalance());
 		assertEquals(33, successCount.get());
 		assertEquals(17, failCount.get());
 

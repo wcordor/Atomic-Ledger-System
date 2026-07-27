@@ -100,8 +100,8 @@ public class Account {
         return received;
     }
 
-    public User getUser() {
-        return user;
+    public Long getUserId() {
+        return user.getId();
     }
 
     public void setUser(User user) {

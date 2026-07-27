@@ -56,12 +56,6 @@ public class Transaction {
         return id;
     }
 
-    public void setId(Long id) {
-        if (this.id == null) {
-            this.id = id;
-        }
-    }
-
     public void setSender(Account sender) {
         if (this.sender == null) {
             this.sender = sender;

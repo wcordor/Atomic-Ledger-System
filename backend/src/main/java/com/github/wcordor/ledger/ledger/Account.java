@@ -58,12 +58,6 @@ public class Account {
         return id;
     }
 
-    public void setId(Long id) {
-        if (this.id == null) {
-            this.id = id;
-        }
-    }
-
     public String getName() {
         return name;
     }

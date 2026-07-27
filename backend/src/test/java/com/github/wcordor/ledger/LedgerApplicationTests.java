@@ -91,8 +91,6 @@ class LedgerApplicationTests {
 		assertEquals("USD", acc.getCurrency());
 		assertEquals(user_Id, acc.getUserId());
 
-		acc.setId(999999999999L);
-		assertNotEquals(999999999999L, acc.getId());
 		acc.setName("Checking");
 		assertEquals("Checking", acc.getName());
 
@@ -134,10 +132,6 @@ class LedgerApplicationTests {
 		assertEquals(1, user.getAccounts().size());
 		assertTrue(user.getAccounts().contains(acc));
 		
-		user.setId(-7L);
-		assertEquals(-7L, user.getId());
-		user.setId(999999999999L);
-		assertEquals(999999999999L, user.getId());
 		user.setFirstName("User");
 		user.setLastName("1");
 		String name = user.getFirstName() + " " + user.getLastName();

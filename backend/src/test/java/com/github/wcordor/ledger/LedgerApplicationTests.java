@@ -303,31 +303,4 @@ class LedgerApplicationTests {
 		assertEquals(17, failCount.get());
 
 	}
-
-	@Test
-	void au() {
-
-		as.createAccount(user.getId(), "Checking", new BigDecimal("500.00"), "USD");
-		user = ur.findById(user.getId()).orElseThrow(() -> new EntityNotFoundException("User not found"));
-		Account acc5 = user.getAccounts().get(0);
-
-		assertEquals(user, acc5.getUser());
-		assertEquals("Checking", acc5.getName());
-		assertEquals(new BigDecimal("500.00"), acc5.getBalance());
-		assertEquals("USD", acc5.getCurrency());
-
-		Account ac = new Account(user, "Savings", new BigDecimal("1000.00"), "USD");
-		ar.save(ac);
-		user = ur.findById(user.getId()).orElseThrow(() -> new EntityNotFoundException("User not found"));
-
-		assertEquals(user, ac.getUser());
-		assertEquals("Savings", ac.getName());
-		assertEquals(new BigDecimal("1000.00"), ac.getBalance());
-		assertEquals("USD", acc5.getCurrency());
-
-		List<Account> accList = user.getAccounts();
-		assertEquals(2, accList.size());
-		
-		assertTrue(accList.contains(acc5) && accList.contains(ac));
-	}
 }

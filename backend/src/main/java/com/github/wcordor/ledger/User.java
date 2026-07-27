@@ -61,8 +61,10 @@ public class User {
     }
 
     public void addAccount(Account account) {
-        this.accounts.add(account);
-        account.setUser(this);
+        if (account.getUserId() == null) {
+            this.accounts.add(account);
+            account.setUser(this);
+        }
     }
 
     public List<Account> getAccounts() {

@@ -137,10 +137,16 @@ class LedgerApplicationTests {
 		String name = user.getFirstName() + " " + user.getLastName();
 		assertEquals("User 1", name);
 		user.addAccount(acc2);
-
 		List<Account> userAccs = user.getAccounts();
-		assertEquals(2, userAccs.size());
-		assertTrue(userAccs.contains(acc) && userAccs.contains(acc2));
+
+		assertFalse(2 == userAccs.size());
+
+		Account acc3 = as.createAccount(user_Id, "Investment", new BigDecimal("5000.00"), "USD");
+		user = ur.findById(user_Id).orElseThrow(() -> new EntityNotFoundException("User not found"));
+		userAccs = user.getAccounts();
+
+		assertTrue(2 == userAccs.size());
+		assertTrue(userAccs.contains(acc) && userAccs.contains(acc3));
 		
 	}
 

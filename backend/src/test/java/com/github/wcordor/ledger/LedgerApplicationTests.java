@@ -161,7 +161,7 @@ class LedgerApplicationTests {
 
 	@Test
 	void testMoneyTransfers() {
-		// acc balance: $1,000, acc2 balance: $0
+		// acc balance: $1,000, acc2 balance: $200
 		
 		try {
 			ts.transferMoney(acc2_Id, acc_Id, new BigDecimal("400.00"), "USD");
@@ -247,7 +247,7 @@ class LedgerApplicationTests {
 
 		List<CompletableFuture<Void>> futures = new ArrayList<>();
 
-		// generate 50 threads
+		// generate 50 CompletableFutures
 		for (int i = 0; i < 50; i++) {
 			CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
 				try {

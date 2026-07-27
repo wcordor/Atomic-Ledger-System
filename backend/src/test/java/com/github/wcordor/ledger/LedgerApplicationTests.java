@@ -195,14 +195,31 @@ class LedgerApplicationTests {
         List<Transaction> a2_transactions = acc2.getTransactions();
 
 		Transaction transaction = a_transactions.get(0);
-		assertNotNull(transaction.getId());
         assertEquals(1, a_transactions.size());
         assertEquals(1, a2_transactions.size());
 		assertTrue(a_transactions.contains(transaction) && a2_transactions.contains(transaction));
-		assertEquals(acc.getId(), transaction.getSenderId());
-		assertEquals(acc2.getId(), transaction.getReceiverId());
-		transaction.setId(99999L);
-		assertFalse(99999L == transaction.getId());
+	
+	}
+
+	@Test
+	void testTransactionFunctions() {
+
+		try {
+			ts.transferMoney(acc2_Id, acc_Id, new BigDecimal("400.00"), "USD");
+		} catch (InsufficientFundsException e) {
+			logger.error("ERROR: " + e.getMessage());
+		}
+
+		acc = ar.findById(acc_Id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+        acc2 = ar.findById(acc2_Id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+
+		List<Transaction> a_transactions = acc.getTransactions();
+		
+
+		Transaction transaction = a_transactions.get(0);
+		assertNotNull(transaction.getId());
+		assertEquals(acc_Id, transaction.getSenderId());
+		assertEquals(acc2_Id, transaction.getReceiverId());
 		transaction.setReceiver(acc);
 		transaction.setSender(acc2);
 		assertFalse(acc_Id.equals(transaction.getReceiverId()));

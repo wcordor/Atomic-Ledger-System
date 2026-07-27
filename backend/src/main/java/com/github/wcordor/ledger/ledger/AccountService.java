@@ -25,7 +25,7 @@ public class AccountService {
         User user = userRepo.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found"));
         Account account = new Account(user, name, initialDeposit, currency);
         accountRepo.save(account);
-        account = accountRepo.findWithTransactions(account.getId())
+        account = accountRepo.findById(account.getId())
         .orElseThrow(() -> new EntityNotFoundException("Account not found"));
         
         return account;

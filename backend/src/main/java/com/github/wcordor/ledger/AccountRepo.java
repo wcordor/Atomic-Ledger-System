@@ -19,10 +19,9 @@ public interface AccountRepo extends JpaRepository<Account, Long> {
     Optional<Account> findWithLockingById(Long id);
 
     List<Account> findByName(String name);
-    Account findById(long id);
     List<Account> findByUserLastName(String lastName);
     List<Account> findByCurrency(String currency);
     @EntityGraph(attributePaths = {"sent", "received"})
     @Query("SELECT a FROM Account a WHERE a.id = :id")
-    Optional<Account> findWithTransactions(@Param("id") Long id);
+    Optional<Account> findById(@Param("id") Long id);
 }

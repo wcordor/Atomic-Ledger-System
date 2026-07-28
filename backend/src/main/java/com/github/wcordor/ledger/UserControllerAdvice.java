@@ -10,7 +10,7 @@ public class UserControllerAdvice {
     
     @ExceptionHandler(UserNotFoundException.class)
 	@ResponseStatus(HttpStatus.NOT_FOUND)
-	public String employeeNotFoundHandler(UserNotFoundException e) {
+	public String userNotFoundHandler(UserNotFoundException e) {
 		return e.getMessage();
 	}
 }

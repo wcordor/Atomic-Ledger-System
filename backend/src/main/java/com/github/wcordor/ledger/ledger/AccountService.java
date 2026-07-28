@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.github.wcordor.ledger.AccountRepo;
 import com.github.wcordor.ledger.User;
-import com.github.wcordor.ledger.UserRepo;
+import com.github.wcordor.ledger.UserRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -14,15 +14,15 @@ import jakarta.persistence.EntityNotFoundException;
 public class AccountService {
 
     private final AccountRepo accountRepo;
-    private final UserRepo userRepo;
+    private final UserRepository userRepository;
 
-    public AccountService(AccountRepo accountRepo, UserRepo userRepo) {
+    public AccountService(AccountRepo accountRepo, UserRepository userRepository) {
         this.accountRepo = accountRepo;
-        this.userRepo = userRepo;
+        this.userRepository = userRepository;
     }
 
     public Account createAccount(Long userId, String name, BigDecimal initialDeposit, String currency) {
-        User user = userRepo.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found"));
         Account account = new Account(user, name, initialDeposit, currency);
         accountRepo.save(account);
         account = accountRepo.findById(account.getId())

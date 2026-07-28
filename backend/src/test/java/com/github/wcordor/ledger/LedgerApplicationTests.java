@@ -36,7 +36,7 @@ class LedgerApplicationTests {
 	private AccountRepo ar;
 
 	@Autowired
-	private UserRepo ur;
+	private UserRepository userRepository;
 
 	@Autowired
 	private TransferService ts;
@@ -61,20 +61,21 @@ class LedgerApplicationTests {
 	void setUp() {
 
 		ar.deleteAll();
-		ur.deleteAll();
+		userRepository.deleteAll();
 		tr.deleteAll();
 
 		user = new User("Account", "Owner");
-		ur.save(user);
+		userRepository.save(user);
 		user_Id = user.getId();
 
 		acc = as.createAccount(user_Id, "Savings", new BigDecimal("1000.00"), "USD");
-		user = ur.findById(user_Id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+		user = userRepository.findById(user_Id)
+			.orElseThrow(() -> new EntityNotFoundException("Account not found"));
 		acc_Id = acc.getId();
 		
 
 		user2 = new User("Account", "Owner II");
-		ur.save(user2);
+		userRepository.save(user2);
 		user2_Id = user2.getId();
 
 		acc2 = as.createAccount(user2_Id, "Checking", new BigDecimal("200.00"), "USD");
@@ -142,7 +143,8 @@ class LedgerApplicationTests {
 		assertFalse(2 == userAccs.size());
 
 		Account acc3 = as.createAccount(user_Id, "Investment", new BigDecimal("5000.00"), "USD");
-		user = ur.findById(user_Id).orElseThrow(() -> new EntityNotFoundException("User not found"));
+		user = userRepository.findById(user_Id)
+			.orElseThrow(() -> new EntityNotFoundException("User not found"));
 		userAccs = user.getAccounts();
 
 		assertTrue(2 == userAccs.size());
@@ -153,10 +155,12 @@ class LedgerApplicationTests {
 	@Test
 	void testUserRepoFunctions() {
 
-		assertEquals(1, ur.findByLastName("Owner").size());
-		assertEquals(user, ur.findById(user_Id).orElseThrow(() -> new EntityNotFoundException("User not found")));
-		assertEquals(1, ur.findByLastName("Owner II").size());
-		assertEquals(user2, ur.findById(user2_Id).orElseThrow(() -> new EntityNotFoundException("User not found")));
+		assertEquals(1, userRepository.findByLastName("Owner").size());
+		assertEquals(user, userRepository.findById(user_Id)
+			.orElseThrow(() -> new EntityNotFoundException("User not found")));
+		assertEquals(1, userRepository.findByLastName("Owner II").size());
+		assertEquals(user2, userRepository.findById(user2_Id)
+			.orElseThrow(() -> new EntityNotFoundException("User not found")));
 	}
 
 	@Test

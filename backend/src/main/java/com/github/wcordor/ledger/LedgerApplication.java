@@ -31,18 +31,18 @@ public class LedgerApplication {
 	}
 
 	@Bean
-	public CommandLineRunner demo(UserRepo uRepo, AccountRepo aRepo, TransferService service, AccountService accService) {
+	public CommandLineRunner demo(UserRepository userRepository, AccountRepo aRepo, TransferService service, AccountService accService) {
 		return (args) -> {
 
 			User user1 = new User("John", "Smith");
-			uRepo.save(user1);
+			userRepository.save(user1);
 			Long user1_id = user1.getId();
 
 			Account account1 = accService.createAccount(user1_id, "Savings", new BigDecimal("5000.00"), "GBP");
 			Account account2 = accService.createAccount(user1_id, "Checking", new BigDecimal("1000.00"), "GBP");
 
 			User user2 = new User("Bernard", "Jones");
-			uRepo.save(user2);
+			userRepository.save(user2);
 			Long user2_id = user2.getId();
 
 			Account account3 = accService.createAccount(user2_id, "Investment", new BigDecimal("15000.00"), "USD");
@@ -50,14 +50,14 @@ public class LedgerApplication {
 			Account account5 = accService.createAccount(user2_id, "Checking", new BigDecimal("3000.00"), "USD");
 
 			User user3 = new User("Deborah", "Adams");
-			uRepo.save(user3);
+			userRepository.save(user3);
 			Long user3_id = user3.getId();
 
 			Account account6 = accService.createAccount(user3_id, "Savings", new BigDecimal("3000.00"), "USD");
 			Account account7 = accService.createAccount(user3_id, "Checking", new BigDecimal("1000.00"), "USD");
 
 			User user4 = new User("Mary", "Johnson");
-			uRepo.save(user4);
+			userRepository.save(user4);
 			Long user4_id = user4.getId();
 
 			Account account8 = accService.createAccount(user4_id, "Savings", new BigDecimal("5500.00"), "USD");
@@ -66,7 +66,7 @@ public class LedgerApplication {
 			logger.info("");
 			logger.info("List of Preloaded Users:");
 			logger.info("------------------------");
-			uRepo.findAll().forEach(user -> {
+			userRepository.findAll().forEach(user -> {
 				logger.info(user.toString());
 			});
 			logger.info("");

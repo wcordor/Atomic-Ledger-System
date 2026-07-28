@@ -11,6 +11,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.retry.annotation.EnableRetry;
 
 import com.github.wcordor.ledger.ledger.Account;
+import com.github.wcordor.ledger.ledger.AccountService;
 import com.github.wcordor.ledger.ledger.TransferService;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -30,68 +31,37 @@ public class LedgerApplication {
 	}
 
 	@Bean
-	public CommandLineRunner demo(UserRepo uRepo, AccountRepo aRepo, TransferService service) {
+	public CommandLineRunner demo(UserRepo uRepo, AccountRepo aRepo, TransferService service, AccountService accService) {
 		return (args) -> {
 
 			User user1 = new User("John", "Smith");
-
-			Account acc1 = new Account("Savings", new BigDecimal("9121.45"), "GBP");
-			Account acc2 = new Account("Checking", new BigDecimal("2500.00"), "GBP");
-			
-			acc1.setUser(user1);
-			acc2.setUser(user1);
-			user1.addAccount(acc1);
-			user1.addAccount(acc2);
-
 			uRepo.save(user1);
-			aRepo.save(acc1);
-			aRepo.save(acc2);
+			Long user1_id = user1.getId();
+
+			Account account1 = accService.createAccount(user1_id, "Savings", new BigDecimal("5000.00"), "GBP");
+			Account account2 = accService.createAccount(user1_id, "Checking", new BigDecimal("1000.00"), "GBP");
 
 			User user2 = new User("Bernard", "Jones");
-
-			Account acc3 = new Account("Investment", new BigDecimal("90956.02"), "USD");
-			Account acc4 = new Account("Savings", new BigDecimal("15643.98"), "USD");
-			Account acc5 = new Account("Checking", new BigDecimal("6500.00"), "USD");
-
-			acc3.setUser(user2);
-			acc4.setUser(user2);
-			acc5.setUser(user2);
-			user2.addAccount(acc3);
-			user2.addAccount(acc4);
-			user2.addAccount(acc5);
-
 			uRepo.save(user2);
-			aRepo.save(acc3);
-			aRepo.save(acc4);
-			aRepo.save(acc5);
+			Long user2_id = user2.getId();
+
+			Account account3 = accService.createAccount(user2_id, "Investment", new BigDecimal("15000.00"), "USD");
+			Account account4 = accService.createAccount(user2_id, "Savings", new BigDecimal("7000.00"), "USD");
+			Account account5 = accService.createAccount(user2_id, "Checking", new BigDecimal("3000.00"), "USD");
 
 			User user3 = new User("Deborah", "Adams");
-
-			Account acc6 = new Account("Savings", new BigDecimal("12255.68"), "USD");
-			Account acc7 = new Account("Checking", new BigDecimal("3000.00"), "USD");
-
-			acc6.setUser(user3);
-			acc7.setUser(user3);
-			user3.addAccount(acc6);
-			user3.addAccount(acc7);
-
 			uRepo.save(user3);
-			aRepo.save(acc6);
-			aRepo.save(acc7);
+			Long user3_id = user3.getId();
+
+			Account account6 = accService.createAccount(user3_id, "Savings", new BigDecimal("3000.00"), "USD");
+			Account account7 = accService.createAccount(user3_id, "Checking", new BigDecimal("1000.00"), "USD");
 
 			User user4 = new User("Mary", "Johnson");
-
-			Account acc8 = new Account("Savings", new BigDecimal("30383.59"), "USD");
-			Account acc9 = new Account("Checking", new BigDecimal("9340.11"), "USD");
-
-			acc8.setUser(user4);
-			acc9.setUser(user4);
-			user4.addAccount(acc8);
-			user4.addAccount(acc9);
-
 			uRepo.save(user4);
-			aRepo.save(acc8);
-			aRepo.save(acc9);
+			Long user4_id = user4.getId();
+
+			Account account8 = accService.createAccount(user4_id, "Savings", new BigDecimal("5500.00"), "USD");
+			Account account9 = accService.createAccount(user4_id, "Checking", new BigDecimal("1500.00"), "USD");
 
 			logger.info("");
 			logger.info("List of Preloaded Users:");

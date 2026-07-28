@@ -92,50 +92,54 @@ public class LedgerApplication {
 			});
 			logger.info("");
 
-			Account bj_checking = aRepo.findWithTransactions(acc5.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
-			Account da_checking = aRepo.findWithTransactions(acc7.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+			Long account5_id = account5.getId();
+			Long account7_id = account7.getId();
 
-			BigDecimal bj_checkingBal = bj_checking.getBalance();
-			BigDecimal da_checkingBal = da_checking.getBalance();
-			String bj_checkingCurrency = bj_checking.getCurrency();
-			String da_checkingCurrency = da_checking.getCurrency();
+			account5 = aRepo.findById(account5_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+			account7 = aRepo.findById(account7_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+
+			BigDecimal account5_bal = account5.getBalance();
+			BigDecimal account7_bal = account7.getBalance();
+			String account5_currency = account5.getCurrency();
+			String account7_currency = account7.getCurrency();
+
 			try {
-				logger.info("Account " + bj_checking.getId() + " (B. Jones) transfer 1,000.00 USD to Account " + da_checking.getId() + " (D. Adams)"); 
-				logger.info("------------------------------------------------------------------");
+				logger.info("Account " + account5_id + " (B. Jones) transfer 500 USD to Account " + account7_id + " (D. Adams)"); 
+				logger.info("-------------------------------------------------------------");
 				logger.info(String.format("Balances before transfer: Account %d - %,.2f %s, Account %d - %,.2f %s",
-				bj_checking.getId(), bj_checkingBal, bj_checkingCurrency, da_checking.getId(), da_checkingBal, da_checkingCurrency));
-				service.transferMoney(da_checking.getId(), bj_checking.getId(), new BigDecimal("1000.00"), "USD");
+					account5_id, account5_bal, account5_currency, account7_id, account7_bal, account7_currency));
+				service.transferMoney(account7_id, account5_id, new BigDecimal("500.00"), "USD");
 			} catch (InsufficientFundsException e) {
 				logger.info("");
 				logger.error("ERROR: " + e.getMessage());
 				logger.info("");
 			}
 
-			bj_checking = aRepo.findWithTransactions(acc5.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
-			da_checking = aRepo.findWithTransactions(acc7.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+			account5 = aRepo.findById(account5_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+			account7 = aRepo.findById(account7_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+			account5_bal = account5.getBalance();
+			account7_bal = account7.getBalance();
 
-			bj_checkingBal = bj_checking.getBalance();
-			da_checkingBal = da_checking.getBalance();
-			logger.info(String.format("Balances before transfer: Account %d - %,.2f %s, Account %d - %,.2f %s",
-				bj_checking.getId(), bj_checkingBal, bj_checkingCurrency, da_checking.getId(), da_checkingBal, da_checkingCurrency));
-			if (bj_checkingBal.compareTo(new BigDecimal("5500.00")) == 0
-			&& da_checkingBal.compareTo(new BigDecimal("4000.00")) == 0) {
+			logger.info(String.format("Balances after transfer: Account %d - %,.2f %s, Account %d - %,.2f %s",
+				account5_id, account5_bal, account5_currency, account7_id, account7_bal, account7_currency));
+			if (account5_bal.compareTo(new BigDecimal("2500.00")) == 0
+				&& account7_bal.compareTo(new BigDecimal("1500.00")) == 0) {
 				logger.info("***********************");
 				logger.info("Transaction successful.");
 				logger.info("***********************");
 				logger.info("");
 			}
 
-			Transaction transaction = bj_checking.getTransactions().get(0);
+			Transaction transaction = account5.getTransactions().get(0);
 			logger.info("Transaction Info:");
 			logger.info(transaction.toString());
 
 			try {
-				logger.info("Account " + da_checking.getId() + " (D. Adams) transfer 6,000.00 USD to Account " + bj_checking.getId() + " (B. Jones)"); 
-				logger.info("------------------------------------------------------------------");	
+				logger.info("Account " + account7_id + " (D. Adams) transfer 2,000 USD to Account " + account5_id + " (B. Jones)"); 
+				logger.info("---------------------------------------------------------------");	
 				logger.info(String.format("Balances before transfer: Account %d - %,.2f %s, Account %d - %,.2f %s",
-				da_checking.getId(), da_checkingBal, da_checkingCurrency, bj_checking.getId(), bj_checkingBal, bj_checkingCurrency));
-				service.transferMoney(bj_checking.getId(), da_checking.getId(), new BigDecimal("6000.00"), "USD");				
+					account7_id, account7_bal, account7_currency, account5_id, account5_bal, account5_currency));
+				service.transferMoney(account5_id, account7_id, new BigDecimal("2000.00"), "USD");				
 				logger.info("");
 			} catch (InsufficientFundsException e) {
 				logger.info("");
@@ -143,41 +147,43 @@ public class LedgerApplication {
 				logger.info("");
 			}
 
-			BigDecimal da_checkingBal_rolledBack = da_checking.getBalance();
-			BigDecimal bj_checkingBal_rolledBack = bj_checking.getBalance();
-			logger.info(String.format("Balances before transfer: Account %d - %,.2f %s, Account %d - %,.2f %s",
-				da_checking.getId(), da_checkingBal, da_checkingCurrency, bj_checking.getId(), bj_checkingBal, bj_checkingCurrency));
+			account5 = aRepo.findById(account5_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+			account7 = aRepo.findById(account7_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+			BigDecimal account5_bal_rolledBack = account5.getBalance();
+			BigDecimal account7_bal_rolledBack = account7.getBalance();
 
-			if (da_checkingBal_rolledBack.compareTo(da_checkingBal) == 0
-			&& bj_checkingBal_rolledBack.compareTo(bj_checkingBal) == 0) {
+			logger.info(String.format("Balances after transfer: Account %d - %,.2f %s, Account %d - %,.2f %s",
+				account7_id, account7_bal, account7_currency, account5_id, account5_bal, account5_currency));
+
+			if (account5_bal_rolledBack.compareTo(account5_bal) == 0
+			&& account7_bal_rolledBack.compareTo(account7_bal) == 0) {
 				logger.info("********************");
 				logger.info("Rollback successful.");
 				logger.info("********************");
 				logger.info("");
 			}
 
-			Account mj_checking = aRepo.findWithTransactions(acc9.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+			Long account9_id = account9.getId();
+			account9 = aRepo.findById(account9_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+			BigDecimal account9_bal = account9.getBalance();
+			String account9_currency = account9.getCurrency();
 			
-			logger.info("40 simultaneous transactions from Account " + bj_checking.getId() + " (B. Jones) and Account " + da_checking.getId());
-			logger.info("(D. Adams), to Account " + mj_checking.getId() + " (M. Johnson)");
+			logger.info("40 simultaneous transactions from Account " + account5_id + " (B. Jones) and Account " + account7_id);
+			logger.info("(D. Adams), to Account " + account9_id + " (M. Johnson)");
 			logger.info("--------------------------------------------------------------------");
 			logger.info("Balances before transfers:");
 			logger.info("");
-			logger.info(String.format("Account %d - %,.2f %s", mj_checking.getId(), mj_checking.getBalance(), mj_checking.getCurrency()));
-			logger.info(String.format("Account %d - %,.2f %s", bj_checking.getId(), bj_checking.getBalance(), bj_checking.getCurrency()));
-			logger.info(String.format("Account %d - %,.2f %s", da_checking.getId(), da_checking.getBalance(), da_checking.getCurrency()));
+			logger.info(String.format("Account %d - %,.2f %s", account9_id, account9_bal, account9_currency));
+			logger.info(String.format("Account %d - %,.2f %s", account5_id, account5_bal, account5_currency));
+			logger.info(String.format("Account %d - %,.2f %s", account7_id, account7_bal, account7_currency));
 			logger.info("");
 
 			List<CompletableFuture<Void>> futures = new ArrayList<>();
 
-			final Long bj_checkingId = bj_checking.getId();
-			final Long mj_checkingId = mj_checking.getId();
-			final Long da_checkingId = da_checking.getId();
-
 			for (int i = 0; i < 20; i++) {
 				CompletableFuture<Void> future1 = CompletableFuture.runAsync(() -> {
 					try {
-						service.transferMoney(mj_checkingId, bj_checkingId, new BigDecimal("200.00"), "USD");
+						service.transferMoney(account9_id, account5_id, new BigDecimal("50.00"), "USD");
 					} catch (InsufficientFundsException e) {
 						logger.info("");
 						logger.error("ERROR: " + e.getMessage());
@@ -188,7 +194,7 @@ public class LedgerApplication {
 
 				CompletableFuture<Void> future2 = CompletableFuture.runAsync(() -> {
 					try {
-						service.transferMoney(mj_checkingId, da_checkingId, new BigDecimal("100.00"), "USD");
+						service.transferMoney(account9_id, account7_id, new BigDecimal("25.00"), "USD");
 					} catch (InsufficientFundsException e) {
 						logger.info("");
 						logger.error("ERROR: " + e.getMessage());
@@ -199,33 +205,31 @@ public class LedgerApplication {
 
 			}
 
-			logger.info("");
-
 			CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
 			aRepo.flush();
 
-			bj_checking = aRepo.findWithTransactions(acc5.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
-			mj_checking = aRepo.findWithTransactions(acc9.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
-			da_checking = aRepo.findWithTransactions(acc7.getId()).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+			account5 = aRepo.findById(account5_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+			account7 = aRepo.findById(account7_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+			account9 = aRepo.findById(account9_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
 
-			BigDecimal mj_checkingBal = mj_checking.getBalance();
-			bj_checkingBal = bj_checking.getBalance();
-			da_checkingBal = da_checking.getBalance();
+			account9_bal = account9.getBalance();
+			account5_bal = account5.getBalance();
+			account7_bal = account7.getBalance();
 
 			logger.info("Balances after transfers:");
 			logger.info("");
-			logger.info(String.format("Account %d - %,.2f %s", mj_checking.getId(), mj_checking.getBalance(), mj_checking.getCurrency()));
-			logger.info(String.format("Account %d - %,.2f %s", bj_checking.getId(), bj_checking.getBalance(), bj_checking.getCurrency()));
-			logger.info(String.format("Account %d - %,.2f %s", da_checking.getId(), da_checking.getBalance(), da_checking.getCurrency()));
-			if (mj_checkingBal.compareTo(new BigDecimal("15340.11")) == 0
-			&& bj_checkingBal.compareTo(new BigDecimal("1500.00")) == 0
-			&& da_checkingBal.compareTo(new BigDecimal("2000.00")) == 0) {
+			logger.info(String.format("Account %d - %,.2f %s", account9_id, account9_bal, account9_currency));
+			logger.info(String.format("Account %d - %,.2f %s", account5_id, account5_bal, account5_currency));
+			logger.info(String.format("Account %d - %,.2f %s", account7_id, account7_bal, account7_currency));
+			if (account9_bal.compareTo(new BigDecimal("3000.00")) == 0
+			&& account5_bal.compareTo(new BigDecimal("1500.00")) == 0
+			&& account7_bal.compareTo(new BigDecimal("1000.00")) == 0) {
 				logger.info("***********************************");
 				logger.info("Concurrent transactions successful.");
 				logger.info("***********************************");
-				logger.info("Account " + mj_checkingId + " total transactions: " + mj_checking.getTransactions().size());
-				logger.info("Account " + bj_checkingId + " total transactions: " + bj_checking.getTransactions().size());
-				logger.info("Account " + da_checkingId + " total transactions: " + da_checking.getTransactions().size());
+				logger.info("Account " + account9_id + " total transactions: " + account9.getTransactions().size());
+				logger.info("Account " + account5_id + " total transactions: " + account5.getTransactions().size());
+				logger.info("Account " + account7_id + " total transactions: " + account7.getTransactions().size());
 				
 			}
 		};

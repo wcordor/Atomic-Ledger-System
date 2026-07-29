@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.wcordor.ledger.Transaction;
 import com.github.wcordor.ledger.User;
 
@@ -41,9 +42,11 @@ public class Account {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "sender", orphanRemoval = true)
     private Set<Transaction> sent = new HashSet<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "receiver", orphanRemoval = true)
     private Set<Transaction> received = new HashSet<>();
 

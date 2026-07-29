@@ -13,7 +13,7 @@ import com.github.wcordor.ledger.ledger.Account;
 
 import jakarta.persistence.LockModeType;
 
-public interface AccountRepo extends JpaRepository<Account, Long> {
+public interface AccountRepository extends JpaRepository<Account, Long> {
     
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<Account> findWithLockingById(Long id);

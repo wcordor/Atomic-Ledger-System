@@ -8,7 +8,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.github.wcordor.ledger.AccountRepo;
+import com.github.wcordor.ledger.AccountRepository;
 import com.github.wcordor.ledger.InsufficientFundsException;
 import com.github.wcordor.ledger.Status;
 import com.github.wcordor.ledger.Transaction;
@@ -20,11 +20,11 @@ import jakarta.persistence.EntityNotFoundException;
 @Service
 public class TransferService {
 
-    private final AccountRepo accountRepo;
+    private final AccountRepository accountRepository;
     private final TransactionRepo transactionRepo;
 
-    public TransferService(AccountRepo accountRepo, TransactionRepo transactionRepo) {
-        this.accountRepo = accountRepo;
+    public TransferService(AccountRepository accountRepository, TransactionRepo transactionRepo) {
+        this.accountRepository = accountRepository;
         this.transactionRepo = transactionRepo;
     }
 
@@ -58,8 +58,8 @@ public class TransferService {
             sender.debit(amount);
             receiver.credit(amount);
 
-            accountRepo.save(receiver);
-            accountRepo.save(sender);
+            accountRepository.save(receiver);
+            accountRepository.save(sender);
             transaction.setStatus(Status.SUCCESSFUL);
             transactionRepo.save(transaction);
         }
@@ -67,7 +67,7 @@ public class TransferService {
     }
 
     public Account getAccountWithTransactionLists(Long id) {
-        Account account = accountRepo.findWithLockingById(id)
+        Account account = accountRepository.findWithLockingById(id)
         .orElseThrow(() -> new EntityNotFoundException("Account not found"));
         account.getSent().size();
         account.getReceived().size();

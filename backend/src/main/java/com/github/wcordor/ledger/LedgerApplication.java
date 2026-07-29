@@ -31,7 +31,7 @@ public class LedgerApplication {
 	}
 
 	@Bean
-	public CommandLineRunner demo(UserRepository userRepository, AccountRepo aRepo, TransferService service, AccountService accService) {
+	public CommandLineRunner demo(UserRepository userRepository, AccountRepository accountRepository, TransferService service, AccountService accService) {
 		return (args) -> {
 
 			User user1 = new User("John", "Smith");
@@ -73,21 +73,21 @@ public class LedgerApplication {
 
 			logger.info("List of Preloaded Accounts:");
 			logger.info("---------------------------");
-			aRepo.findAll().forEach(acc -> {
+			accountRepository.findAll().forEach(acc -> {
 				logger.info(acc.toString());
 			});
 			logger.info("");
 
 			logger.info("Accounts that use USD:");
 			logger.info("----------------------");
-			aRepo.findByCurrency("USD").forEach(usd -> {
+			accountRepository.findByCurrency("USD").forEach(usd -> {
 				logger.info(usd.toString());
 			});
 			logger.info("");
 
 			logger.info("Accounts that use GBP:");
 			logger.info("----------------------");
-			aRepo.findByCurrency("GBP").forEach(gbp -> {
+			accountRepository.findByCurrency("GBP").forEach(gbp -> {
 				logger.info(gbp.toString());
 			});
 			logger.info("");
@@ -95,8 +95,8 @@ public class LedgerApplication {
 			Long account5_id = account5.getId();
 			Long account7_id = account7.getId();
 
-			account5 = aRepo.findById(account5_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
-			account7 = aRepo.findById(account7_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+			account5 = accountRepository.findById(account5_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+			account7 = accountRepository.findById(account7_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
 
 			BigDecimal account5_bal = account5.getBalance();
 			BigDecimal account7_bal = account7.getBalance();
@@ -115,8 +115,8 @@ public class LedgerApplication {
 				logger.info("");
 			}
 
-			account5 = aRepo.findById(account5_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
-			account7 = aRepo.findById(account7_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+			account5 = accountRepository.findById(account5_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+			account7 = accountRepository.findById(account7_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
 			account5_bal = account5.getBalance();
 			account7_bal = account7.getBalance();
 
@@ -147,8 +147,8 @@ public class LedgerApplication {
 				logger.info("");
 			}
 
-			account5 = aRepo.findById(account5_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
-			account7 = aRepo.findById(account7_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+			account5 = accountRepository.findById(account5_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+			account7 = accountRepository.findById(account7_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
 			BigDecimal account5_bal_rolledBack = account5.getBalance();
 			BigDecimal account7_bal_rolledBack = account7.getBalance();
 
@@ -164,7 +164,7 @@ public class LedgerApplication {
 			}
 
 			Long account9_id = account9.getId();
-			account9 = aRepo.findById(account9_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+			account9 = accountRepository.findById(account9_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
 			BigDecimal account9_bal = account9.getBalance();
 			String account9_currency = account9.getCurrency();
 			
@@ -206,11 +206,11 @@ public class LedgerApplication {
 			}
 
 			CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
-			aRepo.flush();
+			accountRepository.flush();
 
-			account5 = aRepo.findById(account5_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
-			account7 = aRepo.findById(account7_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
-			account9 = aRepo.findById(account9_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+			account5 = accountRepository.findById(account5_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+			account7 = accountRepository.findById(account7_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+			account9 = accountRepository.findById(account9_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
 
 			account9_bal = account9.getBalance();
 			account5_bal = account5.getBalance();

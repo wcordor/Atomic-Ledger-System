@@ -4,11 +4,12 @@ import java.math.BigDecimal;
 
 import org.springframework.stereotype.Service;
 
+import com.github.wcordor.ledger.AccountNotFoundException;
 import com.github.wcordor.ledger.AccountRepository;
 import com.github.wcordor.ledger.User;
+import com.github.wcordor.ledger.UserNotFoundException;
 import com.github.wcordor.ledger.UserRepository;
 
-import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class AccountService {
@@ -22,11 +23,12 @@ public class AccountService {
     }
 
     public Account createAccount(Long userId, String name, BigDecimal initialDeposit, String currency) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
         Account account = new Account(user, name, initialDeposit, currency);
         accountRepository.save(account);
-        account = accountRepository.findById(account.getId())
-        .orElseThrow(() -> new EntityNotFoundException("Account not found"));
+        Long accountId = account.getId();
+        account = accountRepository.findById(accountId)
+        .orElseThrow(() -> new AccountNotFoundException(accountId, userId));
         
         return account;
     }

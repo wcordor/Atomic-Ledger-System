@@ -20,19 +20,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class UserController {
 
-    private final UserRepository repository;
     private final UserModelAssembler assembler;
 
     public UserController(UserRepository repository, UserModelAssembler assembler) {
 
-		this.repository = repository;
 		this.assembler = assembler;
 	}
 
     @GetMapping("/users")
 	public CollectionModel<EntityModel<User>> all() {
 
-		List<EntityModel<User>> users = repository.findAll().stream()
+		List<EntityModel<User>> users = service.getAll().stream()
 		.map(assembler::toModel).collect(Collectors.toList());
 
 		return CollectionModel.of(users, linkTo(methodOn(UserController.class).all()).withSelfRel());
@@ -41,7 +39,7 @@ public class UserController {
     @PostMapping("/users")
 	public ResponseEntity<?> newUser(@RequestBody User newUser) {
 
-		EntityModel<User> entityModel = assembler.toModel(repository.save(newUser));
+		EntityModel<User> entityModel = assembler.toModel(service.saveUser(newUser));
 
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
 	}
@@ -49,7 +47,7 @@ public class UserController {
 	@GetMapping("/users/{id}")
 	public EntityModel<User> one(@PathVariable("id") Long id) {
 
-		User user = repository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+		User user = service.getUser(id);
 		
 		return assembler.toModel(user);
 	}
@@ -57,15 +55,7 @@ public class UserController {
 	@PutMapping("/users/{id}")
 	public ResponseEntity<?> replaceUser(@RequestBody User newUser, @PathVariable Long id) {
 
-		User updatedUser = repository.findById(id)
-			.map(user -> {
-				user.setFirstName(newUser.getFirstName());
-				user.setLastName(newUser.getLastName());
-				return repository.save(user);
-			}).orElseGet(() -> {
-					return repository.save(newUser);
-				});
-
+		User updatedUser = service.changeName(id, userRequest.getFirstName(), userRequest.getLastName());		
 		EntityModel<User> entityModel = assembler.toModel(updatedUser);
 
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
@@ -74,7 +64,7 @@ public class UserController {
 	@DeleteMapping("/users/{id}")
 	public ResponseEntity<?> deleteUser(@PathVariable Long id) {
 
-		repository.deleteById(id);
+		service.deleteUser(id);
 
 		return ResponseEntity.noContent().build();
 	}

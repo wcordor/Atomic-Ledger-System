@@ -17,14 +17,25 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.github.wcordor.ledger.ledger.Account;
+import com.github.wcordor.ledger.ledger.AccountService;
+
 @RestController
 public class UserController {
 
     private final UserModelAssembler assembler;
+	private final AccountModelAssembler accountAssembler;
 
-    public UserController(UserRepository repository, UserModelAssembler assembler) {
+	private final UserService service;
+	private final AccountService accountService;
+
+    public UserController(UserService service, AccountService accountService, UserModelAssembler assembler, 
+		AccountModelAssembler accountAssembler) {
 
 		this.assembler = assembler;
+		this.accountAssembler = accountAssembler;
+		this.service = service;
+		this.accountService = accountService;
 	}
 
     @GetMapping("/users")

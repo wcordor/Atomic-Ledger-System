@@ -52,7 +52,7 @@ public class UserController {
     @PostMapping("/users")
 	public ResponseEntity<?> newUser(@RequestBody User newUser) {
 
-		EntityModel<User> entityModel = assembler.toModel(service.saveUser(newUser));
+		EntityModel<User> entityModel = assembler.toModel(service.createUser(newUser.getFirstName(), newUser.getLastName()));
 
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
 	}

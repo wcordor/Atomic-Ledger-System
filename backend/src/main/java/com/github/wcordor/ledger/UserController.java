@@ -121,10 +121,19 @@ public class UserController {
 	@PatchMapping("users/{id}/accounts/{accountId}")
 	public ResponseEntity<?> changeAccountName(@PathVariable("id") Long userId, @PathVariable("accountId") Long accountId,
 	@RequestBody Map<String, String> nameChange) {
+
 		Account account = accountService.changeName(accountId, userId, nameChange.get("name"));
 		EntityModel<Account> entityModel = accountAssembler.toModel(account);
 
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
+	}
+
+	@DeleteMapping("users/{id}/accounts/{accountId}/remove")
+	public ResponseEntity<?> deleteAccount(@PathVariable("id") Long userId, @PathVariable("accountId") Long accountId) {
+
+		accountService.deleteAccount(accountId, userId);
+
+		return ResponseEntity.noContent().build();
 	}
     
 }

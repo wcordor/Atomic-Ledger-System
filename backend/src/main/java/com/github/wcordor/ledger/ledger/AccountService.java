@@ -49,4 +49,14 @@ public class AccountService {
         return accountRepository.save(account);        
     }
 
+    public void deleteAccount(Long accountId, Long userId) {
+        Account account = getAccount(accountId, userId);
+        if (account.getUserId() == userId && account.getBalance().compareTo(new BigDecimal("0.00")) == 0) {
+            accountRepository.deleteById(accountId);
+        }
+        else {
+            throw new AccountDeletionFailureException(accountId, userId);
+        }
+    }
+
 }

@@ -26,12 +26,8 @@ public class AccountService {
     public Account createAccount(Long userId, String name, BigDecimal initialDeposit, String currency) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
         Account account = new Account(user, name, initialDeposit, currency);
-        accountRepository.save(account);
-        Long accountId = account.getId();
-        account = accountRepository.findById(accountId)
-        .orElseThrow(() -> new AccountNotFoundException(accountId, userId));
         
-        return account;
+        return accountRepository.save(account);
     }
     
     public List<Account> getAccounts(Long userId) {

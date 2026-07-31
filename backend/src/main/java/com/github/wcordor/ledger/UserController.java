@@ -64,11 +64,11 @@ public class UserController {
 	}
 
 	@PutMapping("/users/{id}")
-	public ResponseEntity<?> replaceUser(@RequestBody User newUser, @PathVariable Long id) {
+	public ResponseEntity<?> replaceUser(@PathVariable Long id, @RequestBody User userRequest) {
 
 		User updatedUser = service.changeName(id, userRequest.getFirstName(), userRequest.getLastName());		
 		EntityModel<User> entityModel = assembler.toModel(updatedUser);
-
+		
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
 	}
 

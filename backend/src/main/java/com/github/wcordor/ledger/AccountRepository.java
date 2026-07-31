@@ -28,4 +28,7 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     
     List<Account> findByUser_Id(Long id);
     Optional<Account> findByIdAndUser_Id(Long accountId, Long userId);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    Optional<Account> findWithLockingByIdAndUser_Id(Long accountId, Long userId);
 }

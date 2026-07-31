@@ -3,6 +3,7 @@ package com.github.wcordor.ledger;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.hateoas.CollectionModel;
@@ -11,6 +12,7 @@ import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -71,6 +73,16 @@ public class UserController {
 		
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
 	}
+
+	@PatchMapping("/users/{id}")
+	public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
+		
+		User user = service.updateUser(id, updates);
+		EntityModel<User> entityModel = assembler.toModel(user);
+
+		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
+	}
+	
 
 	@DeleteMapping("/users/{id}")
 	public ResponseEntity<?> deleteUser(@PathVariable Long id) {

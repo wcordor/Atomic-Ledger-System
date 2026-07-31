@@ -91,5 +91,31 @@ public class UserController {
 
 		return ResponseEntity.noContent().build();
 	}
+
+	@GetMapping("/users/{id}/accounts")
+	public CollectionModel<EntityModel<Account>> allAccounts(@PathVariable("id") Long userId) {
+
+		List<EntityModel<Account>> accounts = accountService.getAccounts(userId).stream()
+		.map(accountAssembler::toModel).collect(Collectors.toList());
+
+		return CollectionModel.of(accounts, linkTo(methodOn(UserController.class).allAccounts(userId)).withSelfRel());
+	}  
+
+	@GetMapping("/users/{id}/accounts/{accountId}")
+	public EntityModel<Account> oneAccount(@PathVariable("id") Long userId, @PathVariable("accountId") Long accountId) {
+
+		Account account = accountService.getAccount(accountId, userId);
+
+		return accountAssembler.toModel(account);
+	}
+	
+	@PostMapping("users/{id}/accounts")
+	public ResponseEntity<?> newAccount(@PathVariable("id") Long userId, @RequestBody Account newAccount) {
+
+		EntityModel<Account> entityModel = accountAssembler.toModel(accountService.createAccount(userId, newAccount.getName(),
+			newAccount.getBalance(), newAccount.getCurrency()));
+
+		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
+	}
     
 }

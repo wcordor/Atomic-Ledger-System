@@ -117,5 +117,14 @@ public class UserController {
 
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
 	}
+
+	@PatchMapping("users/{id}/accounts/{accountId}")
+	public ResponseEntity<?> changeAccountName(@PathVariable("id") Long userId, @PathVariable("accountId") Long accountId,
+	@RequestBody Map<String, String> nameChange) {
+		Account account = accountService.changeName(accountId, userId, nameChange.get("name"));
+		EntityModel<Account> entityModel = accountAssembler.toModel(account);
+
+		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
+	}
     
 }

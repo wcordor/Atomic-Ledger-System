@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.github.wcordor.ledger.AccountNotFoundException;
 import com.github.wcordor.ledger.AccountRepository;
@@ -38,8 +39,14 @@ public class AccountService {
         return accountRepository.findByIdAndUser_Id(accountId, userId).orElseThrow(() -> new AccountNotFoundException(accountId, userId));
     }
 
-    public Account saveAccount(Account account) {
-        return accountRepository.save(account);
+    @Transactional
+    public Account changeName(Long accountId, Long userId, String name) {
+        Account account = accountRepository.findWithLockingByIdAndUser_Id(accountId, userId)
+            .orElseThrow(() -> new AccountNotFoundException(accountId, userId));
+
+        account.setName(name);
+        
+        return accountRepository.save(account);        
     }
 
 }

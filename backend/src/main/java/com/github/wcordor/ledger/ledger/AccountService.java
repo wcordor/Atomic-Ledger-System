@@ -1,6 +1,7 @@
 package com.github.wcordor.ledger.ledger;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
@@ -31,6 +32,18 @@ public class AccountService {
         .orElseThrow(() -> new AccountNotFoundException(accountId, userId));
         
         return account;
+    }
+    
+    public List<Account> getAccounts(Long userId) {
+        return accountRepository.findByUser_Id(userId);
+    }
+
+    public Account getAccount(Long accountId, Long userId) {
+        return accountRepository.findByIdAndUser_Id(accountId, userId).orElseThrow(() -> new AccountNotFoundException(accountId, userId));
+    }
+
+    public Account saveAccount(Account account) {
+        return accountRepository.save(account);
     }
 
 }

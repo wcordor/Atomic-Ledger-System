@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.github.wcordor.ledger.ledger.Account;
@@ -50,9 +51,9 @@ public class UserController {
 	}
 
     @PostMapping("/users")
-	public ResponseEntity<?> newUser(@RequestBody User newUser) {
+	public ResponseEntity<?> newUser(@RequestHeader("Idempotency-Key") String idempotencyKey, @RequestBody User newUser) {
 
-		EntityModel<User> entityModel = assembler.toModel(service.createUser(newUser.getFirstName(), newUser.getLastName()));
+		EntityModel<User> entityModel = assembler.toModel(service.createUser(idempotencyKey, newUser.getFirstName(), newUser.getLastName()));
 
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
 	}
@@ -75,9 +76,10 @@ public class UserController {
 	}
 
 	@PatchMapping("/users/{id}")
-	public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
+	public ResponseEntity<?> updateUser(@RequestHeader("Idempotency-Key") String idempotencyKey,
+		@PathVariable Long id, @RequestBody Map<String, Object> updates) {
 		
-		User user = service.updateUser(id, updates);
+		User user = service.updateUser(idempotencyKey, id, updates);
 		EntityModel<User> entityModel = assembler.toModel(user);
 
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
@@ -110,19 +112,20 @@ public class UserController {
 	}
 	
 	@PostMapping("users/{id}/accounts")
-	public ResponseEntity<?> newAccount(@PathVariable("id") Long userId, @RequestBody Account newAccount) {
+	public ResponseEntity<?> newAccount(@RequestHeader("Idempotency-Key") String idempotencyKey,
+		@PathVariable("id") Long userId, @RequestBody Account newAccount) {
 
-		EntityModel<Account> entityModel = accountAssembler.toModel(accountService.createAccount(userId, newAccount.getName(),
+		EntityModel<Account> entityModel = accountAssembler.toModel(accountService.createAccount(idempotencyKey, userId, newAccount.getName(),
 			newAccount.getBalance(), newAccount.getCurrency()));
 
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
 	}
 
 	@PatchMapping("users/{id}/accounts/{accountId}")
-	public ResponseEntity<?> changeAccountName(@PathVariable("id") Long userId, @PathVariable("accountId") Long accountId,
-	@RequestBody Map<String, String> nameChange) {
+	public ResponseEntity<?> changeAccountName(@RequestHeader("Idempotency-Key") String idempotencyKey,
+		@PathVariable("id") Long userId, @PathVariable("accountId") Long accountId, @RequestBody Map<String, String> nameChange) {
 
-		Account account = accountService.changeName(accountId, userId, nameChange.get("name"));
+		Account account = accountService.changeName(idempotencyKey, accountId, userId, nameChange.get("name"));
 		EntityModel<Account> entityModel = accountAssembler.toModel(account);
 
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);

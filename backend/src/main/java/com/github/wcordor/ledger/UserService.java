@@ -1,5 +1,6 @@
 package com.github.wcordor.ledger;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -10,9 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
     
     private final UserRepository repository;
+    private final IdempotencyKeyRepository idempotencyKeyRepository;
 
-    public UserService(UserRepository repository) {
+    public UserService(UserRepository repository, IdempotencyKeyRepository idempotencyKeyRepository) {
         this.repository = repository;
+        this.idempotencyKeyRepository = idempotencyKeyRepository;
     }
 
     @Transactional
@@ -28,8 +31,21 @@ public class UserService {
         return repository.findAll();
     }
 
-    public User createUser(String firstName, String lastName) {
+    public User createUser(String idempotencyKey, String firstName, String lastName) {
+        IdempotencyKey savedKey = idempotencyKeyRepository.findByKey(idempotencyKey).orElse(null);
+
+        if (savedKey != null) {
+            if (savedKey.getExpiryDate().isBefore(LocalDateTime.now())) {
+                idempotencyKeyRepository.delete(savedKey);
+            } else {
+                throw new IdempotencyKeyAlreadyExistsException();
+            }
+        }
+
         User user = new User(firstName, lastName);
+
+        IdempotencyKey newKey = new IdempotencyKey(idempotencyKey, LocalDateTime.now().plusHours(24));
+        idempotencyKeyRepository.save(newKey);
         
         return repository.save(user);
     }
@@ -43,7 +59,17 @@ public class UserService {
     }
 
     @Transactional
-    public User updateUser(Long id, Map<String, Object> updates) {
+    public User updateUser(String idempotencyKey, Long id, Map<String, Object> updates) {
+        IdempotencyKey savedKey = idempotencyKeyRepository.findByKey(idempotencyKey).orElse(null);
+
+        if (savedKey != null) {
+            if (savedKey.getExpiryDate().isBefore(LocalDateTime.now())) {
+                idempotencyKeyRepository.delete(savedKey);
+            } else {
+                throw new IdempotencyKeyAlreadyExistsException();
+            }
+        }
+
         User user = repository.findWithLockingById(id).orElseThrow(() -> new UserNotFoundException(id));
 
         updates.forEach((key, value) -> {
@@ -56,6 +82,9 @@ public class UserService {
                     break;
             }
         });
+
+        IdempotencyKey newKey = new IdempotencyKey(idempotencyKey, LocalDateTime.now().plusHours(24));
+        idempotencyKeyRepository.save(newKey);
 
         return repository.save(user);
     }

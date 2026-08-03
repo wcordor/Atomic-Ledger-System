@@ -35,7 +35,7 @@ class LedgerApplicationTests {
 	private UserRepository userRepository;
 
 	@Autowired
-	private TransferService ts;
+	private TransactionService transactionService;
 
 	@Autowired
 	private TransactionRepo tr;
@@ -164,7 +164,7 @@ class LedgerApplicationTests {
 		// acc balance: $1,000, acc2 balance: $200
 		
 		try {
-			ts.transferMoney(acc2_Id, acc_Id, new BigDecimal("400.00"), "USD");
+			transactionService.transferMoney(acc2_Id, acc_Id, new BigDecimal("400.00"), "USD");
 		} catch (InsufficientFundsException e) {
 			logger.error("ERROR: " + e.getMessage());
 		}
@@ -176,11 +176,11 @@ class LedgerApplicationTests {
 		assertEquals(new BigDecimal("600.00"), acc.getBalance());
 		
 		assertThrows(InsufficientFundsException.class, () -> {
-			ts.transferMoney(acc2_Id, acc_Id, new BigDecimal("4000.00"), "USD");
+			transactionService.transferMoney(acc2_Id, acc_Id, new BigDecimal("4000.00"), "USD");
 		});
 
 		try {
-			ts.transferMoney(acc2_Id, acc_Id, new BigDecimal("800.00"), "USD");
+			transactionService.transferMoney(acc2_Id, acc_Id, new BigDecimal("800.00"), "USD");
 		} catch (InsufficientFundsException e) {
 			logger.error("ERROR: " + e.getMessage());
 		}
@@ -205,7 +205,7 @@ class LedgerApplicationTests {
 	void testTransactionFunctions() {
 
 		try {
-			ts.transferMoney(acc2_Id, acc_Id, new BigDecimal("400.00"), "USD");
+			transactionService.transferMoney(acc2_Id, acc_Id, new BigDecimal("400.00"), "USD");
 		} catch (InsufficientFundsException e) {
 			logger.error("ERROR: " + e.getMessage());
 		}
@@ -251,7 +251,7 @@ class LedgerApplicationTests {
 		for (int i = 0; i < 50; i++) {
 			CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
 				try {
-					ts.transferMoney(acc2_Id, acc_Id, new BigDecimal("10.00"), "USD");
+					transactionService.transferMoney(acc2_Id, acc_Id, new BigDecimal("10.00"), "USD");
 				} catch (InsufficientFundsException e) {
 					logger.error("ERROR: " + e.getMessage());
 				}
@@ -281,7 +281,7 @@ class LedgerApplicationTests {
 		for (int i = 0; i < 50; i++) {
 			CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
 				try {
-					ts.transferMoney(acc2_Id, acc_Id, new BigDecimal("30.00"), "USD");
+					transactionService.transferMoney(acc2_Id, acc_Id, new BigDecimal("30.00"), "USD");
 					successCount.incrementAndGet();
 				} catch (InsufficientFundsException e) {
 					logger.error("ERROR: " + e.getMessage());

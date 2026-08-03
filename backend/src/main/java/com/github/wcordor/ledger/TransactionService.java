@@ -12,12 +12,12 @@ import jakarta.persistence.EntityNotFoundException;
 
 
 @Service
-public class TransferService {
+public class TransactionService {
 
     private final AccountRepository accountRepository;
     private final TransactionRepo transactionRepo;
 
-    public TransferService(AccountRepository accountRepository, TransactionRepo transactionRepo) {
+    public TransactionService(AccountRepository accountRepository, TransactionRepo transactionRepo) {
         this.accountRepository = accountRepository;
         this.transactionRepo = transactionRepo;
     }

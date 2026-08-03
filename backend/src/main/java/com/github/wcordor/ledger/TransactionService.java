@@ -53,16 +53,19 @@ public class TransactionService {
         if (expected_senderBal.signum() == -1) {
             throw new InsufficientFundsException();
         }
-        else {
-            sender.debit(amount);
-            receiver.credit(amount);
 
-            accountRepository.save(receiver);
-            accountRepository.save(sender);
-            transaction.setStatus(Status.SUCCESSFUL);
-            transactionRepo.save(transaction);
-        }
+        sender.debit(amount);
+        receiver.credit(amount);
 
+        accountRepository.save(receiver);
+        accountRepository.save(sender);
+
+        Transaction transaction = new Transaction(receiver, sender, amount, currency);
+
+        IdempotencyKey newKey = new IdempotencyKey(idempotencyKey, LocalDateTime.now().plusHours(24));
+        idempotencyKeyRepository.save(newKey);
+
+        return transactionRepository.save(transaction);
     }
 
     public Account getAccountWithTransactions(Long accountId, Long userId) {

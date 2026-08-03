@@ -20,9 +20,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.github.wcordor.ledger.ledger.Account;
-import com.github.wcordor.ledger.ledger.AccountService;
-
 @RestController
 public class UserController {
 

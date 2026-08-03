@@ -18,10 +18,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.github.wcordor.ledger.ledger.Account;
-import com.github.wcordor.ledger.ledger.AccountService;
-import com.github.wcordor.ledger.ledger.TransferService;
-
 import jakarta.persistence.EntityNotFoundException;
 
 import org.slf4j.Logger;

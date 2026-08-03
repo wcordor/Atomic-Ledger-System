@@ -1,4 +1,4 @@
-package com.github.wcordor.ledger.ledger;
+package com.github.wcordor.ledger;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -6,16 +6,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.github.wcordor.ledger.AccountDeletionFailureException;
-import com.github.wcordor.ledger.AccountNotFoundException;
-import com.github.wcordor.ledger.AccountRepository;
-import com.github.wcordor.ledger.IdempotencyKey;
-import com.github.wcordor.ledger.IdempotencyKeyAlreadyExistsException;
-import com.github.wcordor.ledger.IdempotencyKeyRepository;
-import com.github.wcordor.ledger.User;
-import com.github.wcordor.ledger.UserNotFoundException;
-import com.github.wcordor.ledger.UserRepository;
 
 
 @Service

@@ -1,4 +1,4 @@
-package com.github.wcordor.ledger.ledger;
+package com.github.wcordor.ledger;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.github.wcordor.ledger.Transaction;
-import com.github.wcordor.ledger.User;
 
 import jakarta.persistence.*;
 

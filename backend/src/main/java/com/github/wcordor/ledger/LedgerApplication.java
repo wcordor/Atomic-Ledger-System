@@ -10,10 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.retry.annotation.EnableRetry;
 
-import com.github.wcordor.ledger.ledger.Account;
-import com.github.wcordor.ledger.ledger.AccountService;
-import com.github.wcordor.ledger.ledger.TransferService;
-
 import jakarta.persistence.EntityNotFoundException;
 
 import org.springframework.boot.SpringApplication;

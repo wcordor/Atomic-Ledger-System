@@ -3,8 +3,6 @@ package com.github.wcordor.ledger;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.github.wcordor.ledger.ledger.Account;
-
 import jakarta.persistence.*;
 
 @Entity

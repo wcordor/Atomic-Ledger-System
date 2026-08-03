@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.github.wcordor.ledger.ledger.Account;
 
 import jakarta.persistence.*;
 

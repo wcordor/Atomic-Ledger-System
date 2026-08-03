@@ -16,11 +16,14 @@ import jakarta.persistence.EntityNotFoundException;
 public class TransactionService {
 
     private final AccountRepository accountRepository;
-    private final TransactionRepo transactionRepo;
+    private final TransactionRepository transactionRepository;
+    private final IdempotencyKeyRepository idempotencyKeyRepository;
 
-    public TransactionService(AccountRepository accountRepository, TransactionRepo transactionRepo) {
+    public TransactionService(AccountRepository accountRepository, TransactionRepository transactionRepository,
+        IdempotencyKeyRepository idempotencyKeyRepository) {
         this.accountRepository = accountRepository;
-        this.transactionRepo = transactionRepo;
+        this.transactionRepository = transactionRepository;
+        this.idempotencyKeyRepository = idempotencyKeyRepository;
     }
 
     @Retryable(retryFor = { PessimisticLockingFailureException.class }, maxAttempts = 3,

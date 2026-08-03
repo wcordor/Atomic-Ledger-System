@@ -59,9 +59,9 @@ public class TransactionService {
 
     }
 
-    public Account getAccountWithTransactionLists(Long id) {
-        Account account = accountRepository.findWithLockingById(id)
-        .orElseThrow(() -> new EntityNotFoundException("Account not found"));
+    public Account getAccountWithTransactions(Long accountId, Long userId) {
+        Account account = accountRepository.findWithLockingByIdAndUser_Id(accountId, userId)
+        .orElseThrow(() -> new AccountNotFoundException(accountId, userId));
         account.getSent().size();
         account.getReceived().size();
         return account;

@@ -43,10 +43,9 @@ public class TransactionService {
         sender.addTransaction(transaction);
 
         BigDecimal expected_senderBal = sender.getBalance().subtract(amount);
+        
         if (expected_senderBal.signum() == -1) {
-            transaction.setStatus(Status.FAILED);
-            transactionRepo.save(transaction);
-            throw new InsufficientFundsException("Not enough funds to make transaction, canceling transaction.");
+            throw new InsufficientFundsException();
         }
         else {
             sender.debit(amount);

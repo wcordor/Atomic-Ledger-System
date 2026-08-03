@@ -47,6 +47,11 @@ public class Transaction {
         this.currency = currency;
         this.status = status;
         this.timestamp = Instant.now();
+        this.sender = sender;
+        this.receiver = receiver;
+
+        this.sender.addTransaction(this);
+        this.receiver.addTransaction(this);
     }
 
     @Override

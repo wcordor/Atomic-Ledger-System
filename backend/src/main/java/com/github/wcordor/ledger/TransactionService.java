@@ -1,6 +1,7 @@
 package com.github.wcordor.ledger;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 import org.springframework.dao.PessimisticLockingFailureException;
 import org.springframework.retry.annotation.Backoff;
@@ -23,24 +24,26 @@ public class TransactionService {
     }
 
     @Retryable(retryFor = { PessimisticLockingFailureException.class }, maxAttempts = 3,
-         backoff = @Backoff(delay = 50, maxDelay = 150, multiplier = 2.0))
+        backoff = @Backoff(delay = 50, maxDelay = 150, multiplier = 2.0))
     @Transactional(rollbackFor = { InsufficientFundsException.class })
-    public void transferMoney(Long receiverId, Long senderId, BigDecimal amount, String currency) 
-    throws InsufficientFundsException {
+    public Transaction moneyTransfer(String idempotencyKey, Long sender_userId, Long senderId, Long receiverId,
+        BigDecimal amount, String currency) throws InsufficientFundsException {
+        IdempotencyKey savedKey = idempotencyKeyRepository.findByKey(idempotencyKey).orElse(null);
 
-        Account receiver = getAccountWithTransactionLists(receiverId);
-        Account sender = getAccountWithTransactionLists(senderId);
+        if (savedKey != null) {
+            if (savedKey.getExpiryDate().isBefore(LocalDateTime.now())) {
+                idempotencyKeyRepository.delete(savedKey);
+            } else {
+                throw new IdempotencyKeyAlreadyExistsException();
+            }
+        }
+        
+        Account sender = getAccountWithTransactions(senderId, sender_userId);
 
-        Transaction transaction = new Transaction((Account) null, (Account) null, null, null, null);
+        Account receiver = accountRepository.findWithLockingById(receiverId)
+            .orElseThrow(() -> new EntityNotFoundException("Account " + receiverId + " not found"));
 
-        transaction.setReceiver(receiver);
-        transaction.setSender(sender);
-        transaction.setAmount(amount);
-        transaction.setCurrency(currency);
-        transaction.setStatus(Status.PENDING);
-
-        receiver.addTransaction(transaction);
-        sender.addTransaction(transaction);
+        receiver = getAccountWithTransactions(receiverId, receiver.getUserId());
 
         BigDecimal expected_senderBal = sender.getBalance().subtract(amount);
         

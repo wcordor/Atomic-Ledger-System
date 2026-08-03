@@ -33,6 +33,7 @@ public class Transaction {
 
     private String currency;
 
+    @JsonIgnore
     private Status status;
 
     @JsonIgnore
@@ -40,12 +41,9 @@ public class Transaction {
 
     protected Transaction() {}
 
-    public Transaction(Account receiver, Account sender, BigDecimal amount, String currency, Status status) {
-        this.sender = sender;
-        this.receiver = receiver;
+    public Transaction(Account receiver, Account sender, BigDecimal amount, String currency) {
         this.amount = amount;
         this.currency = currency;
-        this.status = status;
         this.timestamp = Instant.now();
         this.sender = sender;
         this.receiver = receiver;
@@ -56,8 +54,8 @@ public class Transaction {
 
     @Override
     public String toString() {
-        return String.format("Transaction[ID: %d, Receiver ID: %d, Sender ID: %d, Amount: %,.2f %s, Status: %s, Timestamp: %s]",
-            id, receiver.getId(), sender.getId(), amount, currency, status, timestamp);
+        return String.format("Transaction[ID: %d, Receiver ID: %d, Sender ID: %d, Amount: %,.2f %s, Timestamp: %s]",
+            id, receiver.getId(), sender.getId(), amount, currency, timestamp);
     }
 
     public Long getId() {

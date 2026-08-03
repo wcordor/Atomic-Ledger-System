@@ -25,17 +25,21 @@ public class UserController {
 
     private final UserModelAssembler assembler;
 	private final AccountModelAssembler accountAssembler;
+	private final TransactionModelAssembler transactionAssembler;
 
 	private final UserService service;
 	private final AccountService accountService;
+	private final TransactionService transactionService;
 
-    public UserController(UserService service, AccountService accountService, UserModelAssembler assembler, 
-		AccountModelAssembler accountAssembler) {
+    public UserController(UserService service, AccountService accountService, TransactionService transactionService,
+		UserModelAssembler assembler, AccountModelAssembler accountAssembler, TransactionModelAssembler transactionAssembler) {
 
 		this.assembler = assembler;
 		this.accountAssembler = accountAssembler;
+		this.transactionAssembler = transactionAssembler;
 		this.service = service;
 		this.accountService = accountService;
+		this.transactionService = transactionService;
 	}
 
     @GetMapping("/users")

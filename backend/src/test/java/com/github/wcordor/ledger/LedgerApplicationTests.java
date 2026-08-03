@@ -38,7 +38,7 @@ class LedgerApplicationTests {
 	private TransactionService transactionService;
 
 	@Autowired
-	private TransactionRepo tr;
+	private TransactionRepository transactionRepository;
 
 	@Autowired
 	private AccountService as;
@@ -58,13 +58,13 @@ class LedgerApplicationTests {
 
 		accountRepository.deleteAll();
 		userRepository.deleteAll();
-		tr.deleteAll();
+		transactionRepository.deleteAll();
 
 		user = new User("Account", "Owner");
 		userRepository.save(user);
 		user_Id = user.getId();
 
-		acc = as.createAccount(user_Id, "Savings", new BigDecimal("1000.00"), "USD");
+		acc = as.createAccount("1", user_Id, "Savings", new BigDecimal("1000.00"), "USD");
 		user = userRepository.findById(user_Id)
 			.orElseThrow(() -> new EntityNotFoundException("Account not found"));
 		acc_Id = acc.getId();
@@ -74,7 +74,7 @@ class LedgerApplicationTests {
 		userRepository.save(user2);
 		user2_Id = user2.getId();
 
-		acc2 = as.createAccount(user2_Id, "Checking", new BigDecimal("200.00"), "USD");
+		acc2 = as.createAccount("2", user2_Id, "Checking", new BigDecimal("200.00"), "USD");
 		acc2_Id = acc2.getId();
 
 	}
@@ -138,7 +138,7 @@ class LedgerApplicationTests {
 
 		assertFalse(2 == userAccs.size());
 
-		Account acc3 = as.createAccount(user_Id, "Investment", new BigDecimal("5000.00"), "USD");
+		Account acc3 = as.createAccount("3", user_Id, "Investment", new BigDecimal("5000.00"), "USD");
 		user = userRepository.findById(user_Id)
 			.orElseThrow(() -> new EntityNotFoundException("User not found"));
 		userAccs = user.getAccounts();
@@ -162,9 +162,10 @@ class LedgerApplicationTests {
 	@Test
 	void testMoneyTransfers() {
 		// acc balance: $1,000, acc2 balance: $200
-		
+		Long acc_userId = acc.getUserId();
+
 		try {
-			transactionService.transferMoney(acc2_Id, acc_Id, new BigDecimal("400.00"), "USD");
+			transactionService.moneyTransfer(acc_Id, acc_userId, acc2_Id, new BigDecimal("400.00"), "USD");
 		} catch (InsufficientFundsException e) {
 			logger.error("ERROR: " + e.getMessage());
 		}
@@ -176,11 +177,11 @@ class LedgerApplicationTests {
 		assertEquals(new BigDecimal("600.00"), acc.getBalance());
 		
 		assertThrows(InsufficientFundsException.class, () -> {
-			transactionService.transferMoney(acc2_Id, acc_Id, new BigDecimal("4000.00"), "USD");
+			transactionService.moneyTransfer(acc_Id, acc_userId, acc2_Id, new BigDecimal("4000.00"), "USD");
 		});
 
 		try {
-			transactionService.transferMoney(acc2_Id, acc_Id, new BigDecimal("800.00"), "USD");
+			transactionService.moneyTransfer(acc_Id, acc_userId, acc2_Id, new BigDecimal("800.00"), "USD");
 		} catch (InsufficientFundsException e) {
 			logger.error("ERROR: " + e.getMessage());
 		}
@@ -204,8 +205,10 @@ class LedgerApplicationTests {
 	@Test
 	void testTransactionFunctions() {
 
+		Long acc_userId = acc.getUserId();
+
 		try {
-			transactionService.transferMoney(acc2_Id, acc_Id, new BigDecimal("400.00"), "USD");
+			transactionService.moneyTransfer("t", acc_userId, acc_Id, acc2_Id, new BigDecimal("400.00"), "USD");
 		} catch (InsufficientFundsException e) {
 			logger.error("ERROR: " + e.getMessage());
 		}

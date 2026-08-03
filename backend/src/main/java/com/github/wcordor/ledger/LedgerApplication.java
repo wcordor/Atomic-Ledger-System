@@ -34,30 +34,30 @@ public class LedgerApplication {
 			userRepository.save(user1);
 			Long user1_id = user1.getId();
 
-			Account account1 = accService.createAccount(user1_id, "Savings", new BigDecimal("5000.00"), "GBP");
-			Account account2 = accService.createAccount(user1_id, "Checking", new BigDecimal("1000.00"), "GBP");
+			Account account1 = accService.createAccount("idempotency1", user1_id, "Savings", new BigDecimal("5000.00"), "GBP");
+			Account account2 = accService.createAccount("idempotency2", user1_id, "Checking", new BigDecimal("1000.00"), "GBP");
 
 			User user2 = new User("Bernard", "Jones");
 			userRepository.save(user2);
 			Long user2_id = user2.getId();
 
-			Account account3 = accService.createAccount(user2_id, "Investment", new BigDecimal("15000.00"), "USD");
-			Account account4 = accService.createAccount(user2_id, "Savings", new BigDecimal("7000.00"), "USD");
-			Account account5 = accService.createAccount(user2_id, "Checking", new BigDecimal("3000.00"), "USD");
+			Account account3 = accService.createAccount("idempotency3", user2_id, "Investment", new BigDecimal("15000.00"), "USD");
+			Account account4 = accService.createAccount("idempotency4", user2_id, "Savings", new BigDecimal("7000.00"), "USD");
+			Account account5 = accService.createAccount("idempotency5", user2_id, "Checking", new BigDecimal("3000.00"), "USD");
 
 			User user3 = new User("Deborah", "Adams");
 			userRepository.save(user3);
 			Long user3_id = user3.getId();
 
-			Account account6 = accService.createAccount(user3_id, "Savings", new BigDecimal("3000.00"), "USD");
-			Account account7 = accService.createAccount(user3_id, "Checking", new BigDecimal("1000.00"), "USD");
+			Account account6 = accService.createAccount("idempotency6", user3_id, "Savings", new BigDecimal("3000.00"), "USD");
+			Account account7 = accService.createAccount("idempotency7", user3_id, "Checking", new BigDecimal("1000.00"), "USD");
 
 			User user4 = new User("Mary", "Johnson");
 			userRepository.save(user4);
 			Long user4_id = user4.getId();
 
-			Account account8 = accService.createAccount(user4_id, "Savings", new BigDecimal("5500.00"), "USD");
-			Account account9 = accService.createAccount(user4_id, "Checking", new BigDecimal("1500.00"), "USD");
+			Account account8 = accService.createAccount("idempotency8", user4_id, "Savings", new BigDecimal("5500.00"), "USD");
+			Account account9 = accService.createAccount("idempotency9", user4_id, "Checking", new BigDecimal("1500.00"), "USD");
 
 			logger.info("");
 			logger.info("List of Preloaded Users:");

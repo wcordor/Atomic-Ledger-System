@@ -139,5 +139,19 @@ public class UserController {
 
 		return ResponseEntity.noContent().build();
 	}
+
+	@PostMapping("users/{id}/accounts/{accountId}/money-transfer")
+	public ResponseEntity<?> newTransaction(@RequestHeader("Idempotency-Key") String idempotencyKey,
+		@PathVariable("id") Long userId, @PathVariable("accountId") Long accountId, @RequestBody Transaction newTransaction) {
+
+		if (accountId != newTransaction.getSenderId()) {
+			return ResponseEntity.badRequest().body("Account ID in path does not match sender ID in request body.");
+		}
+
+		EntityModel<Transaction> entityModel = transactionAssembler.toModel(transactionService.moneyTransfer(idempotencyKey, userId,
+		accountId, newTransaction.getReceiverId(), newTransaction.getAmount(), newTransaction.getCurrency()));
+
+		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
+	}
     
 }

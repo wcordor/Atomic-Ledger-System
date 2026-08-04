@@ -2,6 +2,7 @@ package com.github.wcordor.ledger;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.dao.PessimisticLockingFailureException;
 import org.springframework.retry.annotation.Backoff;
@@ -74,6 +75,13 @@ public class TransactionService {
         account.getSent().size();
         account.getReceived().size();
         return account;
+    }
+
+    public List<Transaction> getTransactions(Long accountId, Long userId) {
+        Account account = accountRepository.findByIdAndUser_Id(accountId, userId)
+            .orElseThrow(() -> new AccountNotFoundException(accountId, userId));
+        
+        return account.getTransactions();
     }
     
 }

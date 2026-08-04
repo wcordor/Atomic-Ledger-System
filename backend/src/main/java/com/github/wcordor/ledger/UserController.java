@@ -153,5 +153,15 @@ public class UserController {
 
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
 	}
+
+	@GetMapping("users/{id}/accounts/{accountId}/transactions")
+	public CollectionModel<EntityModel<Transaction>> allTransactions(@PathVariable("id") Long userId,
+		@PathVariable("accountId") Long accountId) {
+		
+		List<EntityModel<Transaction>> transactions = transactionService.getTransactions(accountId, userId).stream()
+		.map(transactionAssembler::toModel).collect(Collectors.toList());
+
+		return CollectionModel.of(transactions, linkTo(methodOn(UserController.class).allTransactions(userId, accountId)).withSelfRel());
+	}
     
 }

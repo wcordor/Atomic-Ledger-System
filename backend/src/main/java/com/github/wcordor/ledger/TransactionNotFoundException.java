@@ -2,8 +2,8 @@ package com.github.wcordor.ledger;
 
 public class TransactionNotFoundException extends RuntimeException {
 
-    public TransactionNotFoundException(Long id) {
-        super("Could not find transaction " + id);
+    public TransactionNotFoundException(Long transactionId, Long accountId) {
+        super("Transaction " + transactionId + " either does not exist or does not belong to account " + accountId + ".");
     }
 
 }

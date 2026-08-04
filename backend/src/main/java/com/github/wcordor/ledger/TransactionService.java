@@ -19,12 +19,14 @@ public class TransactionService {
     private final AccountRepository accountRepository;
     private final TransactionRepository transactionRepository;
     private final IdempotencyKeyRepository idempotencyKeyRepository;
+    private final AccountService accountService;
 
     public TransactionService(AccountRepository accountRepository, TransactionRepository transactionRepository,
-        IdempotencyKeyRepository idempotencyKeyRepository) {
+        IdempotencyKeyRepository idempotencyKeyRepository, AccountService accountService) {
         this.accountRepository = accountRepository;
         this.transactionRepository = transactionRepository;
         this.idempotencyKeyRepository = idempotencyKeyRepository;
+        this.accountService = accountService;
     }
 
     @Retryable(retryFor = { PessimisticLockingFailureException.class }, maxAttempts = 3,
@@ -78,8 +80,7 @@ public class TransactionService {
     }
 
     public List<Transaction> getTransactions(Long accountId, Long userId) {
-        Account account = accountRepository.findByIdAndUser_Id(accountId, userId)
-            .orElseThrow(() -> new AccountNotFoundException(accountId, userId));
+        Account account = accountService.getAccount(accountId, userId);
         
         return account.getTransactions();
     }

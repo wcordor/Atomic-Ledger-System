@@ -84,5 +84,18 @@ public class TransactionService {
         
         return account.getTransactions();
     }
+
+    public Transaction getTransaction(Long transactionId, Long accountId, Long userId) {
+        accountService.getAccount(accountId, userId);
+
+        Transaction transaction = transactionRepository.findById(transactionId)
+            .orElseThrow(() -> new TransactionNotFoundException(transactionId, accountId));
+
+        if (transaction.getSenderId() != accountId && transaction.getReceiverId() != accountId) {
+            throw new TransactionNotFoundException(transactionId, accountId);
+        }
+
+        return transaction;
+    }
     
 }

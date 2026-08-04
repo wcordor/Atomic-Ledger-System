@@ -163,5 +163,13 @@ public class UserController {
 
 		return CollectionModel.of(transactions, linkTo(methodOn(UserController.class).allTransactions(userId, accountId)).withSelfRel());
 	}
-    
+
+	@GetMapping("users/{id}/accounts/{accountId}/transactions/{transactionId}")
+    public EntityModel<Transaction> oneTransaction(@PathVariable("id") Long userId,
+		@PathVariable("accountId") Long accountId, @PathVariable("transactionId") Long transactionId) {
+		
+		Transaction transaction = transactionService.getTransaction(transactionId, accountId, userId);
+
+		return transactionAssembler.toModel(transaction);
+	}
 }

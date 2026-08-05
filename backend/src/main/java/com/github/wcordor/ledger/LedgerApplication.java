@@ -3,14 +3,13 @@ package com.github.wcordor.ledger;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.retry.annotation.EnableRetry;
-
-import jakarta.persistence.EntityNotFoundException;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -27,37 +26,49 @@ public class LedgerApplication {
 	}
 
 	@Bean
-	public CommandLineRunner demo(UserRepository userRepository, AccountRepository accountRepository, TransactionService transactionService, AccountService accService) {
+	public CommandLineRunner demo(UserRepository userRepository, AccountRepository accountRepository,
+		TransactionService transactionService, AccountService accountService, UserService userService) {
+
 		return (args) -> {
 
-			User user1 = new User("John", "Smith");
-			userRepository.save(user1);
+			User user1 = userService.createUser(UUID.randomUUID().toString(), "John", "Smith");
 			Long user1_id = user1.getId();
 
-			Account account1 = accService.createAccount("idempotency1", user1_id, "Savings", new BigDecimal("5000.00"), "GBP");
-			Account account2 = accService.createAccount("idempotency2", user1_id, "Checking", new BigDecimal("1000.00"), "GBP");
+			Account account1 = accountService.createAccount(UUID.randomUUID().toString(), user1_id,
+				"Savings", new BigDecimal("5000.00"), "GBP");
 
-			User user2 = new User("Bernard", "Jones");
-			userRepository.save(user2);
+			Account account2 = accountService.createAccount(UUID.randomUUID().toString(), user1_id,
+				"Checking", new BigDecimal("1000.00"), "GBP");
+
+			User user2 = userService.createUser(UUID.randomUUID().toString(), "Bernard", "Jones");
 			Long user2_id = user2.getId();
 
-			Account account3 = accService.createAccount("idempotency3", user2_id, "Investment", new BigDecimal("15000.00"), "USD");
-			Account account4 = accService.createAccount("idempotency4", user2_id, "Savings", new BigDecimal("7000.00"), "USD");
-			Account account5 = accService.createAccount("idempotency5", user2_id, "Checking", new BigDecimal("3000.00"), "USD");
+			Account account3 = accountService.createAccount(UUID.randomUUID().toString(), user2_id,
+				"Investment", new BigDecimal("15000.00"), "USD");
 
-			User user3 = new User("Deborah", "Adams");
-			userRepository.save(user3);
+			Account account4 = accountService.createAccount(UUID.randomUUID().toString(), user2_id, 
+				"Savings", new BigDecimal("7000.00"), "USD");
+
+			Account account5 = accountService.createAccount(UUID.randomUUID().toString(), user2_id,
+				"Checking", new BigDecimal("3000.00"), "USD");
+
+			User user3 = userService.createUser(UUID.randomUUID().toString(), "Deborah", "Adams");
 			Long user3_id = user3.getId();
 
-			Account account6 = accService.createAccount("idempotency6", user3_id, "Savings", new BigDecimal("3000.00"), "USD");
-			Account account7 = accService.createAccount("idempotency7", user3_id, "Checking", new BigDecimal("1000.00"), "USD");
+			Account account6 = accountService.createAccount(UUID.randomUUID().toString(), user3_id,
+				"Savings", new BigDecimal("3000.00"), "USD");
 
-			User user4 = new User("Mary", "Johnson");
-			userRepository.save(user4);
+			Account account7 = accountService.createAccount(UUID.randomUUID().toString(), user3_id,
+				"Checking", new BigDecimal("1000.00"), "USD");
+
+			User user4 = userService.createUser(UUID.randomUUID().toString(), "Mary", "Johnson");
 			Long user4_id = user4.getId();
 
-			Account account8 = accService.createAccount("idempotency8", user4_id, "Savings", new BigDecimal("5500.00"), "USD");
-			Account account9 = accService.createAccount("idempotency9", user4_id, "Checking", new BigDecimal("1500.00"), "USD");
+			Account account8 = accountService.createAccount(UUID.randomUUID().toString(), user4_id,
+				"Savings", new BigDecimal("5500.00"), "USD");
+
+			Account account9 = accountService.createAccount(UUID.randomUUID().toString(), user4_id,
+				"Checking", new BigDecimal("1500.00"), "USD");
 
 			logger.info("");
 			logger.info("List of Preloaded Users:");
@@ -91,9 +102,8 @@ public class LedgerApplication {
 			Long account5_id = account5.getId();
 			Long account7_id = account7.getId();
 
-			account5 = accountRepository.findById(account5_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
-			account7 = accountRepository.findById(account7_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
-
+			account5 = accountService.getAccount(account5_id, user2_id);
+			account7 = accountService.getAccount(account7_id, user3_id);
 			BigDecimal account5_bal = account5.getBalance();
 			BigDecimal account7_bal = account7.getBalance();
 			String account5_currency = account5.getCurrency();
@@ -111,8 +121,8 @@ public class LedgerApplication {
 				logger.info("");
 			}
 
-			account5 = accountRepository.findById(account5_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
-			account7 = accountRepository.findById(account7_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+			account5 = accountService.getAccount(account5_id, user2_id);
+			account7 = accountService.getAccount(account7_id, user3_id);
 			account5_bal = account5.getBalance();
 			account7_bal = account7.getBalance();
 
@@ -143,8 +153,8 @@ public class LedgerApplication {
 				logger.info("");
 			}
 
-			account5 = accountRepository.findById(account5_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
-			account7 = accountRepository.findById(account7_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+			account5 = accountService.getAccount(account5_id, user2_id);
+			account7 = accountService.getAccount(account7_id, user3_id);
 			BigDecimal account5_bal_rolledBack = account5.getBalance();
 			BigDecimal account7_bal_rolledBack = account7.getBalance();
 
@@ -160,7 +170,7 @@ public class LedgerApplication {
 			}
 
 			Long account9_id = account9.getId();
-			account9 = accountRepository.findById(account9_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+			account9 = accountService.getAccount(account9_id, user4_id);
 			BigDecimal account9_bal = account9.getBalance();
 			String account9_currency = account9.getCurrency();
 			
@@ -204,9 +214,9 @@ public class LedgerApplication {
 			CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
 			accountRepository.flush();
 
-			account5 = accountRepository.findById(account5_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
-			account7 = accountRepository.findById(account7_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
-			account9 = accountRepository.findById(account9_id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+			account5 = accountService.getAccount(account5_id, user2_id);
+			account7 = accountService.getAccount(account7_id, user3_id);
+			account9 = accountService.getAccount(account9_id, user4_id);
 
 			account9_bal = account9.getBalance();
 			account5_bal = account5.getBalance();

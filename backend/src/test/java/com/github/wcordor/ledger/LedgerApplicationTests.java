@@ -187,11 +187,13 @@ class LedgerApplicationTests {
 		assertEquals(new BigDecimal("600.00"), account.getBalance());
 		
 		assertThrows(InsufficientFundsException.class, () -> {
-			transactionService.moneyTransfer(acc_Id, acc_userId, acc2_Id, new BigDecimal("4000.00"), "USD");
+			transactionService.moneyTransfer(UUID.randomUUID().toString(), account_userId, account_id, account2_id,
+				new BigDecimal("4000.00"), "USD");
 		});
 
 		try {
-			transactionService.moneyTransfer(acc_Id, acc_userId, acc2_Id, new BigDecimal("800.00"), "USD");
+			transactionService.moneyTransfer(UUID.randomUUID().toString(), account_userId, account_id, account2_id,
+				new BigDecimal("800.00"), "USD");
 		} catch (InsufficientFundsException e) {
 			logger.error("ERROR: " + e.getMessage());
 		}
@@ -250,7 +252,8 @@ class LedgerApplicationTests {
 		for (int i = 0; i < 50; i++) {
 			CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
 				try {
-					transactionService.transferMoney(acc2_Id, acc_Id, new BigDecimal("10.00"), "USD");
+					transactionService.moneyTransfer(UUID.randomUUID().toString(), account_userId, account_id, account2_id,
+						new BigDecimal("10.00"), "USD");
 				} catch (InsufficientFundsException e) {
 					logger.error("ERROR: " + e.getMessage());
 				}
@@ -280,7 +283,9 @@ class LedgerApplicationTests {
 		for (int i = 0; i < 50; i++) {
 			CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
 				try {
-					transactionService.transferMoney(acc2_Id, acc_Id, new BigDecimal("30.00"), "USD");
+					transactionService.moneyTransfer(UUID.randomUUID().toString(), account_userId, account_id, account2_id,
+						new BigDecimal("30.00"), "USD");
+						
 					successCount.incrementAndGet();
 				} catch (InsufficientFundsException e) {
 					logger.error("ERROR: " + e.getMessage());

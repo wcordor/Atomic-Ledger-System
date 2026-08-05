@@ -140,7 +140,10 @@ public class LedgerApplication {
 				logger.info("---------------------------------------------------------------");	
 				logger.info(String.format("Balances before transfer: Account %d - %,.2f %s, Account %d - %,.2f %s",
 					account7_id, account7_bal, account7_currency, account5_id, account5_bal, account5_currency));
-				transactionService.moneyTransfer("idempotency11", user3_id, account7_id, account5_id, new BigDecimal("2000.00"), "USD");				
+
+				transactionService.moneyTransfer(UUID.randomUUID().toString(), user3_id, account7_id, account5_id,
+					new BigDecimal("2000.00"), "USD");
+
 				logger.info("");
 			} catch (InsufficientFundsException e) {
 				logger.info("");
@@ -184,7 +187,7 @@ public class LedgerApplication {
 			for (int i = 0; i < 20; i++) {
 				CompletableFuture<Void> future1 = CompletableFuture.runAsync(() -> {
 					try {
-						transactionService.moneyTransfer("idempotency12", user2_id, account5_id, account9_id, new BigDecimal("50.00"), "USD");
+						transactionService.moneyTransfer(UUID.randomUUID().toString(), user2_id, account5_id, account9_id, new BigDecimal("50.00"), "USD");
 					} catch (InsufficientFundsException e) {
 						logger.info("");
 						logger.error("ERROR: " + e.getMessage());
@@ -195,7 +198,7 @@ public class LedgerApplication {
 
 				CompletableFuture<Void> future2 = CompletableFuture.runAsync(() -> {
 					try {
-						transactionService.moneyTransfer("idempotency13", user3_id, account7_id, account9_id, new BigDecimal("25.00"), "USD");
+						transactionService.moneyTransfer(UUID.randomUUID().toString(), user3_id, account7_id, account9_id, new BigDecimal("25.00"), "USD");
 					} catch (InsufficientFundsException e) {
 						logger.info("");
 						logger.error("ERROR: " + e.getMessage());

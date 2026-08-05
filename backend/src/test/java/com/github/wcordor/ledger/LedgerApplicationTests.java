@@ -41,7 +41,13 @@ class LedgerApplicationTests {
 	private TransactionRepository transactionRepository;
 
 	@Autowired
-	private AccountService as;
+	private IdempotencyKeyRepository idempotencyKeyRepository;
+
+	@Autowired
+	private AccountService accountService;
+
+	@Autowired
+	private UserService userService;
 
 	private Account acc;
 	private Long acc_Id;

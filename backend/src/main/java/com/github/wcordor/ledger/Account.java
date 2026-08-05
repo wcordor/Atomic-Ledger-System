@@ -23,9 +23,6 @@ public class Account {
 
     private String name;
 
-    @Version
-    private Integer version;
-
     protected Account() {}
 
     Account(User user, String name, BigDecimal initialDeposit, String currency) {
@@ -124,7 +121,6 @@ public class Account {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((version == null) ? 0 : version.hashCode());
         return result;
     }
 
@@ -141,11 +137,6 @@ public class Account {
             if (other.id != null)
                 return false;
         } else if (!id.equals(other.id))
-            return false;
-        if (version == null) {
-            if (other.version != null)
-                return false;
-        } else if (!version.equals(other.version))
             return false;
         return true;
     }

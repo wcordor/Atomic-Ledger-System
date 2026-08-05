@@ -16,9 +16,6 @@ public class User {
     private String firstName;
     private String lastName;
 
-    @Version
-    private Integer version;
-
     protected User() {}
 
     public User(String firstName, String lastName) {
@@ -70,7 +67,6 @@ public class User {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((version == null) ? 0 : version.hashCode());
         return result;
     }
 
@@ -87,11 +83,6 @@ public class User {
             if (other.id != null)
                 return false;
         } else if (!id.equals(other.id))
-            return false;
-        if (version == null) {
-            if (other.version != null)
-                return false;
-        } else if (!version.equals(other.version))
             return false;
         return true;
     }

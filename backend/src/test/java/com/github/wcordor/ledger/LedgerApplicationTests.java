@@ -176,16 +176,12 @@ class LedgerApplicationTests {
 	@Test
 	void testMoneyTransfers() {
 		// acc balance: $1,000, acc2 balance: $200
-		Long acc_userId = acc.getUserId();
+		Transaction transaction = 
+			transactionService.moneyTransfer(UUID.randomUUID().toString(), account_userId, account_id, account2_id,
+				new BigDecimal("400.00"), "USD");
 
-		try {
-			transactionService.moneyTransfer(acc_Id, acc_userId, acc2_Id, new BigDecimal("400.00"), "USD");
-		} catch (InsufficientFundsException e) {
-			logger.error("ERROR: " + e.getMessage());
-		}
-
-		acc = accountRepository.findById(acc_Id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
-		acc2 = accountRepository.findById(acc2_Id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+		account = accountService.getAccount(account_id, account_userId);
+		account2 = accountService.getAccount(account2_id, acc2_userId);
 
 		assertEquals(new BigDecimal("600.00"), account2.getBalance());
 		assertEquals(new BigDecimal("600.00"), account.getBalance());
@@ -209,7 +205,6 @@ class LedgerApplicationTests {
         List<Transaction> a_transactions = account.getTransactions();
         List<Transaction> a2_transactions = account2.getTransactions();
 
-		Transaction transaction = a_transactions.get(0);
         assertEquals(1, a_transactions.size());
         assertEquals(1, a2_transactions.size());
 		assertTrue(a_transactions.contains(transaction) && a2_transactions.contains(transaction));
@@ -219,21 +214,13 @@ class LedgerApplicationTests {
 	@Test
 	void testTransactionFunctions() {
 
-		Long acc_userId = acc.getUserId();
+		Transaction transaction =
+			transactionService.moneyTransfer(UUID.randomUUID().toString(), account_userId, account_id, account2_id,
+				new BigDecimal("400.00"), "USD");
 
-		try {
-			transactionService.moneyTransfer("t", acc_userId, acc_Id, acc2_Id, new BigDecimal("400.00"), "USD");
-		} catch (InsufficientFundsException e) {
-			logger.error("ERROR: " + e.getMessage());
-		}
+		account = accountService.getAccount(account_id, account_userId);
+        account2 = accountService.getAccount(account2_id, acc2_userId);
 
-		acc = accountRepository.findById(acc_Id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
-        acc2 = accountRepository.findById(acc2_Id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
-
-		List<Transaction> a_transactions = acc.getTransactions();
-		
-
-		Transaction transaction = a_transactions.get(0);
 		assertNotNull(transaction.getId());
 		assertEquals(acc_Id, transaction.getSenderId());
 		assertEquals(acc2_Id, transaction.getReceiverId());
@@ -274,8 +261,8 @@ class LedgerApplicationTests {
 		CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
 		accountRepository.flush();
 
-		acc = accountRepository.findById(acc_Id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
-		acc2 = accountRepository.findById(acc2_Id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+		account = accountService.getAccount(account_id, account_userId);
+		account2 = accountService.getAccount(account2_id, acc2_userId);
 
 		assertEquals(new BigDecimal("500.00"), account.getBalance());
 		assertEquals(new BigDecimal("700.00"), account2.getBalance());
@@ -306,8 +293,8 @@ class LedgerApplicationTests {
 		CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
 		accountRepository.flush();
 
-		acc = accountRepository.findById(acc_Id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
-		acc2 = accountRepository.findById(acc2_Id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+		account = accountService.getAccount(account_id, account_userId);
+		account2 = accountService.getAccount(account2_id, acc2_userId);
 
 		assertEquals(new BigDecimal("10.00"), acc.getBalance());
 		assertEquals(new BigDecimal("1190.00"), acc2.getBalance());

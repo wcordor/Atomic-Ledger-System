@@ -59,9 +59,6 @@ public class TransactionService {
         sender.debit(amount);
         receiver.credit(amount);
 
-        accountRepository.save(receiver);
-        accountRepository.save(sender);
-
         Transaction transaction = new Transaction(receiver, sender, amount, currency);
 
         IdempotencyKey newKey = new IdempotencyKey(idempotencyKey, LocalDateTime.now().plusHours(24));

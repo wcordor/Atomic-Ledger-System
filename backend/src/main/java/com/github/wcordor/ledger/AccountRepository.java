@@ -26,7 +26,9 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     
     List<Account> findByUser_Id(Long id);
     
-    Optional<Account> findByIdAndUser_Id(Long accountId, Long userId);
+    @EntityGraph(attributePaths = {"sent", "received"})
+    @Query("SELECT a FROM Account a WHERE a.id = :id")
+    Optional<Account> findByIdAndUser_Id(@Param("id") Long accountId, @Param("user_Id") Long userId);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<Account> findWithLockingByIdAndUser_Id(Long accountId, Long userId);

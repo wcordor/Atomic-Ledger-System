@@ -123,7 +123,52 @@ class LedgerApplicationTests {
 		List<Account> usd = accountRepository.findByCurrency("USD");
 		assertEquals(2, usd.size());
 		assertTrue(usd.contains(account) && usd.contains(account2));
+
+		List<Account> userAccounts = accountRepository.findByUser_Id(user_id);
+		assertEquals(1, userAccounts.size());
+		assertTrue(userAccounts.contains(account));
+
+		Account actual = accountRepository.findByIdAndUser_Id(account_id, user_id)
+			.orElseThrow(() -> new AccountNotFoundException(account_id, user_id));
+
+		assertEquals(account, actual);
+			
+	}
+
+	@Test
+	void testAccountServiceFunctions() {
+
+		List<Account> accountList = accountService.getAccounts(user_id);
+		assertEquals(1, accountList.size());
+
+		Account account3 = accountService.createAccount("Key-Test", user_id, "Checking",
+			new BigDecimal("300.00"), "USD");
+
+		assertThrows(IdempotencyKeyAlreadyExistsException.class, () -> {
+			accountService.createAccount("Key-Test", user_id, "Checking",
+				new BigDecimal("300.00"), "USD");
+		});
+
+		Account actual = accountService.getAccount(account3.getId(), user_id);
+		assertEquals(account3, actual);
+
+		Account nameChange = accountService.changeName(UUID.randomUUID().toString(),
+			account3.getId(), user_id, "Savings");
+
+		assertEquals("Savings", nameChange.getName());
+
+		assertThrows(AccountDeletionFailureException.class, () -> {
+			accountService.deleteAccount(account3.getId(), user_id);
+		});
+
+		transactionService.moneyTransfer(UUID.randomUUID().toString(), user_id, account3.getId(),
+			account_id, new BigDecimal("300.00"), "USD");
 		
+		accountService.deleteAccount(account3.getId(), user_id);
+
+		accountList = accountService.getAccounts(user_id);
+		
+		assertFalse(accountList.contains(account3));
 	}
 
 	@Test

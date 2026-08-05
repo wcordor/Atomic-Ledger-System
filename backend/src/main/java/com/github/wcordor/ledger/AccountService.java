@@ -69,7 +69,7 @@ public class AccountService {
         IdempotencyKey newKey = new IdempotencyKey(idempotencyKey, LocalDateTime.now().plusHours(24));
         idempotencyKeyRepository.save(newKey);
         
-        return accountRepository.save(account);        
+        return account;        
     }
 
     public void deleteAccount(Long accountId, Long userId) {

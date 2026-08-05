@@ -228,6 +228,21 @@ class LedgerApplicationTests {
 		List<Long> transactionAccIds = transaction.getAccountIds();
 		assertEquals(2, transactionAccIds.size());
 		assertTrue(transactionAccIds.contains(account_id) && transactionAccIds.contains(account2_id));
+	}
+
+	@Test
+	void testTransactionServiceFunctions() {
+
+		Transaction transaction = 
+			transactionService.moneyTransfer(UUID.randomUUID().toString(), user_id, account_id, account2_id,
+				new BigDecimal("400.00"), "USD");
+		
+		List<Transaction> transactions = transactionService.getTransactions(account_id, user_id);
+		assertEquals(1, transactions.size());
+		assertTrue(transactions.contains(transaction));
+
+		Transaction actual = transactionService.getTransaction(transaction.getId(), account_id, user_id);
+		assertEquals(transaction, actual);
 
 	}
 

@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -68,22 +69,27 @@ class LedgerApplicationTests {
 		userRepository.deleteAll();
 		transactionRepository.deleteAll();
 
-		user = new User("Account", "Owner");
-		userRepository.save(user);
-		user_Id = user.getId();
+		user = userService.createUser(UUID.randomUUID().toString(), "Account", "Owner");
+		user_id = user.getId();
 
-		acc = as.createAccount("1", user_Id, "Savings", new BigDecimal("1000.00"), "USD");
-		user = userRepository.findById(user_Id)
-			.orElseThrow(() -> new EntityNotFoundException("Account not found"));
-		acc_Id = acc.getId();
+		account = accountService.createAccount(UUID.randomUUID().toString(), user_id, "Savings",
+			new BigDecimal("1000.00"), "USD");
+
+		account_id = account.getId();
+		account_userId = account.getUserId();
+		user = userService.getUser(user_id);
 		
 
 		user2 = new User("Account", "Owner II");
 		userRepository.save(user2);
 		user2_Id = user2.getId();
 
-		acc2 = as.createAccount("2", user2_Id, "Checking", new BigDecimal("200.00"), "USD");
-		acc2_Id = acc2.getId();
+		account2 = accountService.createAccount(UUID.randomUUID().toString(), user2_id, "Checking",
+			new BigDecimal("200.00"), "USD");
+
+		account2_id = account2.getId();
+		acc2_userId = account2.getUserId();
+		user2 = userService.getUser(user2_id);
 
 	}
 
@@ -146,9 +152,9 @@ class LedgerApplicationTests {
 
 		assertFalse(2 == userAccs.size());
 
-		Account acc3 = as.createAccount("3", user_Id, "Investment", new BigDecimal("5000.00"), "USD");
-		user = userRepository.findById(user_Id)
-			.orElseThrow(() -> new EntityNotFoundException("User not found"));
+		Account acc3 = accountService.createAccount(UUID.randomUUID().toString(), user_id, "Investment",
+			new BigDecimal("5000.00"), "USD");
+		user = userService.getUser(user_id);
 		userAccs = user.getAccounts();
 
 		assertTrue(2 == userAccs.size());

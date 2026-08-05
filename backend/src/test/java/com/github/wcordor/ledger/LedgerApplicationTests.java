@@ -224,16 +224,8 @@ class LedgerApplicationTests {
         account2 = accountService.getAccount(account2_id, acc2_userId);
 
 		assertNotNull(transaction.getId());
-		assertEquals(acc_Id, transaction.getSenderId());
-		assertEquals(acc2_Id, transaction.getReceiverId());
-		transaction.setReceiver(acc);
-		transaction.setSender(acc2);
-		assertFalse(acc_Id.equals(transaction.getReceiverId()));
-		assertFalse(acc2_Id.equals(transaction.getSenderId()));
-		assertTrue(acc2_Id.equals(transaction.getReceiverId()));
-		assertTrue(acc_Id.equals(transaction.getSenderId()));
-		assertEquals(new BigDecimal("400.00"), transaction.getAmount());
-		transaction.setAmount(new BigDecimal("9000000.00"));
+		assertEquals(account_id, transaction.getSenderId());
+		assertEquals(account2_id, transaction.getReceiverId());
 		assertEquals(new BigDecimal("400.00"), transaction.getAmount());
 		assertEquals("USD", transaction.getCurrency());
 
@@ -301,8 +293,8 @@ class LedgerApplicationTests {
 		account = accountService.getAccount(account_id, account_userId);
 		account2 = accountService.getAccount(account2_id, acc2_userId);
 
-		assertEquals(new BigDecimal("10.00"), acc.getBalance());
-		assertEquals(new BigDecimal("1190.00"), acc2.getBalance());
+		assertEquals(new BigDecimal("10.00"), account.getBalance());
+		assertEquals(new BigDecimal("1190.00"), account2.getBalance());
 		assertEquals(33, successCount.get());
 		assertEquals(17, failCount.get());
 

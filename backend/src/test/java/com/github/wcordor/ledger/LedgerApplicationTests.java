@@ -49,15 +49,17 @@ class LedgerApplicationTests {
 	@Autowired
 	private UserService userService;
 
-	private Account acc;
-	private Long acc_Id;
-	private Account acc2;
-	private Long acc2_Id;
+	private Account account;
+	private Long account_id;
+	private Long account_userId;
+	private Account account2;
+	private Long account2_id;
+	private Long acc2_userId;
 
 	private User user;
-	private Long user_Id;
+	private Long user_id;
 	private User user2;
-	private Long user2_Id;
+	private Long user2_id;
 
 	@BeforeEach
 	void setUp() {

@@ -96,20 +96,20 @@ class LedgerApplicationTests {
 	@Test
 	void testAccountFunctions() {
 
-		assertNotNull(acc_Id);
-		assertEquals("Savings", acc.getName());
-		assertEquals(new BigDecimal("1000.00"), acc.getBalance());
-		assertEquals("USD", acc.getCurrency());
-		assertEquals(user_Id, acc.getUserId());
+		assertNotNull(account_id);
+		assertEquals("Savings", account.getName());
+		assertEquals(new BigDecimal("1000.00"), account.getBalance());
+		assertEquals("USD", account.getCurrency());
+		assertEquals(user_id, account.getUserId());
 
-		acc.setName("Checking");
-		assertEquals("Checking", acc.getName());
+		account.setName("Checking");
+		assertEquals("Checking", account.getName());
 
-		acc.setCurrency("GBP");
-		assertEquals("GBP", acc.getCurrency());
-		acc.setUser(user2);
-		assertNotEquals(user2_Id, acc.getUserId());
-		assertEquals(user_Id, acc.getUserId());
+		account.setCurrency("GBP");
+		assertEquals("GBP", account.getCurrency());
+		account.setUser(user2);
+		assertNotEquals(user2_id, account.getUserId());
+		assertEquals(user_id, account.getUserId());
 
 	}
 
@@ -117,37 +117,37 @@ class LedgerApplicationTests {
 	void testAccountRepoFunctions() {
 
 		assertEquals(1, accountRepository.findByName("Savings").size());
-		assertTrue(accountRepository.findByName("Savings").contains(acc));
+		assertTrue(accountRepository.findByName("Savings").contains(account));
 		
-		assertEquals(acc,
-			accountRepository.findById(acc_Id).orElseThrow(() -> new EntityNotFoundException("Account not found")));
+		assertEquals(account,
+			accountRepository.findById(account_id).orElseThrow(() -> new EntityNotFoundException("Account not found")));
 		assertEquals(1, accountRepository.findByUserLastName("Owner").size());
-		assertTrue(accountRepository.findByUserLastName("Owner").contains(acc));
+		assertTrue(accountRepository.findByUserLastName("Owner").contains(account));
 
 		List<Account> usd = accountRepository.findByCurrency("USD");
 		assertEquals(2, usd.size());
-		assertTrue(usd.contains(acc) && usd.contains(acc2));
+		assertTrue(usd.contains(account) && usd.contains(account2));
 		
 	}
 
 	@Test
 	void testUserFunctions() {
 
-		assertNotNull(user_Id);
+		assertNotNull(user_id);
 		assertEquals("Account", user.getFirstName());
 		assertEquals("Owner", user.getLastName());
-		assertNotNull(user2_Id);
+		assertNotNull(user2_id);
 		assertEquals("Account", user2.getFirstName());
 		assertEquals("Owner II", user2.getLastName());
 
 		assertEquals(1, user.getAccounts().size());
-		assertTrue(user.getAccounts().contains(acc));
+		assertTrue(user.getAccounts().contains(account));
 		
 		user.setFirstName("User");
 		user.setLastName("1");
 		String name = user.getFirstName() + " " + user.getLastName();
 		assertEquals("User 1", name);
-		user.addAccount(acc2);
+		user.addAccount(account2);
 		List<Account> userAccs = user.getAccounts();
 
 		assertFalse(2 == userAccs.size());
@@ -158,7 +158,7 @@ class LedgerApplicationTests {
 		userAccs = user.getAccounts();
 
 		assertTrue(2 == userAccs.size());
-		assertTrue(userAccs.contains(acc) && userAccs.contains(acc3));
+		assertTrue(userAccs.contains(account) && userAccs.contains(acc3));
 		
 	}
 
@@ -166,10 +166,10 @@ class LedgerApplicationTests {
 	void testUserRepoFunctions() {
 
 		assertEquals(1, userRepository.findByLastName("Owner").size());
-		assertEquals(user, userRepository.findById(user_Id)
+		assertEquals(user, userRepository.findById(user_id)
 			.orElseThrow(() -> new EntityNotFoundException("User not found")));
 		assertEquals(1, userRepository.findByLastName("Owner II").size());
-		assertEquals(user2, userRepository.findById(user2_Id)
+		assertEquals(user2, userRepository.findById(user2_id)
 			.orElseThrow(() -> new EntityNotFoundException("User not found")));
 	}
 
@@ -187,8 +187,8 @@ class LedgerApplicationTests {
 		acc = accountRepository.findById(acc_Id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
 		acc2 = accountRepository.findById(acc2_Id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
 
-		assertEquals(new BigDecimal("600.00"), acc2.getBalance());
-		assertEquals(new BigDecimal("600.00"), acc.getBalance());
+		assertEquals(new BigDecimal("600.00"), account2.getBalance());
+		assertEquals(new BigDecimal("600.00"), account.getBalance());
 		
 		assertThrows(InsufficientFundsException.class, () -> {
 			transactionService.moneyTransfer(acc_Id, acc_userId, acc2_Id, new BigDecimal("4000.00"), "USD");
@@ -200,14 +200,14 @@ class LedgerApplicationTests {
 			logger.error("ERROR: " + e.getMessage());
 		}
 
-        acc = accountRepository.findById(acc_Id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
-        acc2 = accountRepository.findById(acc2_Id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+        account = accountService.getAccount(account_id, account_userId);
+        account2 = accountService.getAccount(account2_id, acc2_userId);
 
-		assertEquals(new BigDecimal("600.00"), acc.getBalance());
-		assertEquals(new BigDecimal("600.00"), acc2.getBalance());
+		assertEquals(new BigDecimal("600.00"), account.getBalance());
+		assertEquals(new BigDecimal("600.00"), account2.getBalance());
 
-        List<Transaction> a_transactions = acc.getTransactions();
-        List<Transaction> a2_transactions = acc2.getTransactions();
+        List<Transaction> a_transactions = account.getTransactions();
+        List<Transaction> a2_transactions = account2.getTransactions();
 
 		Transaction transaction = a_transactions.get(0);
         assertEquals(1, a_transactions.size());
@@ -250,7 +250,7 @@ class LedgerApplicationTests {
 
 		List<Long> transactionAccIds = transaction.getAccountIds();
 		assertEquals(2, transactionAccIds.size());
-		assertTrue(transactionAccIds.contains(acc_Id) && transactionAccIds.contains(acc2_Id));
+		assertTrue(transactionAccIds.contains(account_id) && transactionAccIds.contains(account2_id));
 
 	}
 
@@ -277,8 +277,8 @@ class LedgerApplicationTests {
 		acc = accountRepository.findById(acc_Id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
 		acc2 = accountRepository.findById(acc2_Id).orElseThrow(() -> new EntityNotFoundException("Account not found"));
 
-		assertEquals(new BigDecimal("500.00"), acc.getBalance());
-		assertEquals(new BigDecimal("700.00"), acc2.getBalance());
+		assertEquals(new BigDecimal("500.00"), account.getBalance());
+		assertEquals(new BigDecimal("700.00"), account2.getBalance());
 
 	}
 	

@@ -52,10 +52,8 @@ class LedgerApplicationTests {
 
 	private Account account;
 	private Long account_id;
-	private Long account_userId;
 	private Account account2;
 	private Long account2_id;
-	private Long acc2_userId;
 
 	private User user;
 	private Long user_id;
@@ -77,7 +75,6 @@ class LedgerApplicationTests {
 			new BigDecimal("1000.00"), "USD");
 
 		account_id = account.getId();
-		account_userId = account.getUserId();
 		user = userService.getUser(user_id);
 		
 
@@ -88,7 +85,6 @@ class LedgerApplicationTests {
 			new BigDecimal("200.00"), "USD");
 
 		account2_id = account2.getId();
-		acc2_userId = account2.getUserId();
 		user2 = userService.getUser(user2_id);
 
 	}
@@ -177,29 +173,29 @@ class LedgerApplicationTests {
 	void testMoneyTransfers() {
 		// acc balance: $1,000, acc2 balance: $200
 		Transaction transaction = 
-			transactionService.moneyTransfer(UUID.randomUUID().toString(), account_userId, account_id, account2_id,
+			transactionService.moneyTransfer(UUID.randomUUID().toString(), user_id, account_id, account2_id,
 				new BigDecimal("400.00"), "USD");
 
-		account = accountService.getAccount(account_id, account_userId);
-		account2 = accountService.getAccount(account2_id, acc2_userId);
+		account = accountService.getAccount(account_id, user_id);
+		account2 = accountService.getAccount(account2_id, user2_id);
 
 		assertEquals(new BigDecimal("600.00"), account2.getBalance());
 		assertEquals(new BigDecimal("600.00"), account.getBalance());
 		
 		assertThrows(InsufficientFundsException.class, () -> {
-			transactionService.moneyTransfer(UUID.randomUUID().toString(), account_userId, account_id, account2_id,
+			transactionService.moneyTransfer(UUID.randomUUID().toString(), user_id, account_id, account2_id,
 				new BigDecimal("4000.00"), "USD");
 		});
 
 		try {
-			transactionService.moneyTransfer(UUID.randomUUID().toString(), account_userId, account_id, account2_id,
+			transactionService.moneyTransfer(UUID.randomUUID().toString(), user_id, account_id, account2_id,
 				new BigDecimal("800.00"), "USD");
 		} catch (InsufficientFundsException e) {
 			logger.error("ERROR: " + e.getMessage());
 		}
 
-        account = accountService.getAccount(account_id, account_userId);
-        account2 = accountService.getAccount(account2_id, acc2_userId);
+        account = accountService.getAccount(account_id, user_id);
+        account2 = accountService.getAccount(account2_id, user2_id);
 
 		assertEquals(new BigDecimal("600.00"), account.getBalance());
 		assertEquals(new BigDecimal("600.00"), account2.getBalance());
@@ -217,11 +213,11 @@ class LedgerApplicationTests {
 	void testTransactionFunctions() {
 
 		Transaction transaction =
-			transactionService.moneyTransfer(UUID.randomUUID().toString(), account_userId, account_id, account2_id,
+			transactionService.moneyTransfer(UUID.randomUUID().toString(), user_id, account_id, account2_id,
 				new BigDecimal("400.00"), "USD");
 
-		account = accountService.getAccount(account_id, account_userId);
-        account2 = accountService.getAccount(account2_id, acc2_userId);
+		account = accountService.getAccount(account_id, user_id);
+        account2 = accountService.getAccount(account2_id, user2_id);
 
 		assertNotNull(transaction.getId());
 		assertEquals(account_id, transaction.getSenderId());
@@ -244,7 +240,7 @@ class LedgerApplicationTests {
 		for (int i = 0; i < 50; i++) {
 			CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
 				try {
-					transactionService.moneyTransfer(UUID.randomUUID().toString(), account_userId, account_id, account2_id,
+					transactionService.moneyTransfer(UUID.randomUUID().toString(), user_id, account_id, account2_id,
 						new BigDecimal("10.00"), "USD");
 				} catch (InsufficientFundsException e) {
 					logger.error("ERROR: " + e.getMessage());
@@ -256,8 +252,8 @@ class LedgerApplicationTests {
 		CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
 		accountRepository.flush();
 
-		account = accountService.getAccount(account_id, account_userId);
-		account2 = accountService.getAccount(account2_id, acc2_userId);
+		account = accountService.getAccount(account_id, user_id);
+		account2 = accountService.getAccount(account2_id, user2_id);
 
 		assertEquals(new BigDecimal("500.00"), account.getBalance());
 		assertEquals(new BigDecimal("700.00"), account2.getBalance());
@@ -275,7 +271,7 @@ class LedgerApplicationTests {
 		for (int i = 0; i < 50; i++) {
 			CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
 				try {
-					transactionService.moneyTransfer(UUID.randomUUID().toString(), account_userId, account_id, account2_id,
+					transactionService.moneyTransfer(UUID.randomUUID().toString(), user_id, account_id, account2_id,
 						new BigDecimal("30.00"), "USD");
 						
 					successCount.incrementAndGet();
@@ -290,8 +286,8 @@ class LedgerApplicationTests {
 		CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
 		accountRepository.flush();
 
-		account = accountService.getAccount(account_id, account_userId);
-		account2 = accountService.getAccount(account2_id, acc2_userId);
+		account = accountService.getAccount(account_id, user_id);
+		account2 = accountService.getAccount(account2_id, user2_id);
 
 		assertEquals(new BigDecimal("10.00"), account.getBalance());
 		assertEquals(new BigDecimal("1190.00"), account2.getBalance());

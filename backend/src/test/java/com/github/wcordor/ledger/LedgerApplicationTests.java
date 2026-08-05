@@ -233,11 +233,6 @@ class LedgerApplicationTests {
 		transaction.setAmount(new BigDecimal("9000000.00"));
 		assertEquals(new BigDecimal("400.00"), transaction.getAmount());
 		assertEquals("USD", transaction.getCurrency());
-		transaction.setCurrency("GBP");
-		assertEquals("USD", transaction.getCurrency());
-		assertEquals(Status.SUCCESSFUL, transaction.getStatus());
-		transaction.setStatus(Status.FAILED);
-		assertEquals(Status.SUCCESSFUL, transaction.getStatus());
 
 		List<Long> transactionAccIds = transaction.getAccountIds();
 		assertEquals(2, transactionAccIds.size());

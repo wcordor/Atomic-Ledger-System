@@ -62,46 +62,16 @@ public class Transaction {
         return id;
     }
 
-    public void setSender(Account sender) {
-        if (this.sender == null) {
-            this.sender = sender;
-        }
-    }
-
-    public void setReceiver(Account receiver) {
-        if (this.receiver == null) {
-            this.receiver = receiver;
-        }
-    }
-
     public BigDecimal getAmount() {
         return amount;
-    }
-
-    public void setAmount(BigDecimal amount) {
-        if (this.amount == null) {
-            this.amount = amount;
-        }
     }
 
     public String getCurrency() {
         return currency;
     }
 
-    public void setCurrency(String currency) {
-        if (this.currency == null) {
-            this.currency = currency;
-        }
-    }
-
     public Status getStatus() {
         return status;
-    }
-
-    public void setStatus(Status status) {
-        if (this.status != Status.SUCCESSFUL && this.status != Status.FAILED) {
-            this.status = status;
-        }
     }
 
     public Long getSenderId() {

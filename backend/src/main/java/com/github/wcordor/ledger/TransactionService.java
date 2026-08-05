@@ -44,12 +44,11 @@ public class TransactionService {
             }
         }
         
-        Account sender = getAccountWithTransactions(senderId, sender_userId);
+        Account sender = accountRepository.findWithLockingByIdAndUser_Id(senderId, sender_userId)
+        .orElseThrow(() -> new AccountNotFoundException(senderId, sender_userId));
 
         Account receiver = accountRepository.findWithLockingById(receiverId)
             .orElseThrow(() -> new EntityNotFoundException("Account " + receiverId + " not found"));
-
-        receiver = getAccountWithTransactions(receiverId, receiver.getUserId());
 
         BigDecimal expected_senderBal = sender.getBalance().subtract(amount);
         
@@ -69,14 +68,6 @@ public class TransactionService {
         idempotencyKeyRepository.save(newKey);
 
         return transactionRepository.save(transaction);
-    }
-
-    public Account getAccountWithTransactions(Long accountId, Long userId) {
-        Account account = accountRepository.findWithLockingByIdAndUser_Id(accountId, userId)
-        .orElseThrow(() -> new AccountNotFoundException(accountId, userId));
-        account.getSent().size();
-        account.getReceived().size();
-        return account;
     }
 
     public List<Transaction> getTransactions(Long accountId, Long userId) {

@@ -114,7 +114,7 @@ class LedgerApplicationTests {
 	}
 
 	@Test
-	void testAccountRepoFunctions() {
+	void testAccountRepositoryFunctions() {
 
 		assertEquals(1, accountRepository.findByName("Savings").size());
 		assertTrue(accountRepository.findByName("Savings").contains(account));
@@ -163,7 +163,7 @@ class LedgerApplicationTests {
 	}
 
 	@Test
-	void testUserRepoFunctions() {
+	void testUserRepositoryFunctions() {
 
 		assertEquals(1, userRepository.findByLastName("Owner").size());
 		assertEquals(user, userRepository.findById(user_id)

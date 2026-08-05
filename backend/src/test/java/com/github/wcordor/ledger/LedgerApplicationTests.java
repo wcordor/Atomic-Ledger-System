@@ -68,6 +68,7 @@ class LedgerApplicationTests {
 		accountRepository.deleteAll();
 		userRepository.deleteAll();
 		transactionRepository.deleteAll();
+		idempotencyKeyRepository.deleteAll();
 
 		user = userService.createUser(UUID.randomUUID().toString(), "Account", "Owner");
 		user_id = user.getId();
@@ -80,9 +81,8 @@ class LedgerApplicationTests {
 		user = userService.getUser(user_id);
 		
 
-		user2 = new User("Account", "Owner II");
-		userRepository.save(user2);
-		user2_Id = user2.getId();
+		user2 = userService.createUser(UUID.randomUUID().toString(), "Account", "Owner II");
+		user2_id = user2.getId();
 
 		account2 = accountService.createAccount(UUID.randomUUID().toString(), user2_id, "Checking",
 			new BigDecimal("200.00"), "USD");

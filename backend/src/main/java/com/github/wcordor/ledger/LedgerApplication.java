@@ -108,18 +108,14 @@ public class LedgerApplication {
 			BigDecimal account7_bal = account7.getBalance();
 			String account5_currency = account5.getCurrency();
 			String account7_currency = account7.getCurrency();
+			
+			logger.info("Account " + account5_id + " (B. Jones) transfer 500 USD to Account " + account7_id + " (D. Adams)"); 
+			logger.info("-------------------------------------------------------------");
+			logger.info(String.format("Balances before transfer: Account %d - %,.2f %s, Account %d - %,.2f %s",
+				account5_id, account5_bal, account5_currency, account7_id, account7_bal, account7_currency));
 
-			try {
-				logger.info("Account " + account5_id + " (B. Jones) transfer 500 USD to Account " + account7_id + " (D. Adams)"); 
-				logger.info("-------------------------------------------------------------");
-				logger.info(String.format("Balances before transfer: Account %d - %,.2f %s, Account %d - %,.2f %s",
-					account5_id, account5_bal, account5_currency, account7_id, account7_bal, account7_currency));
-				transactionService.moneyTransfer("idempotency10", user2_id, account5_id, account7_id, new BigDecimal("500.00"), "USD");
-			} catch (InsufficientFundsException e) {
-				logger.info("");
-				logger.error("ERROR: " + e.getMessage());
-				logger.info("");
-			}
+			Transaction transaction = transactionService.moneyTransfer(UUID.randomUUID().toString(), user2_id,
+				account5_id, account7_id, new BigDecimal("500.00"), "USD");
 
 			account5 = accountService.getAccount(account5_id, user2_id);
 			account7 = accountService.getAccount(account7_id, user3_id);
@@ -136,7 +132,6 @@ public class LedgerApplication {
 				logger.info("");
 			}
 
-			Transaction transaction = account5.getTransactions().get(0);
 			logger.info("Transaction Info:");
 			logger.info(transaction.toString());
 

@@ -176,6 +176,10 @@ class LedgerApplicationTests {
 		accountList = accountService.getAccounts(user_id);
 		
 		assertFalse(accountList.contains(account3));
+
+		assertThrows(AccountNotFoundException.class, () -> {
+			accountService.getAccount(account3.getId(), user2_id);
+		});
 	}
 
 	@Test
@@ -328,6 +332,9 @@ class LedgerApplicationTests {
 		Transaction actual = transactionService.getTransaction(transaction.getId(), account_id, user_id);
 		assertEquals(transaction, actual);
 
+		assertThrows(TransactionNotFoundException.class, () -> {
+			transactionService.getTransaction(4L, account_id, user_id); 
+		});
 	}
 
 	@Test

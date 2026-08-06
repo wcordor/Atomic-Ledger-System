@@ -1,103 +1,115 @@
-# Atomic Ledger System
+# The Ledger Service
 
-A compact full-stack demo that connects a Java Spring Boot backend with an Android client to model financial transfers safely and reliably.
+The Ledger Service is a Spring Boot backend project built to model financial account operations in a way that is both practical and technically interesting. The project focuses on building a reliable API for managing users, accounts, and transfers while demonstrating core backend concepts such as transaction safety, idempotency, and concurrency-aware business logic.
 
-## What this project demonstrates
+This project was created as a portfolio piece to highlight my approach to backend development, especially around API design, persistence, and handling real-world reliability concerns in Java.
 
-- A backend API that persists users, accounts, and transfer operations in PostgreSQL.
-- A mobile client that sends transfer requests and can trigger activity from the device accelerometer.
-- Transaction safety and rollback behavior for failed transfers.
-- Clear separation between backend business logic and client-side networking/UI concerns.
+## What the project demonstrates
+
+- A RESTful backend for creating and managing users and accounts
+- Safe money transfer flows with rollback behavior when a transfer cannot be completed
+- Idempotency handling to reduce duplicate or repeated operations
+- Transaction-aware service logic for consistent state updates
+- Spring Data JPA integration with PostgreSQL
+
+## Project highlights
+
+This project is designed to show that I can think beyond simple CRUD work and build systems that behave correctly when data integrity and concurrent operations matter. It is especially relevant for roles focused on backend development, API engineering, or software engineering fundamentals.
+
+## Tech stack
+
+- Java 21
+- Spring Boot 4.0.5
+- Spring Web
+- Spring Data JPA
+- PostgreSQL
+- Gradle
+- JUnit 5
 
 ## Project structure
 
-- `backend`: Spring Boot service with REST controller, JPA repositories, and transfer business logic.
-- `android-client`: Android app with a single activity that posts transfer requests.
+- backend: Spring Boot application and REST API
+  - controllers for users, accounts, and transactions
+  - services for business logic and transaction handling
+  - repositories for persistence
+  - automated tests for core behavior
 
-## How to run
+## Getting started
 
-1. Start PostgreSQL.
-2. In `backend`, run:
+### Prerequisites
 
-   ```bash
-   ./gradlew bootRun
-   ```
+- Java 21
+- PostgreSQL running locally
+- Gradle
 
-3. Run the Android app from `android-client`.
-   - The app is currently configured to call `http://172.25.216.231:8080/transfer`.
-   - Update the URL in `android-client/app/src/main/java/com/example/atomicledgersystem/MainActivity.java` if your backend uses a different host.
+### Database configuration
 
-## Backend details
+The application expects PostgreSQL to be available at:
 
-- `backend/src/main/java/clean/S1Application.java` seeds sample users and accounts at startup.
-- `backend/src/main/java/clean/TransferController.java` exposes a POST `/transfer` endpoint.
-- `backend/src/main/java/clean/TransferService.java` performs the transfer with:
-  - `@Transactional(rollbackOn = InsufficientFundsException.class)` for atomic rollback
-  - `@Retryable(retryFor = RuntimeException.class, maxAttempts = 3)` for transient error handling
-  - optimistic locking through `AccountRepo.findWithLockingById`
-- `backend/src/main/java/clean/TransferRequest.java` expects JSON with `outAccId`, `inAccId`, and `amt`.
+- host: localhost
+- port: 5432
+- database: postgres
+- user: postgres
+- password: my-password
 
-## Android client details
+These values are defined in backend/src/main/resources/application.properties.
 
-- `android-client/app/src/main/java/com/example/atomicledgersystem/MainActivity.java` registers an accelerometer listener.
-- When movement magnitude exceeds `12.0f`, it posts a transfer request to the backend.
-- The client alternates between a normal transfer amount (`10.00`) and a forced failure amount (`1000000.00`).
-- `OkHttp` is used for network requests, and UI updates are performed on the main thread via `runOnUiThread(...)`.
+### Run the backend
 
-## Configuration
-
-From `backend/src/main/resources/application.properties`:
-
-- `spring.datasource.url=jdbc:postgresql://localhost:5432/postgres`
-- `spring.datasource.username=postgres`
-- `spring.datasource.password=my-password`
-- `spring.jpa.hibernate.ddl-auto=create-drop`
-- `spring.jpa.show-sql=true`
-- `server.address=0.0.0.0`
-
-### macOS (Homebrew) Troubleshooting
-
-If you installed PostgreSQL via Homebrew on a Mac, Homebrew defaults to using your system username as the primary role. When starting the application, you may encounter the following error:
-`FATAL: role "postgres" does not exist`
-
-To fix this, log into your local PostgreSQL instance via terminal and create the missing superuser role:
+From the repository root:
 
 ```bash
-# Log into your default local database
-psql postgres
+cd backend
+./gradlew bootRun
+```
 
-# Create the postgres superuser role
-CREATE ROLE postgres WITH SUPERUSER LOGIN;
+The application will start on port 8080.
+
+## API overview
+
+The backend currently exposes the following main endpoints:
+
+### Users
+
+- GET /users
+- POST /users
+- GET /users/{id}
+- PATCH /users/{id}
+- DELETE /users/{id}/remove
+- GET /users/{id}/accounts
+
+### Accounts
+
+- GET /users/{id}/accounts
+- GET /users/{id}/accounts/{accountId}
+- POST /users/{id}/accounts
+- PATCH /users/{id}/accounts/{accountId}
+- DELETE /users/{id}/accounts/{accountId}/remove
+
+### Transactions
+
+- POST /users/{id}/accounts/{accountId}/money-transfer
+- GET /users/{id}/accounts/{accountId}/transactions
+- GET /users/{id}/accounts/{accountId}/transactions/{transactionId}
+
+## Example behaviors
+
+The project includes logic for:
+
+- transferring funds between accounts
+- rejecting transfers when the sender does not have enough funds
+- rolling back transactions safely when a transfer fails
+- preventing duplicate request behavior through idempotency handling
+
+## Testing
+
+Run the backend test suite with:
+
+```bash
+cd backend
+./gradlew test
 ```
 
 ## Notes
 
-- The backend uses `create-drop`, so the database schema and sample data are recreated on each start.
-- The current mobile app setup is best suited for local development or demo purposes.
-- The system is intentionally simple and focused on illustrating transactional transfer behavior, not production-ready security or validation.
-
-## Potential improvements
-
-- Move the backend URL out of the Android app and into configuration.
-- Add proper authentication and input validation.
-- Replace `create-drop` with a more stable migration strategy.
-- Add more user-facing UI and account management features.
-
-### android-client — student final project
-
-Short student final-project Android app demonstrating posting transfer requests to the backend.
-
-- **Tech:** Java, Android SDK, Gradle (Kotlin DSL)
-- **Status:** Individual student project — created for a class final project but currently unmaintained.
-
-How to run:
-
-- Open the `android-client` folder in Android Studio and run the `app` module.
-- Or build from the command line:
-  `cd android-client`
-  `./gradlew assembleDebug`
-
-Notes:
-
-- Update the backend host URL in `android-client/app/src/main/java/com/example/atomicledgersystem/MainActivity.java` if your backend runs on a different host.
-- Kept for historical/reference purposes only; not actively maintained.
+This project is intentionally focused on demonstrating backend fundamentals and reliable application behavior rather than production-scale infrastructure concerns. It is a strong fit for showcasing software engineering fundamentals to recruiters, internship managers, or hiring teams.

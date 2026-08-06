@@ -55,7 +55,15 @@ public class UserService {
     }
 
     public void deleteUser(Long id) {
-        repository.deleteById(id);
+        User user = getUser(id);
+
+        if (user.getAccounts().size() == 0) {
+            repository.deleteById(id);
+        }
+        else {
+            throw new UserDeletionFailureException(id);
+        }
+        
     }
 
     @Transactional

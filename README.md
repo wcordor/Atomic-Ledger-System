@@ -112,4 +112,4 @@ cd backend
 
 ## Notes
 
-This project is intentionally focused on demonstrating backend fundamentals and reliable application behavior rather than production-scale infrastructure concerns. It is a strong fit for showcasing software engineering fundamentals to recruiters, internship managers, or hiring teams.
+This project is intentionally focused on demonstrating core backend engineering principles, including reliable service design, transactional correctness, and practical API development. It serves as a clear example of how I approach building dependable software systems with attention to data integrity and user-facing behavior.

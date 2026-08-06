@@ -108,6 +108,12 @@ class LedgerApplicationTests {
 		assertNotEquals(user2_id, account.getUserId());
 		assertEquals(user_id, account.getUserId());
 
+		account.debit(new BigDecimal("100.00"));
+		assertEquals(new BigDecimal("900.00"), account.getBalance());
+
+		account.credit(new BigDecimal("200.00"));
+		assertEquals(new BigDecimal("1100.00"), account.getBalance());
+
 	}
 
 	@Test

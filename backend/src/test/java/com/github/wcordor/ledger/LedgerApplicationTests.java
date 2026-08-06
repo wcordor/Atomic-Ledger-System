@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -212,6 +213,38 @@ class LedgerApplicationTests {
 		assertEquals(1, userRepository.findByLastName("Owner II").size());
 		assertEquals(user2, userRepository.findById(user2_id)
 			.orElseThrow(() -> new EntityNotFoundException("User not found")));
+	}
+
+	@Test
+	void testUserServiceFunctions() {
+		user = userService.changeName(user_id, "Owner", "of Account I");
+		assertEquals("Owner", user.getFirstName());
+		assertEquals("of Account I", user.getLastName());
+		assertThrows(UserDeletionFailureException.class, () -> {
+			userService.deleteUser(user_id);
+		});
+
+		User delete = userService.createUser(UUID.randomUUID().toString(), "To", "Delete");
+
+		List<User> userList = userService.getAll();
+		assertEquals(3, userList.size());
+
+		userService.deleteUser(delete.getId());
+
+		userList = userService.getAll();
+		assertEquals(2, userList.size());
+
+		assertThrows(UserNotFoundException.class, () -> {
+			userService.getUser(55L);
+		});
+
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("lastName", "PATCH");
+
+		user = userService.updateUser(UUID.randomUUID().toString(), user_id, map);
+
+		assertEquals("Owner", user.getFirstName());
+		assertEquals("PATCH", user.getLastName());
 	}
 
 	@Test

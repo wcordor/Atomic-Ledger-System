@@ -1,4 +1,4 @@
-package com.github.wcordor.ledger;
+package com.github.wcordor.ledger.entity;
 
 import java.util.ArrayList;
 import java.util.List;

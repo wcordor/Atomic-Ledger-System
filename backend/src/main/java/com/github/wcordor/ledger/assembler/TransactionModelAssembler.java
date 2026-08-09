@@ -1,8 +1,10 @@
-package com.github.wcordor.ledger;
+package com.github.wcordor.ledger.assembler;
 
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
+
+import com.github.wcordor.ledger.entity.Transaction;
 
 @Component
 public class TransactionModelAssembler implements RepresentationModelAssembler<Transaction, EntityModel<Transaction>> {

@@ -1,4 +1,4 @@
-package com.github.wcordor.ledger;
+package com.github.wcordor.ledger.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -6,6 +6,14 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.github.wcordor.ledger.entity.IdempotencyKey;
+import com.github.wcordor.ledger.entity.User;
+import com.github.wcordor.ledger.exception.IdempotencyKeyAlreadyExistsException;
+import com.github.wcordor.ledger.exception.UserDeletionFailureException;
+import com.github.wcordor.ledger.exception.UserNotFoundException;
+import com.github.wcordor.ledger.repository.IdempotencyKeyRepository;
+import com.github.wcordor.ledger.repository.UserRepository;
 
 @Service
 public class UserService {

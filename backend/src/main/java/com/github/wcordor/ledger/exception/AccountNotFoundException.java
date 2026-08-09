@@ -1,4 +1,4 @@
-package com.github.wcordor.ledger;
+package com.github.wcordor.ledger.exception;
 
 public class AccountNotFoundException extends RuntimeException {
 

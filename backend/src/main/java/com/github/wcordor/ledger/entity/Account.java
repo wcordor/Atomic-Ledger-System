@@ -1,4 +1,4 @@
-package com.github.wcordor.ledger;
+package com.github.wcordor.ledger.entity;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ public class Account {
 
     protected Account() {}
 
-    Account(User user, String name, BigDecimal initialDeposit, String currency) {
+    public Account(User user, String name, BigDecimal initialDeposit, String currency) {
         this.name = name;
         balance = initialDeposit;
         this.currency = currency;
@@ -108,11 +108,11 @@ public class Account {
         }
     }
 
-    void credit(BigDecimal amount) {
+    public void credit(BigDecimal amount) {
         balance = balance.add(amount);
     }
 
-    void debit(BigDecimal amount) {
+    public void debit(BigDecimal amount) {
         balance = balance.subtract(amount);
     }
 

@@ -1,10 +1,13 @@
-package com.github.wcordor.ledger;
+package com.github.wcordor.ledger.assembler;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
+
+import com.github.wcordor.ledger.controller.UserController;
+import com.github.wcordor.ledger.entity.Account;
 
 @Component
 public class AccountModelAssembler implements RepresentationModelAssembler<Account, EntityModel<Account>> {

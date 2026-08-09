@@ -23,20 +23,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.github.wcordor.ledger.entity.Account;
 import com.github.wcordor.ledger.entity.Transaction;
 import com.github.wcordor.ledger.entity.User;
-import com.github.wcordor.ledger.exception.AccountDeletionFailureException;
-import com.github.wcordor.ledger.exception.AccountNotFoundException;
-import com.github.wcordor.ledger.exception.IdempotencyKeyAlreadyExistsException;
-import com.github.wcordor.ledger.exception.InsufficientFundsException;
-import com.github.wcordor.ledger.exception.TransactionNotFoundException;
-import com.github.wcordor.ledger.exception.UserDeletionFailureException;
-import com.github.wcordor.ledger.exception.UserNotFoundException;
-import com.github.wcordor.ledger.repository.AccountRepository;
-import com.github.wcordor.ledger.repository.IdempotencyKeyRepository;
-import com.github.wcordor.ledger.repository.TransactionRepository;
-import com.github.wcordor.ledger.repository.UserRepository;
-import com.github.wcordor.ledger.service.AccountService;
-import com.github.wcordor.ledger.service.TransactionService;
-import com.github.wcordor.ledger.service.UserService;
+import com.github.wcordor.ledger.exception.*;
+import com.github.wcordor.ledger.repository.*;
+import com.github.wcordor.ledger.service.*;
 
 import jakarta.persistence.EntityNotFoundException;
 

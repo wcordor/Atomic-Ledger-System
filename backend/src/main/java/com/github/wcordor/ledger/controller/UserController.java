@@ -21,15 +21,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.github.wcordor.ledger.assembler.AccountModelAssembler;
-import com.github.wcordor.ledger.assembler.TransactionModelAssembler;
-import com.github.wcordor.ledger.assembler.UserModelAssembler;
+import com.github.wcordor.ledger.assembler.*;
 import com.github.wcordor.ledger.entity.Account;
 import com.github.wcordor.ledger.entity.Transaction;
 import com.github.wcordor.ledger.entity.User;
-import com.github.wcordor.ledger.service.AccountService;
-import com.github.wcordor.ledger.service.TransactionService;
-import com.github.wcordor.ledger.service.UserService;
+import com.github.wcordor.ledger.service.*;
 
 @RestController
 public class UserController {

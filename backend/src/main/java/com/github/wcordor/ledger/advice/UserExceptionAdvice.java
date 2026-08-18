@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.github.wcordor.ledger.exception.NullUserNameException;
 import com.github.wcordor.ledger.exception.UserDeletionFailureException;
 import com.github.wcordor.ledger.exception.UserNotFoundException;
 
@@ -20,6 +21,12 @@ public class UserExceptionAdvice {
 	@ExceptionHandler(UserDeletionFailureException.class)
 	@ResponseStatus(HttpStatus.CONFLICT)
 	public String userDeletionFailureHandler(UserDeletionFailureException e) {
+		return e.getMessage();
+	}
+
+	@ExceptionHandler(NullUserNameException.class)
+	@ResponseStatus(HttpStatus.CONFLICT)
+	public String NullUserNameHandler(NullUserNameException e) {
 		return e.getMessage();
 	}
 }

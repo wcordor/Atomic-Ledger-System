@@ -13,6 +13,4 @@ public class AccountPatchDTO {
     public void setName(JsonNullable<String> name) {
         this.name = name;
     }
-
-    
 }

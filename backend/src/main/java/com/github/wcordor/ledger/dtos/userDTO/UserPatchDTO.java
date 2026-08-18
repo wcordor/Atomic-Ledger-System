@@ -23,5 +23,4 @@ public class UserPatchDTO {
         this.lastName = lastName;
     }
     
-    
 }

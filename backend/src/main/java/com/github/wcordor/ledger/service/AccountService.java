@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.github.wcordor.ledger.dtos.accountDTO.*;
 import com.github.wcordor.ledger.entity.Account;
 import com.github.wcordor.ledger.entity.IdempotencyKey;
 import com.github.wcordor.ledger.entity.User;
@@ -32,7 +33,7 @@ public class AccountService {
         this.idempotencyKeyRepository = idempotencyKeyRepository;
     }
 
-    public Account createAccount(String idempotencyKey, Long userId, String name, BigDecimal initialDeposit, String currency) {
+    public AccountResponseDTO createAccount(String idempotencyKey, Long userId, AccountCreationDTO accountDTO) {
         IdempotencyKey savedKey = idempotencyKeyRepository.findByKey(idempotencyKey).orElse(null);
 
         if (savedKey != null) {
@@ -44,7 +45,10 @@ public class AccountService {
         }
 
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
-        Account account = new Account(user, name, initialDeposit, currency);
+        Account account = accountRepository.save(
+            new Account(user, accountDTO.name(), accountDTO.initialDeposit(),
+            accountDTO.currency()));
+
 
         IdempotencyKey newKey = new IdempotencyKey(idempotencyKey, LocalDateTime.now().plusHours(24));
         idempotencyKeyRepository.save(newKey);
@@ -56,12 +60,15 @@ public class AccountService {
         return accountRepository.findByUser_Id(userId);
     }
 
-    public Account getAccount(Long accountId, Long userId) {
-        return accountRepository.findByIdAndUser_Id(accountId, userId).orElseThrow(() -> new AccountNotFoundException(accountId, userId));
+    public AccountResponseDTO getAccount(Long accountId, Long userId) {
+        Account account = accountRepository.findByIdAndUser_Id(accountId, userId)
+            .orElseThrow(() -> new AccountNotFoundException(accountId, userId));
+
+        return accountMapper.toDTO(account);
     }
 
     @Transactional
-    public Account changeName(String idempotencyKey, Long accountId, Long userId, String name) {
+    public AccountResponseDTO changeName(String idempotencyKey, Long accountId, Long userId, AccountPatchDTO accountDTO) {
         IdempotencyKey savedKey = idempotencyKeyRepository.findByKey(idempotencyKey).orElse(null);
 
         if (savedKey != null) {
@@ -75,7 +82,9 @@ public class AccountService {
         Account account = accountRepository.findWithLockingByIdAndUser_Id(accountId, userId)
             .orElseThrow(() -> new AccountNotFoundException(accountId, userId));
 
-        account.setName(name);
+        if (accountDTO.getName().isPresent()) {
+            account.setName(accountDTO.getName().get());
+        }
 
         IdempotencyKey newKey = new IdempotencyKey(idempotencyKey, LocalDateTime.now().plusHours(24));
         idempotencyKeyRepository.save(newKey);

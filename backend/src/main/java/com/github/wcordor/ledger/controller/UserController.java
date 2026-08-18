@@ -1,11 +1,10 @@
 package com.github.wcordor.ledger.controller;
 
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -16,10 +15,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.github.wcordor.ledger.assembler.*;
-import com.github.wcordor.ledger.entity.Account;
-import com.github.wcordor.ledger.entity.Transaction;
-import com.github.wcordor.ledger.entity.User;
+import com.github.wcordor.ledger.dtos.accountDTO.*;
+import com.github.wcordor.ledger.dtos.transactionDTO.*;
+import com.github.wcordor.ledger.dtos.userDTO.*;
 import com.github.wcordor.ledger.service.*;
 
 @RestController
@@ -44,7 +42,7 @@ public class UserController {
 	}
 
     @PostMapping("/users")
-	public ResponseEntity<?> newUser(@RequestHeader("Idempotency-Key") String idempotencyKey, @RequestBody User newUser) {
+	public ResponseEntity<?> newUser(@RequestHeader("Idempotency-Key") String idempotencyKey, @RequestBody UserCreationDTO userDTO) {
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(idempotencyKey, userDTO));
 	}
@@ -63,12 +61,9 @@ public class UserController {
 
 	@PatchMapping("/users/{id}")
 	public ResponseEntity<?> updateUser(@RequestHeader("Idempotency-Key") String idempotencyKey,
-		@PathVariable Long id, @RequestBody Map<String, Object> updates) {
-		
-		User user = service.updateUser(idempotencyKey, id, updates);
-		EntityModel<User> entityModel = assembler.toModel(user);
+		@PathVariable Long id, @RequestBody UserPatchDTO patchDTO) {
 
-		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
+		return ResponseEntity.ok(userService.updateUser(idempotencyKey, id, patchDTO));
 	}
 	
 
@@ -94,14 +89,14 @@ public class UserController {
 	
 	@PostMapping("users/{id}/accounts")
 	public ResponseEntity<?> newAccount(@RequestHeader("Idempotency-Key") String idempotencyKey,
-		@PathVariable("id") Long userId, @RequestBody Account newAccount) {
+		@PathVariable("id") Long userId, @RequestBody AccountCreationDTO accountDTO) {
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(accountService.createAccount(idempotencyKey, userId, accountDTO));
 	}
 
 	@PatchMapping("users/{id}/accounts/{accountId}")
 	public ResponseEntity<?> changeAccountName(@RequestHeader("Idempotency-Key") String idempotencyKey,
-		@PathVariable("id") Long userId, @PathVariable("accountId") Long accountId, @RequestBody Map<String, String> nameChange) {
+		@PathVariable("id") Long userId, @PathVariable("accountId") Long accountId, @RequestBody AccountPatchDTO patchDTO) {
 
 		return ResponseEntity.ok(
 			accountService.changeName(idempotencyKey, accountId, userId, patchDTO)
@@ -118,16 +113,11 @@ public class UserController {
 
 	@PostMapping("users/{id}/accounts/{accountId}/money-transfer")
 	public ResponseEntity<?> newTransaction(@RequestHeader("Idempotency-Key") String idempotencyKey,
-		@PathVariable("id") Long userId, @PathVariable("accountId") Long accountId, @RequestBody Transaction newTransaction) {
+		@PathVariable("id") Long userId, @PathVariable("accountId") Long accountId, @RequestBody TransactionCreationDTO transactionDTO) {
 
-		if (accountId != newTransaction.getSenderId()) {
-			return ResponseEntity.badRequest().body("Account ID in path does not match sender ID in request body.");
-		}
-
-		EntityModel<Transaction> entityModel = transactionAssembler.toModel(transactionService.moneyTransfer(idempotencyKey, userId,
-		accountId, newTransaction.getReceiverId(), newTransaction.getAmount(), newTransaction.getCurrency()));
-
-		return ResponseEntity.status(HttpStatus.CREATED).body(entityModel);
+		return ResponseEntity.status(HttpStatus.CREATED).body(
+			transactionService.moneyTransfer(idempotencyKey, userId, accountId, transactionDTO)
+		);
 	}
 
 	@GetMapping("users/{id}/accounts/{accountId}/transactions")

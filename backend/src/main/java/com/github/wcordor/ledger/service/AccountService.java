@@ -15,6 +15,7 @@ import com.github.wcordor.ledger.exception.AccountDeletionFailureException;
 import com.github.wcordor.ledger.exception.AccountNotFoundException;
 import com.github.wcordor.ledger.exception.IdempotencyKeyAlreadyExistsException;
 import com.github.wcordor.ledger.exception.UserNotFoundException;
+import com.github.wcordor.ledger.mapper.AccountMapper;
 import com.github.wcordor.ledger.repository.AccountRepository;
 import com.github.wcordor.ledger.repository.IdempotencyKeyRepository;
 import com.github.wcordor.ledger.repository.UserRepository;
@@ -26,11 +27,14 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final UserRepository userRepository;
     private final IdempotencyKeyRepository idempotencyKeyRepository;
+    private final AccountMapper accountMapper;
 
-    public AccountService(AccountRepository accountRepository, UserRepository userRepository, IdempotencyKeyRepository idempotencyKeyRepository) {
+    public AccountService(AccountRepository accountRepository, UserRepository userRepository,
+        IdempotencyKeyRepository idempotencyKeyRepository, AccountMapper accountMapper) {
         this.accountRepository = accountRepository;
         this.userRepository = userRepository;
         this.idempotencyKeyRepository = idempotencyKeyRepository;
+        this.accountMapper = accountMapper;
     }
 
     public AccountResponseDTO createAccount(String idempotencyKey, Long userId, AccountCreationDTO accountDTO) {
@@ -53,7 +57,7 @@ public class AccountService {
         IdempotencyKey newKey = new IdempotencyKey(idempotencyKey, LocalDateTime.now().plusHours(24));
         idempotencyKeyRepository.save(newKey);
         
-        return accountRepository.save(account);
+        return accountMapper.toDTO(account);
     }
     
     public List<Account> getAccounts(Long userId) {
@@ -89,7 +93,7 @@ public class AccountService {
         IdempotencyKey newKey = new IdempotencyKey(idempotencyKey, LocalDateTime.now().plusHours(24));
         idempotencyKeyRepository.save(newKey);
         
-        return account;        
+        return accountMapper.toDTO(account);        
     }
 
     public void deleteAccount(Long accountId, Long userId) {

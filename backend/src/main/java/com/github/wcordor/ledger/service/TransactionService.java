@@ -18,6 +18,7 @@ import com.github.wcordor.ledger.exception.AccountNotFoundException;
 import com.github.wcordor.ledger.exception.IdempotencyKeyAlreadyExistsException;
 import com.github.wcordor.ledger.exception.InsufficientFundsException;
 import com.github.wcordor.ledger.exception.TransactionNotFoundException;
+import com.github.wcordor.ledger.mapper.TransactionMapper;
 import com.github.wcordor.ledger.repository.AccountRepository;
 import com.github.wcordor.ledger.repository.IdempotencyKeyRepository;
 import com.github.wcordor.ledger.repository.TransactionRepository;
@@ -32,13 +33,15 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final IdempotencyKeyRepository idempotencyKeyRepository;
     private final AccountService accountService;
+    private final TransactionMapper transactionMapper;
 
     public TransactionService(AccountRepository accountRepository, TransactionRepository transactionRepository,
-        IdempotencyKeyRepository idempotencyKeyRepository, AccountService accountService) {
+        IdempotencyKeyRepository idempotencyKeyRepository, AccountService accountService, TransactionMapper transactionMapper) {
         this.accountRepository = accountRepository;
         this.transactionRepository = transactionRepository;
         this.idempotencyKeyRepository = idempotencyKeyRepository;
         this.accountService = accountService;
+        this.transactionMapper = transactionMapper;
     }
 
     @Retryable(retryFor = { PessimisticLockingFailureException.class }, maxAttempts = 3,
@@ -82,7 +85,7 @@ public class TransactionService {
         IdempotencyKey newKey = new IdempotencyKey(idempotencyKey, LocalDateTime.now().plusHours(24));
         idempotencyKeyRepository.save(newKey);
 
-        return transactionRepository.save(transaction);
+        return transactionMapper.toDTO(transaction);
     }
 
     public List<Transaction> getTransactions(Long accountId, Long userId) {
@@ -101,7 +104,7 @@ public class TransactionService {
             throw new TransactionNotFoundException(transactionId, accountId);
         }
 
-        return transaction;
+        return transactionMapper.toDTO(transaction);
     }
     
 }

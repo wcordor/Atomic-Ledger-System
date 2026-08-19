@@ -14,6 +14,7 @@ import com.github.wcordor.ledger.exception.IdempotencyKeyAlreadyExistsException;
 import com.github.wcordor.ledger.exception.NullUserNameException;
 import com.github.wcordor.ledger.exception.UserDeletionFailureException;
 import com.github.wcordor.ledger.exception.UserNotFoundException;
+import com.github.wcordor.ledger.mapper.UserMapper;
 import com.github.wcordor.ledger.repository.IdempotencyKeyRepository;
 import com.github.wcordor.ledger.repository.UserRepository;
 
@@ -22,10 +23,12 @@ public class UserService {
     
     private final UserRepository repository;
     private final IdempotencyKeyRepository idempotencyKeyRepository;
+    private final UserMapper userMapper;
 
-    public UserService(UserRepository repository, IdempotencyKeyRepository idempotencyKeyRepository) {
+    public UserService(UserRepository repository, IdempotencyKeyRepository idempotencyKeyRepository, UserMapper userMapper) {
         this.repository = repository;
         this.idempotencyKeyRepository = idempotencyKeyRepository;
+        this.userMapper = userMapper;
     }
 
     @Transactional
@@ -64,7 +67,7 @@ public class UserService {
         IdempotencyKey newKey = new IdempotencyKey(idempotencyKey, LocalDateTime.now().plusHours(24));
         idempotencyKeyRepository.save(newKey);
         
-        return repository.save(user);
+        return userMapper.toDTO(user);
     }
 
     public UserResponseDTO getUser(Long id) {
@@ -109,7 +112,7 @@ public class UserService {
         IdempotencyKey newKey = new IdempotencyKey(idempotencyKey, LocalDateTime.now().plusHours(24));
         idempotencyKeyRepository.save(newKey);
 
-        return repository.save(user);
+        return userMapper.toDTO(user);
     }
     
 }

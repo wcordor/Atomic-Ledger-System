@@ -98,7 +98,9 @@ public class AccountService {
     }
 
     public void deleteAccount(Long accountId, Long userId) {
-        Account account = getAccount(accountId, userId);
+        Account account = accountRepository.findByIdAndUser_Id(accountId, userId)
+            .orElseThrow(() -> new AccountNotFoundException(accountId, userId));
+            
         if (account.getUserId() == userId && account.getBalance().compareTo(new BigDecimal("0.00")) == 0) {
             accountRepository.deleteById(accountId);
         }

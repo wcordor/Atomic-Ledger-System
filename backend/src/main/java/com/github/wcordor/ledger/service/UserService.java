@@ -77,7 +77,7 @@ public class UserService {
     }
 
     public void deleteUser(Long id) {
-        User user = getUser(id);
+        User user = repository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
 
         if (user.getAccounts().size() == 0) {
             repository.deleteById(id);

@@ -16,15 +16,15 @@ public class User {
     private String firstName;
     private String lastName;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE, orphanRemoval = true)
+    private List<Account> accounts = new ArrayList<>();
+
     protected User() {}
 
     public User(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
     }
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE, orphanRemoval = true)
-    private List<Account> accounts = new ArrayList<>();
 
     @Override
     public String toString() {

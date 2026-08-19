@@ -64,6 +64,10 @@ public class Account {
         this.name = name;
     }
 
+    public String getUserName() {
+        return user.getName();
+    }
+
     public BigDecimal getBalance() {
         return balance;
     }

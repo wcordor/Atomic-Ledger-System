@@ -60,8 +60,9 @@ public class AccountService {
         return accountMapper.toDTO(account);
     }
     
-    public List<Account> getAccounts(Long userId) {
-        return accountRepository.findByUser_Id(userId);
+    @SuppressWarnings("null")
+    public List<String> getAccounts(Long userId) {
+        return accountRepository.findByUser_Id(userId).stream().map(Account::getName).toList();
     }
 
     public AccountResponseDTO getAccount(Long accountId, Long userId) {

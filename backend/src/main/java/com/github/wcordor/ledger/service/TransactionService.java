@@ -88,10 +88,12 @@ public class TransactionService {
         return transactionMapper.toDTO(transaction);
     }
 
-    public List<Transaction> getTransactions(Long accountId, Long userId) {
-        Account account = accountService.getAccount(accountId, userId);
+    @SuppressWarnings("null")
+    public List<String> getTransactions(Long accountId, Long userId) {
+        Account account = accountRepository.findByIdAndUser_Id(accountId, userId)
+            .orElseThrow(() -> new AccountNotFoundException(accountId, userId));
         
-        return account.getTransactions();
+        return account.getTransactions().stream().map(Transaction::getAmountAndCurrency).toList();
     }
 
     public TransactionResponseDTO getTransaction(Long transactionId, Long accountId, Long userId) {

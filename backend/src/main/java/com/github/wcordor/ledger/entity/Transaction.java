@@ -93,6 +93,14 @@ public class Transaction {
         return accountIds;
     }
 
+    public String getAmountAndCurrency() {
+        return String.format("Amount: %,.2f %s, Timestamp: %s", amount, currency, timestamp);
+    }
+
+    public Instant getTimestamp() {
+        return timestamp;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;

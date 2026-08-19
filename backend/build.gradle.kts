@@ -27,6 +27,8 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-aspectj")
 	implementation("org.springframework.retry:spring-retry:2.0.12")
 	implementation("org.springframework.boot:spring-boot-starter-hateoas")
+	implementation("org.hibernate.validator:hibernate-validator:9.1.0.Final")
+	implementation("org.openapitools:jackson-databind-nullable:0.2.10")
 }
 
 tasks.withType<Test> {

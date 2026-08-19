@@ -35,6 +35,10 @@ public class User {
         return id;
     }
 
+    public String getName() {
+        return firstName + " " + lastName;
+    }
+
     public String getFirstName() {
         return firstName;
     }

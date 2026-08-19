@@ -47,8 +47,9 @@ public class UserService {
         return new UserResponseDTO(user.getFirstName(), user.getLastName(), accounts);
     }
 
-    public List<User> getAll() {
-        return repository.findAll();
+    @SuppressWarnings("null")
+    public List<String> getAll() {
+        return repository.findAll().stream().map(User::getName).toList();
     }
 
     public UserResponseDTO createUser(String idempotencyKey, UserCreationDTO userDTO) {

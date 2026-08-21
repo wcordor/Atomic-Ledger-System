@@ -14,6 +14,7 @@ import com.github.wcordor.ledger.entity.User;
 import com.github.wcordor.ledger.exception.AccountDeletionFailureException;
 import com.github.wcordor.ledger.exception.AccountNotFoundException;
 import com.github.wcordor.ledger.exception.IdempotencyKeyAlreadyExistsException;
+import com.github.wcordor.ledger.exception.InvalidUserIdException;
 import com.github.wcordor.ledger.exception.UserNotFoundException;
 import com.github.wcordor.ledger.mapper.AccountMapper;
 import com.github.wcordor.ledger.repository.AccountRepository;
@@ -48,11 +49,13 @@ public class AccountService {
             }
         }
 
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
-        Account account = accountRepository.save(
-            new Account(user, accountDTO.name(), accountDTO.initialDeposit(),
-            accountDTO.currency()));
+        userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
 
+        if (!accountDTO.userId().equals(userId)) {
+            throw new InvalidUserIdException();
+        }
+
+        Account account = accountRepository.save(accountMapper.toAccount(accountDTO));
 
         IdempotencyKey newKey = new IdempotencyKey(idempotencyKey, LocalDateTime.now().plusHours(24));
         idempotencyKeyRepository.save(newKey);

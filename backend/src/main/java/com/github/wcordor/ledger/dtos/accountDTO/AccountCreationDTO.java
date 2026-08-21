@@ -14,5 +14,8 @@ public record AccountCreationDTO(
     BigDecimal initialDeposit,
 
     @NotBlank
-    String currency
+    String currency,
+
+    @NotNull
+    Long userId
 ) {}

@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.github.wcordor.ledger.dtos.accountDTO.*;
 import com.github.wcordor.ledger.entity.Account;
 import com.github.wcordor.ledger.entity.IdempotencyKey;
-import com.github.wcordor.ledger.entity.User;
 import com.github.wcordor.ledger.exception.AccountDeletionFailureException;
 import com.github.wcordor.ledger.exception.AccountNotFoundException;
 import com.github.wcordor.ledger.exception.IdempotencyKeyAlreadyExistsException;

@@ -242,7 +242,7 @@ class LedgerApplicationTests {
 		userAccs = user.getAccounts();
 
 		assertTrue(2 == userAccs.size());
-		assertTrue(userAccs.contains(account) && userAccs.contains(acc3));
+		assertTrue(userAccs.contains(account) && userAccs.contains(account3));
 		
 	}
 

@@ -18,7 +18,9 @@ public class UserMapper {
         
         @SuppressWarnings("null")
         List<String> accounts = user.getAccounts()
-            .stream().map(Account::getName).toList();
+            .stream().map(Account::getInfo).toList();
+
+        Long id = user.getId();
         
         return new UserResponseDTO(firstName, lastName, accounts, id);
     }

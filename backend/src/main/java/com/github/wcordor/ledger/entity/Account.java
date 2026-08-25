@@ -116,6 +116,10 @@ public class Account {
         balance = balance.subtract(amount);
     }
 
+    public String getInfo() {
+        return String.format("name: %s, id: %d, balance: %,.2f %s", name, id, balance, currency);
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;

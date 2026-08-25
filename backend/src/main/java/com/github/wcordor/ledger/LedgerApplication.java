@@ -142,7 +142,7 @@ public class LedgerApplication {
 			}
 
 			logger.info("Transaction Info:");
-			logger.info(transaction.toString());
+			logger.info(transactionDTO.toString());
 
 			try {
 				logger.info("Account " + account7_id + " (D. Adams) transfer 2,000 USD to Account " + account5_id + " (B. Jones)"); 

@@ -28,13 +28,15 @@ public class AccountService {
     private final UserRepository userRepository;
     private final IdempotencyKeyRepository idempotencyKeyRepository;
     private final AccountMapper accountMapper;
+    private final UserService userService;
 
     public AccountService(AccountRepository accountRepository, UserRepository userRepository,
-        IdempotencyKeyRepository idempotencyKeyRepository, AccountMapper accountMapper) {
+        IdempotencyKeyRepository idempotencyKeyRepository, AccountMapper accountMapper, UserService userService) {
         this.accountRepository = accountRepository;
         this.userRepository = userRepository;
         this.idempotencyKeyRepository = idempotencyKeyRepository;
         this.accountMapper = accountMapper;
+        this.userService = userService;
     }
 
     public AccountResponseDTO createAccount(String idempotencyKey, Long userId, AccountCreationDTO accountDTO) {
@@ -64,7 +66,10 @@ public class AccountService {
     
     @SuppressWarnings("null")
     public List<String> getAccounts(Long userId) {
-        return accountRepository.findByUser_Id(userId).stream().map(Account::getName).toList();
+
+        userService.getUser(userId);
+
+        return accountRepository.findByUser_Id(userId).stream().map(Account::getInfo).toList();
     }
 
     public AccountResponseDTO getAccount(Long accountId, Long userId) {

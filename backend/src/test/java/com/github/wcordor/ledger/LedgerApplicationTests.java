@@ -188,7 +188,7 @@ class LedgerApplicationTests {
 		accountDTO3 = accountService.changeName(UUID.randomUUID().toString(),
 			account3_id, user_id, new AccountPatchDTO(JsonNullable.of("Savings")));
 
-		assertEquals("Savings", nameChange.getName());
+		assertEquals("Savings", accountDTO3.name());
 
 		assertThrows(AccountDeletionFailureException.class, () -> {
 			accountService.deleteAccount(account3.getId(), user_id);

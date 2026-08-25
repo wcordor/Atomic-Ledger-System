@@ -270,7 +270,7 @@ class LedgerApplicationTests {
 		UserResponseDTO delete = userService.createUser(UUID.randomUUID().toString(), 
 			new UserCreationDTO("To", "Delete"));
 
-		List<User> userList = userService.getAll();
+		List<String> userList = userService.getAll();
 		assertEquals(3, userList.size());
 
 		userService.deleteUser(delete.id());

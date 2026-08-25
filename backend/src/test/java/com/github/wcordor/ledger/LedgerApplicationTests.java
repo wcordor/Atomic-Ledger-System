@@ -28,6 +28,7 @@ import com.github.wcordor.ledger.entity.Account;
 import com.github.wcordor.ledger.entity.Transaction;
 import com.github.wcordor.ledger.entity.User;
 import com.github.wcordor.ledger.exception.*;
+import com.github.wcordor.ledger.mapper.AccountMapper;
 import com.github.wcordor.ledger.repository.*;
 import com.github.wcordor.ledger.service.*;
 
@@ -64,6 +65,9 @@ class LedgerApplicationTests {
 
     @Autowired
     DemoRequestFactory requestFactory;
+
+	@Autowired
+	AccountMapper accountMapper;
 
     private AccountResponseDTO accountDTO;
     private Account account;
@@ -458,4 +462,29 @@ class LedgerApplicationTests {
 		assertEquals(17, failCount.get());
 
 	}
+
+	@Test
+	void testAccountMapperMethods() {
+
+		AccountResponseDTO accountDTO3 = accountMapper.toDTO(account);
+		assertEquals(account.getName(), accountDTO3.name());
+		assertEquals(account.getBalance(), accountDTO3.balance());
+		assertEquals(account.getCurrency(), accountDTO3.currency());
+		assertEquals(account.getTransactions().size(), accountDTO3.transactions().size());
+		assertEquals(account.getId(), accountDTO3.id());
+
+		Long id = account.getUserId();
+        User user3 = requestFactory.getDemoUser(id);
+		assertEquals(accountDTO3.userName(), user3.getName());
+
+		AccountCreationDTO creationDTO = new AccountCreationDTO("New Account", new BigDecimal("10.00"), "USD", user_id);
+		Account account3 = accountMapper.toAccount(creationDTO);
+
+		assertEquals(creationDTO.name(), account3.getName());
+		assertEquals(creationDTO.initialDeposit(), account3.getBalance());
+		assertEquals(creationDTO.currency(), account3.getCurrency());
+		assertEquals(creationDTO.userId(), account3.getUserId());
+
+	}
+	
 }

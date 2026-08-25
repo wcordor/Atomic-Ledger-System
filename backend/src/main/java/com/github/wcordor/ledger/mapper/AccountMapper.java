@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
+import com.github.wcordor.ledger.dtos.accountDTO.AccountCreationDTO;
 import com.github.wcordor.ledger.dtos.accountDTO.AccountResponseDTO;
 import com.github.wcordor.ledger.entity.Account;
 import com.github.wcordor.ledger.entity.Transaction;
@@ -23,6 +24,14 @@ public class AccountMapper {
 
         String owner = account.getUserName();
 
-        return new AccountResponseDTO(name, balance, currency, owner, transactions);
+        return new AccountResponseDTO(name, balance, currency, owner, transactions, id);
+    }
+
+    public Account toAccount(AccountCreationDTO accountDTO) {
+
+        Long userId = accountDTO.userId();
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+
+        return new Account(user, accountDTO.name(), accountDTO.initialDeposit(), accountDTO.currency());
     }
 }

@@ -5,8 +5,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.github.wcordor.ledger.Status;
-
 import jakarta.persistence.*;
 
 @Entity
@@ -32,8 +30,6 @@ public class Transaction {
     private Instant timestamp;
 
     private String currency;
-
-    private Status status;
 
     private List<Long> accountIds = new ArrayList<>();
 
@@ -66,10 +62,6 @@ public class Transaction {
 
     public String getCurrency() {
         return currency;
-    }
-
-    public Status getStatus() {
-        return status;
     }
 
     public Long getSenderId() {

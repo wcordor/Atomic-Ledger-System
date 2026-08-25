@@ -29,6 +29,7 @@ import com.github.wcordor.ledger.entity.Transaction;
 import com.github.wcordor.ledger.entity.User;
 import com.github.wcordor.ledger.exception.*;
 import com.github.wcordor.ledger.mapper.AccountMapper;
+import com.github.wcordor.ledger.mapper.UserMapper;
 import com.github.wcordor.ledger.repository.*;
 import com.github.wcordor.ledger.service.*;
 
@@ -68,6 +69,9 @@ class LedgerApplicationTests {
 
 	@Autowired
 	AccountMapper accountMapper;
+
+	@Autowired
+	UserMapper userMapper;
 
     private AccountResponseDTO accountDTO;
     private Account account;
@@ -486,5 +490,22 @@ class LedgerApplicationTests {
 		assertEquals(creationDTO.userId(), account3.getUserId());
 
 	}
-	
+
+	@Test
+	void testUserMapperMethods() {
+
+		UserResponseDTO userDTO3 = userMapper.toDTO(user);
+		assertEquals(user.getFirstName(), userDTO3.firstName());
+		assertEquals(user.getLastName(), userDTO3.lastName());
+		assertEquals(user.getAccounts().size(), userDTO3.accounts().size());
+		assertTrue(user.getAccounts().contains(account) && userDTO3.accounts().contains(account.getInfo()));
+		assertEquals(user.getId(), userDTO3.id());
+
+		UserCreationDTO creationDTO = new UserCreationDTO("New", "User");
+		User user3 = userMapper.toUser(creationDTO);
+
+		assertEquals(creationDTO.firstName(), user3.getFirstName());
+		assertEquals(creationDTO.lastName(), user3.getLastName());
+	}
+
 }

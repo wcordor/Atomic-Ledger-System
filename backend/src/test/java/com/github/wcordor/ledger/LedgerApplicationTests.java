@@ -199,9 +199,10 @@ class LedgerApplicationTests {
 		
 		accountService.deleteAccount(account3_id, user_id);
 
-		accountList = accountService.getAccounts(user_id);
-		
-		assertFalse(accountList.contains(account3));
+		accountList = accountService.getAccounts(user_id);	
+		account = requestFactory.getDemoAccount(account_id, user_id);
+
+		assertTrue(accountList.size() == 1 && accountList.contains(account.getInfo()));
 
 		assertThrows(AccountNotFoundException.class, () -> {
 			accountService.getAccount(account3.getId(), user2_id);

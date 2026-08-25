@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -336,8 +337,17 @@ class LedgerApplicationTests {
 		Transaction transaction = requestFactory.getDemoTransaction(transactionDTO.id(), account_id, user_id);
 		assertTrue(transactions.contains(transaction.getAmountAndCurrency()));
 
-		Transaction actual = transactionService.getTransaction(transaction.getId(), account_id, user_id);
-		assertEquals(transaction, actual);
+		TransactionResponseDTO actual = transactionService.getTransaction(transactionDTO.id(), account_id, user_id);
+		long diffMillis = Math.abs(
+			Duration.between(transactionDTO.timestamp(), actual.timestamp()).toMillis()
+		);
+		//assertEquals(transactionDTO, actual);
+		assertEquals(transactionDTO.id(), actual.id());
+		assertEquals(transactionDTO.senderId(), actual.senderId());
+		assertEquals(transactionDTO.receiverId(), actual.receiverId());
+		assertEquals(transactionDTO.amount(), actual.amount());
+		assertEquals(transactionDTO.currency(), actual.currency());
+		assertTrue(diffMillis < 1);
 
 		assertThrows(TransactionNotFoundException.class, () -> {
 			transactionService.getTransaction(4L, account_id, user_id); 

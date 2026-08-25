@@ -357,6 +357,7 @@ class LedgerApplicationTests {
 		assertEquals(account2_id, transaction.getReceiverId());
 		assertEquals(new BigDecimal("400.00"), transaction.getAmount());
 		assertEquals("USD", transaction.getCurrency());
+		assertNotNull(transaction.getTimestamp());
 
 		List<Long> transactionAccIds = transaction.getAccountIds();
 		assertEquals(2, transactionAccIds.size());

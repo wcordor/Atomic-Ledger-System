@@ -5,13 +5,21 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.github.wcordor.ledger.exception.InvalidTransferException;
 import com.github.wcordor.ledger.exception.TransactionNotFoundException;
 
 @RestControllerAdvice
-public class TransactionNotFoundAdvice {
+public class TransactionExceptionAdvice {
+
     @ExceptionHandler(TransactionNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String transactionNotFoundHandler(TransactionNotFoundException e) {
+        return e.getMessage();
+    }
+
+    @ExceptionHandler(InvalidTransferException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public String invalidTransferHandler(InvalidTransferException e) {
         return e.getMessage();
     }
 }

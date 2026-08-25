@@ -17,6 +17,7 @@ import com.github.wcordor.ledger.entity.Transaction;
 import com.github.wcordor.ledger.exception.AccountNotFoundException;
 import com.github.wcordor.ledger.exception.IdempotencyKeyAlreadyExistsException;
 import com.github.wcordor.ledger.exception.InsufficientFundsException;
+import com.github.wcordor.ledger.exception.InvalidTransferException;
 import com.github.wcordor.ledger.exception.TransactionNotFoundException;
 import com.github.wcordor.ledger.mapper.TransactionMapper;
 import com.github.wcordor.ledger.repository.AccountRepository;
@@ -49,6 +50,7 @@ public class TransactionService {
     @Transactional(rollbackFor = { InsufficientFundsException.class })
     public TransactionResponseDTO moneyTransfer(String idempotencyKey, Long sender_userId, Long senderId,
         TransactionCreationDTO transactionDTO) throws InsufficientFundsException {
+            
         IdempotencyKey savedKey = idempotencyKeyRepository.findByKey(idempotencyKey).orElse(null);
 
         if (savedKey != null) {
@@ -57,6 +59,10 @@ public class TransactionService {
             } else {
                 throw new IdempotencyKeyAlreadyExistsException();
             }
+        }
+
+        if (senderId == transactionDTO.receiverId()) {
+            throw new InvalidTransferException();
         }
         
         Account sender = accountRepository.findWithLockingByIdAndUser_Id(senderId, sender_userId)

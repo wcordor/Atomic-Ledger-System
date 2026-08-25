@@ -10,9 +10,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.retry.annotation.EnableRetry;
 
-import com.github.wcordor.ledger.entity.Account;
-import com.github.wcordor.ledger.entity.Transaction;
-import com.github.wcordor.ledger.entity.User;
+import com.github.wcordor.ledger.dtos.accountDTO.AccountResponseDTO;
+import com.github.wcordor.ledger.dtos.transactionDTO.TransactionResponseDTO;
+import com.github.wcordor.ledger.dtos.userDTO.UserResponseDTO;
 import com.github.wcordor.ledger.exception.InsufficientFundsException;
 import com.github.wcordor.ledger.repository.AccountRepository;
 import com.github.wcordor.ledger.repository.UserRepository;
@@ -40,43 +40,43 @@ public class LedgerApplication {
 
 		return (args) -> {
 
-			User user1 = userService.createUser(UUID.randomUUID().toString(), "John", "Smith");
-			Long user1_id = user1.getId();
+			UserResponseDTO userDTO1 = requestFactory.createDemoUser("John", "Smith");
+			Long user1_id = userDTO1.id();
 
-			Account account1 = accountService.createAccount(UUID.randomUUID().toString(), user1_id,
+			AccountResponseDTO accountDTO1 = requestFactory.createDemoAccount(user1_id,
 				"Savings", new BigDecimal("5000.00"), "GBP");
 
-			Account account2 = accountService.createAccount(UUID.randomUUID().toString(), user1_id,
+			AccountResponseDTO accountDTO2 = requestFactory.createDemoAccount(user1_id,
 				"Checking", new BigDecimal("1000.00"), "GBP");
 
-			User user2 = userService.createUser(UUID.randomUUID().toString(), "Bernard", "Jones");
-			Long user2_id = user2.getId();
+			UserResponseDTO userDTO2 = requestFactory.createDemoUser("Bernard", "Jones");
+			Long user2_id = userDTO2.id();
 
-			Account account3 = accountService.createAccount(UUID.randomUUID().toString(), user2_id,
+			AccountResponseDTO accountDTO3 = requestFactory.createDemoAccount(user2_id,
 				"Investment", new BigDecimal("15000.00"), "USD");
 
-			Account account4 = accountService.createAccount(UUID.randomUUID().toString(), user2_id, 
+			AccountResponseDTO accountDTO4 = requestFactory.createDemoAccount(user2_id, 
 				"Savings", new BigDecimal("7000.00"), "USD");
 
-			Account account5 = accountService.createAccount(UUID.randomUUID().toString(), user2_id,
+			AccountResponseDTO accountDTO5 = requestFactory.createDemoAccount(user2_id,
 				"Checking", new BigDecimal("3000.00"), "USD");
 
-			User user3 = userService.createUser(UUID.randomUUID().toString(), "Deborah", "Adams");
-			Long user3_id = user3.getId();
+			UserResponseDTO userDTO3 = requestFactory.createDemoUser("Deborah", "Adams");
+			Long user3_id = userDTO3.id();
 
-			Account account6 = accountService.createAccount(UUID.randomUUID().toString(), user3_id,
+			AccountResponseDTO accountDTO6 = requestFactory.createDemoAccount(user3_id,
 				"Savings", new BigDecimal("3000.00"), "USD");
 
-			Account account7 = accountService.createAccount(UUID.randomUUID().toString(), user3_id,
+			AccountResponseDTO accountDTO7 = requestFactory.createDemoAccount(user3_id,
 				"Checking", new BigDecimal("1000.00"), "USD");
 
-			User user4 = userService.createUser(UUID.randomUUID().toString(), "Mary", "Johnson");
-			Long user4_id = user4.getId();
+			UserResponseDTO userDTO4 = requestFactory.createDemoUser("Mary", "Johnson");
+			Long user4_id = userDTO4.id();
 
-			Account account8 = accountService.createAccount(UUID.randomUUID().toString(), user4_id,
+			AccountResponseDTO accountDTO8 = requestFactory.createDemoAccount(user4_id,
 				"Savings", new BigDecimal("5500.00"), "USD");
 
-			Account account9 = accountService.createAccount(UUID.randomUUID().toString(), user4_id,
+			AccountResponseDTO accountDTO9 = requestFactory.createDemoAccount(user4_id,
 				"Checking", new BigDecimal("1500.00"), "USD");
 
 			logger.info("");
@@ -123,7 +123,7 @@ public class LedgerApplication {
 			logger.info(String.format("Balances before transfer: Account %d - %,.2f %s, Account %d - %,.2f %s",
 				account5_id, account5_bal, account5_currency, account7_id, account7_bal, account7_currency));
 
-			Transaction transaction = transactionService.moneyTransfer(UUID.randomUUID().toString(), user2_id,
+			TransactionResponseDTO transactionDTO = requestFactory.demoMoneyTransfer(user2_id,
 				account5_id, account7_id, new BigDecimal("500.00"), "USD");
 
 			account5 = accountService.getAccount(account5_id, user2_id);

@@ -205,7 +205,12 @@ class LedgerApplicationTests {
 		assertTrue(accountList.size() == 1 && accountList.contains(account.getInfo()));
 
 		assertThrows(AccountNotFoundException.class, () -> {
-			accountService.getAccount(account3.getId(), user2_id);
+			requestFactory.getDemoAccount(account3_id, user_id);
+		});
+
+		AccountCreationDTO mismatch = new AccountCreationDTO("user_id mismatch", new BigDecimal("0.00"), "USD", user_id);
+		assertThrows(InvalidUserIdException.class, () -> {
+			accountService.createAccount(UUID.randomUUID().toString(), user2_id, mismatch);
 		});
 	}
 

@@ -234,7 +234,7 @@ class LedgerApplicationTests {
 		user.addAccount(account2);
 		List<Account> userAccs = user.getAccounts();
 
-		assertFalse(2 == userAccs.size());
+		assertFalse(2 == userAccs.size() && userAccs.contains(account2));
 
 		AccountResponseDTO account3DTO = requestFactory.createDemoAccount(user_id, "Account III", new BigDecimal("5000.00"), "USD");
 		Account account3 = requestFactory.getDemoAccount(account3DTO.id(), user_id);

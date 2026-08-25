@@ -390,7 +390,7 @@ class LedgerApplicationTests {
 		assertTrue(diffMillis < 1);
 
 		assertThrows(TransactionNotFoundException.class, () -> {
-			transactionService.getTransaction(4L, account_id, user_id); 
+			transactionService.getTransaction(400L, account_id, user_id); 
 		});
 	}
 

@@ -371,7 +371,7 @@ class LedgerApplicationTests {
 			transactionService.moneyTransfer(UUID.randomUUID().toString(), user_id, account_id, 
 			new TransactionCreationDTO(account2_id, new BigDecimal("400.00"), "USD"));
 		
-		List<Transaction> transactions = transactionService.getTransactions(account_id, user_id);
+		List<String> transactions = transactionService.getTransactions(account_id, user_id);
 		assertEquals(1, transactions.size());
 
 		Transaction transaction = requestFactory.getDemoTransaction(transactionDTO.id(), account_id, user_id);

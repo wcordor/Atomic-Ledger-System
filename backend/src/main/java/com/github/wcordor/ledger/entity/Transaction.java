@@ -5,7 +5,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.wcordor.ledger.Status;
 
 import jakarta.persistence.*;
@@ -34,10 +33,8 @@ public class Transaction {
 
     private String currency;
 
-    @JsonIgnore
     private Status status;
 
-    @JsonIgnore
     private List<Long> accountIds = new ArrayList<>();
 
     protected Transaction() {}

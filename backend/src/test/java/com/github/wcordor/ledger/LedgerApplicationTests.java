@@ -166,8 +166,8 @@ class LedgerApplicationTests {
 		Account actual = accountService.getAccount(account3.getId(), user_id);
 		assertEquals(account3, actual);
 
-		Account nameChange = accountService.changeName(UUID.randomUUID().toString(),
-			account3.getId(), user_id, "Savings");
+		accountDTO3 = accountService.changeName(UUID.randomUUID().toString(),
+			account3_id, user_id, new AccountPatchDTO(JsonNullable.of("Savings")));
 
 		assertEquals("Savings", nameChange.getName());
 

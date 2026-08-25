@@ -246,7 +246,11 @@ class LedgerApplicationTests {
 		List<User> userList = userService.getAll();
 		assertEquals(3, userList.size());
 
-		userService.deleteUser(delete.getId());
+		userService.deleteUser(delete.id());
+
+		assertThrows(UserNotFoundException.class, () -> {
+			userService.getUser(delete.id());
+		});
 
 		userList = userService.getAll();
 		assertEquals(2, userList.size());

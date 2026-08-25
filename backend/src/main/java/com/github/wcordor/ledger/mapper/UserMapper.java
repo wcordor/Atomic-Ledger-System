@@ -20,7 +20,7 @@ public class UserMapper {
         List<String> accounts = user.getAccounts()
             .stream().map(Account::getName).toList();
         
-        return new UserResponseDTO(firstName, lastName, accounts);
+        return new UserResponseDTO(firstName, lastName, accounts, id);
     }
 
     public User toUser(UserCreationDTO userDTO) {

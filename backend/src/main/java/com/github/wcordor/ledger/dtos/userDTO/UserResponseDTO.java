@@ -6,6 +6,7 @@ public record UserResponseDTO(
 
     String firstName, 
     String lastName, 
-    List<String> accounts
+    List<String> accounts,
+    Long id
     
 ) {}

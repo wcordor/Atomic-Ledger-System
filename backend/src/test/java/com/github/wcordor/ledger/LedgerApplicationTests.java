@@ -295,6 +295,7 @@ class LedgerApplicationTests {
 
 	@Test
 	void testMoneyTransfers() {
+
 		// acc balance: $1,000, acc2 balance: $200
 		TransactionResponseDTO transactionDTO = 
 			transactionService.moneyTransfer(UUID.randomUUID().toString(), user_id, account_id,

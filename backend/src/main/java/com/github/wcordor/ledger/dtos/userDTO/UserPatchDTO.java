@@ -7,6 +7,11 @@ public class UserPatchDTO {
     private JsonNullable<String> firstName = JsonNullable.undefined();
     private JsonNullable<String> lastName = JsonNullable.undefined();
 
+    public UserPatchDTO(JsonNullable<String> firstName, JsonNullable<String> lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
     public JsonNullable<String> getFirstName() {
         return firstName;
     }

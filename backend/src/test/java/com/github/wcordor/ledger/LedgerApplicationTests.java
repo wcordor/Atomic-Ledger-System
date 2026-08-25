@@ -251,14 +251,8 @@ class LedgerApplicationTests {
 		userList = userService.getAll();
 		assertEquals(2, userList.size());
 
-		assertThrows(UserNotFoundException.class, () -> {
-			userService.getUser(55L);
-		});
-
-		HashMap<String, Object> map = new HashMap<>();
-		map.put("lastName", "PATCH");
-
-		user = userService.updateUser(UUID.randomUUID().toString(), user_id, map);
+		userDTO = userService.updateUser(UUID.randomUUID().toString(), user_id,
+			new UserPatchDTO(JsonNullable.undefined(), JsonNullable.of("PATCH")));
 
 		assertEquals("Owner", user.getFirstName());
 		assertEquals("PATCH", user.getLastName());

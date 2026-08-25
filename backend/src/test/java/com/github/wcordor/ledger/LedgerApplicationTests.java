@@ -251,10 +251,10 @@ class LedgerApplicationTests {
 
 		assertEquals(1, userRepository.findByLastName("Owner I").size());
 		assertEquals(user, userRepository.findById(user_id)
-			.orElseThrow(() -> new EntityNotFoundException("User not found")));
+			.orElseThrow(() -> new UserNotFoundException(user_id)));
 		assertEquals(1, userRepository.findByLastName("Owner II").size());
 		assertEquals(user2, userRepository.findById(user2_id)
-			.orElseThrow(() -> new EntityNotFoundException("User not found")));
+			.orElseThrow(() -> new UserNotFoundException(user2_id)));
 	}
 
 	@Test

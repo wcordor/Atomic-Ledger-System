@@ -76,11 +76,11 @@ class LedgerApplicationTests {
 		transactionRepository.deleteAll();
 		idempotencyKeyRepository.deleteAll();
 
-		user = userService.createUser(UUID.randomUUID().toString(), "Account", "Owner");
-		user_id = user.getId();
+        userDTO = requestFactory.createDemoUser("Account", "Owner I");
+        user_id = userDTO.id();
 
-		account = accountService.createAccount(UUID.randomUUID().toString(), user_id, "Savings",
-			new BigDecimal("1000.00"), "USD");
+        accountDTO = requestFactory.createDemoAccount(user_id, "Account I",
+            new BigDecimal("1000.00"), "USD");
 
 		account_id = account.getId();
 		user = userService.getUser(user_id);
@@ -211,9 +211,9 @@ class LedgerApplicationTests {
 
 		assertFalse(2 == userAccs.size());
 
-		Account acc3 = accountService.createAccount(UUID.randomUUID().toString(), user_id, "Investment",
-			new BigDecimal("5000.00"), "USD");
-		user = userService.getUser(user_id);
+		AccountResponseDTO account3DTO = requestFactory.createDemoAccount(user_id, "Account III", new BigDecimal("5000.00"), "USD");
+		Account account3 = requestFactory.getDemoAccount(account3DTO.id(), user_id);
+		user = requestFactory.getDemoUser(user_id);
 		userAccs = user.getAccounts();
 
 		assertTrue(2 == userAccs.size());
@@ -307,12 +307,10 @@ class LedgerApplicationTests {
 	@Test
 	void testTransactionFunctions() {
 
-		Transaction transaction =
-			transactionService.moneyTransfer(UUID.randomUUID().toString(), user_id, account_id, account2_id,
-				new BigDecimal("400.00"), "USD");
-
-		account = accountService.getAccount(account_id, user_id);
-        account2 = accountService.getAccount(account2_id, user2_id);
+		TransactionResponseDTO transactionDTO = requestFactory.demoMoneyTransfer(user_id, account_id, account2_id,
+			new BigDecimal("400.00"), "USD");
+		
+		Transaction transaction = requestFactory.getDemoTransaction(transactionDTO.id(), account_id, user_id);
 
 		assertNotNull(transaction.getId());
 		assertEquals(account_id, transaction.getSenderId());
@@ -334,7 +332,9 @@ class LedgerApplicationTests {
 		
 		List<Transaction> transactions = transactionService.getTransactions(account_id, user_id);
 		assertEquals(1, transactions.size());
-		assertTrue(transactions.contains(transaction));
+
+		Transaction transaction = requestFactory.getDemoTransaction(transactionDTO.id(), account_id, user_id);
+		assertTrue(transactions.contains(transaction.getAmountAndCurrency()));
 
 		Transaction actual = transactionService.getTransaction(transaction.getId(), account_id, user_id);
 		assertEquals(transaction, actual);

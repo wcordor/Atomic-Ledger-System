@@ -37,7 +37,7 @@ public class LedgerApplication {
 
 	@Bean
 	public CommandLineRunner demo(UserRepository userRepository, AccountRepository accountRepository,
-		TransactionService transactionService, AccountService accountService, UserService userService) {
+		TransactionService transactionService, AccountService accountService, UserService userService, DemoRequestFactory requestFactory) {
 
 		return (args) -> {
 

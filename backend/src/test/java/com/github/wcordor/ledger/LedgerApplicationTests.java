@@ -116,7 +116,7 @@ class LedgerApplicationTests {
 	void testAccountFunctions() {
 
 		assertNotNull(account_id);
-		assertEquals("Savings", account.getName());
+		assertEquals("Account I", account.getName());
 		assertEquals(new BigDecimal("1000.00"), account.getBalance());
 		assertEquals("USD", account.getCurrency());
 		assertEquals(user_id, account.getUserId());
@@ -141,13 +141,13 @@ class LedgerApplicationTests {
 	@Test
 	void testAccountRepositoryFunctions() {
 
-		assertEquals(1, accountRepository.findByName("Savings").size());
-		assertTrue(accountRepository.findByName("Savings").contains(account));
+		assertEquals(1, accountRepository.findByName("Account I").size());
+		assertTrue(accountRepository.findByName("Account I").contains(account));
 		
 		assertEquals(account,
 			accountRepository.findById(account_id).orElseThrow(() -> new EntityNotFoundException("Account not found")));
-		assertEquals(1, accountRepository.findByUserLastName("Owner").size());
-		assertTrue(accountRepository.findByUserLastName("Owner").contains(account));
+		assertEquals(1, accountRepository.findByUserLastName("Owner I").size());
+		assertTrue(accountRepository.findByUserLastName("Owner I").contains(account));
 
 		List<Account> usd = accountRepository.findByCurrency("USD");
 		assertEquals(2, usd.size());
@@ -213,7 +213,7 @@ class LedgerApplicationTests {
 
 		assertNotNull(user_id);
 		assertEquals("Account", user.getFirstName());
-		assertEquals("Owner", user.getLastName());
+		assertEquals("Owner I", user.getLastName());
 		assertNotNull(user2_id);
 		assertEquals("Account", user2.getFirstName());
 		assertEquals("Owner II", user2.getLastName());
@@ -243,7 +243,7 @@ class LedgerApplicationTests {
 	@Test
 	void testUserRepositoryFunctions() {
 
-		assertEquals(1, userRepository.findByLastName("Owner").size());
+		assertEquals(1, userRepository.findByLastName("Owner I").size());
 		assertEquals(user, userRepository.findById(user_id)
 			.orElseThrow(() -> new EntityNotFoundException("User not found")));
 		assertEquals(1, userRepository.findByLastName("Owner II").size());

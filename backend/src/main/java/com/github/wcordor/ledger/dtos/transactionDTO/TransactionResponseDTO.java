@@ -9,5 +9,6 @@ public record TransactionResponseDTO(
     Long receiverId,
     BigDecimal amount,
     String currency,
-    Instant timestamp
+    Instant timestamp,
+    Long id
 ) {}

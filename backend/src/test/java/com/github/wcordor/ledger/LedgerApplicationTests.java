@@ -298,6 +298,8 @@ class LedgerApplicationTests {
         List<Transaction> a_transactions = account.getTransactions();
         List<Transaction> a2_transactions = account2.getTransactions();
 
+		Transaction transaction = requestFactory.getDemoTransaction(transactionDTO.id(), account2_id, user2_id);
+
         assertEquals(1, a_transactions.size());
         assertEquals(1, a2_transactions.size());
 		assertTrue(a_transactions.contains(transaction) && a2_transactions.contains(transaction));

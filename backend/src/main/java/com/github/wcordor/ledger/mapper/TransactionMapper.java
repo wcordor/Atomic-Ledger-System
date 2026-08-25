@@ -17,7 +17,8 @@ public class TransactionMapper {
         BigDecimal amount = transaction.getAmount();
         String currency = transaction.getCurrency();
         Instant timestamp = transaction.getTimestamp();
+        Long id = transaction.getId();
 
-        return new TransactionResponseDTO(senderId, receiverId, amount, currency, timestamp);
+        return new TransactionResponseDTO(senderId, receiverId, amount, currency, timestamp, id);
     }
 }

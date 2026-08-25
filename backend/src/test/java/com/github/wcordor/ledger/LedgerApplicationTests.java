@@ -381,7 +381,7 @@ class LedgerApplicationTests {
 		long diffMillis = Math.abs(
 			Duration.between(transactionDTO.timestamp(), actual.timestamp()).toMillis()
 		);
-		//assertEquals(transactionDTO, actual);
+
 		assertEquals(transactionDTO.id(), actual.id());
 		assertEquals(transactionDTO.senderId(), actual.senderId());
 		assertEquals(transactionDTO.receiverId(), actual.receiverId());

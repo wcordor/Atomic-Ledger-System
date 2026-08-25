@@ -111,12 +111,12 @@ public class LedgerApplication {
 			Long account5_id = accountDTO5.id();
 			Long account7_id = accountDTO7.id();
 
-			account5 = accountService.getAccount(account5_id, user2_id);
-			account7 = accountService.getAccount(account7_id, user3_id);
-			BigDecimal account5_bal = account5.getBalance();
-			BigDecimal account7_bal = account7.getBalance();
-			String account5_currency = account5.getCurrency();
-			String account7_currency = account7.getCurrency();
+			accountDTO5 = accountService.getAccount(account5_id, user2_id);
+			accountDTO7 = accountService.getAccount(account7_id, user3_id);
+			BigDecimal account5_bal = accountDTO5.balance();
+			BigDecimal account7_bal = accountDTO7.balance();
+			String account5_currency = accountDTO5.currency();
+			String account7_currency = accountDTO7.currency();
 			
 			logger.info("Account " + account5_id + " (B. Jones) transfer 500 USD to Account " + account7_id + " (D. Adams)"); 
 			logger.info("-------------------------------------------------------------");
@@ -126,10 +126,10 @@ public class LedgerApplication {
 			TransactionResponseDTO transactionDTO = requestFactory.demoMoneyTransfer(user2_id,
 				account5_id, account7_id, new BigDecimal("500.00"), "USD");
 
-			account5 = accountService.getAccount(account5_id, user2_id);
-			account7 = accountService.getAccount(account7_id, user3_id);
-			account5_bal = account5.getBalance();
-			account7_bal = account7.getBalance();
+			accountDTO5 = accountService.getAccount(account5_id, user2_id);
+			accountDTO7 = accountService.getAccount(account7_id, user3_id);
+			account5_bal = accountDTO5.balance();
+			account7_bal = accountDTO7.balance();
 
 			logger.info(String.format("Balances after transfer: Account %d - %,.2f %s, Account %d - %,.2f %s",
 				account5_id, account5_bal, account5_currency, account7_id, account7_bal, account7_currency));
@@ -160,10 +160,10 @@ public class LedgerApplication {
 				logger.info("");
 			}
 
-			account5 = accountService.getAccount(account5_id, user2_id);
-			account7 = accountService.getAccount(account7_id, user3_id);
-			BigDecimal account5_bal_rolledBack = account5.getBalance();
-			BigDecimal account7_bal_rolledBack = account7.getBalance();
+			accountDTO5 = accountService.getAccount(account5_id, user2_id);
+			accountDTO7 = accountService.getAccount(account7_id, user3_id);
+			BigDecimal account5_bal_rolledBack = accountDTO5.balance();
+			BigDecimal account7_bal_rolledBack = accountDTO7.balance();
 
 			logger.info(String.format("Balances after transfer: Account %d - %,.2f %s, Account %d - %,.2f %s",
 				account7_id, account7_bal, account7_currency, account5_id, account5_bal, account5_currency));
@@ -176,10 +176,10 @@ public class LedgerApplication {
 				logger.info("");
 			}
 
-			Long account9_id = account9.getId();
-			account9 = accountService.getAccount(account9_id, user4_id);
-			BigDecimal account9_bal = account9.getBalance();
-			String account9_currency = account9.getCurrency();
+			Long account9_id = accountDTO9.id();
+			accountDTO9 = accountService.getAccount(account9_id, user4_id);
+			BigDecimal account9_bal = accountDTO9.balance();
+			String account9_currency = accountDTO9.currency();
 			
 			logger.info("40 simultaneous transactions from Account " + account5_id + " (B. Jones) and Account " + account7_id);
 			logger.info("(D. Adams), to Account " + account9_id + " (M. Johnson)");
@@ -221,13 +221,13 @@ public class LedgerApplication {
 			CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
 			accountRepository.flush();
 
-			account5 = accountService.getAccount(account5_id, user2_id);
-			account7 = accountService.getAccount(account7_id, user3_id);
-			account9 = accountService.getAccount(account9_id, user4_id);
+			accountDTO5 = accountService.getAccount(account5_id, user2_id);
+			accountDTO7 = accountService.getAccount(account7_id, user3_id);
+			accountDTO9 = accountService.getAccount(account9_id, user4_id);
 
-			account9_bal = account9.getBalance();
-			account5_bal = account5.getBalance();
-			account7_bal = account7.getBalance();
+			account9_bal = accountDTO9.balance();
+			account5_bal = accountDTO5.balance();
+			account7_bal = accountDTO7.balance();
 
 			logger.info("Balances after transfers:");
 			logger.info("");

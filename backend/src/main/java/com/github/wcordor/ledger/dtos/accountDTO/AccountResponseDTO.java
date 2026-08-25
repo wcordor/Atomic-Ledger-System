@@ -9,6 +9,7 @@ public record AccountResponseDTO(
     BigDecimal balance,
     String currency,
     String userName,
-    List<String> transactions
+    List<String> transactions,
+    Long id
 
 ) {}

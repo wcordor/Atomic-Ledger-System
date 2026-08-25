@@ -109,8 +109,8 @@ public class LedgerApplication {
 			});
 			logger.info("");
 
-			Long account5_id = account5.getId();
-			Long account7_id = account7.getId();
+			Long account5_id = accountDTO5.id();
+			Long account7_id = accountDTO7.id();
 
 			account5 = accountService.getAccount(account5_id, user2_id);
 			account7 = accountService.getAccount(account7_id, user3_id);
@@ -241,9 +241,9 @@ public class LedgerApplication {
 				logger.info("***********************************");
 				logger.info("Concurrent transactions successful.");
 				logger.info("***********************************");
-				logger.info("Account " + account9_id + " total transactions: " + account9.getTransactions().size());
-				logger.info("Account " + account5_id + " total transactions: " + account5.getTransactions().size());
-				logger.info("Account " + account7_id + " total transactions: " + account7.getTransactions().size());
+				logger.info("Account " + account9_id + " total transactions: " + accountDTO9.transactions().size());
+				logger.info("Account " + account5_id + " total transactions: " + accountDTO5.transactions().size());
+				logger.info("Account " + account7_id + " total transactions: " + accountDTO7.transactions().size());
 				
 			}
 		};

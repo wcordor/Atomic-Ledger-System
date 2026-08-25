@@ -9,9 +9,18 @@ import com.github.wcordor.ledger.dtos.accountDTO.AccountCreationDTO;
 import com.github.wcordor.ledger.dtos.accountDTO.AccountResponseDTO;
 import com.github.wcordor.ledger.entity.Account;
 import com.github.wcordor.ledger.entity.Transaction;
+import com.github.wcordor.ledger.entity.User;
+import com.github.wcordor.ledger.exception.UserNotFoundException;
+import com.github.wcordor.ledger.repository.UserRepository;
 
 @Component
 public class AccountMapper {
+
+    private final UserRepository userRepository;
+
+    public AccountMapper(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
     
     public AccountResponseDTO toDTO(Account account) {
         String name = account.getName();
@@ -21,8 +30,12 @@ public class AccountMapper {
         @SuppressWarnings("null")
         List<String> transactions = account.getTransactions().stream()
             .map(Transaction::getAmountAndCurrency).toList();
+        
+        Long userId = account.getUserId();
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
 
-        String owner = account.getUserName();
+        String owner = user.getName();
+        Long id = account.getId();
 
         return new AccountResponseDTO(name, balance, currency, owner, transactions, id);
     }

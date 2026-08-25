@@ -100,11 +100,15 @@ class LedgerApplicationTests {
         userDTO2 = requestFactory.createDemoUser("Account", "Owner II");
         user2_id = userDTO2.id();
 
-		account2 = accountService.createAccount(UUID.randomUUID().toString(), user2_id, "Checking",
-			new BigDecimal("200.00"), "USD");
+        accountDTO2 = requestFactory.createDemoAccount(user2_id, "Account II", new BigDecimal("200.00"), "USD");
+        account2_id = accountDTO2.id();
 
-		account2_id = account2.getId();
-		user2 = userService.getUser(user2_id);
+        userDTO2 = userService.getUser(user2_id);
+
+        account = requestFactory.getDemoAccount(account_id, user_id);
+        account2 = requestFactory.getDemoAccount(account2_id, user2_id);
+        user = requestFactory.getDemoUser(user_id);
+        user2 = requestFactory.getDemoUser(user2_id);
 
 	}
 

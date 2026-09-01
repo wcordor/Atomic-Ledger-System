@@ -464,20 +464,23 @@ class LedgerApplicationTests {
 		List<String> transactions = transactionService.getTransactions(account_id, user_id);
 		assertEquals(1, transactions.size());
 
+		List<String> transactions2 = transactionService.getTransactions(account2_id, user2_id);
+		assertEquals(1, transactions2.size());
+
 		Transaction transaction = requestFactory.getDemoTransaction(transactionDTO.id(), account_id, user_id);
-		assertTrue(transactions.contains(transaction.getAmountAndCurrency()));
+		assertTrue(transactions.contains(transaction.getAmountAndCurrency()) && transactions2.contains(transaction.getAmountAndCurrency()));
 
 		TransactionResponseDTO actual = transactionService.getTransaction(transactionDTO.id(), account_id, user_id);
-		long diffMillis = Math.abs(
-			Duration.between(transactionDTO.timestamp(), actual.timestamp()).toMillis()
-		);
+		TransactionResponseDTO actual2 = transactionService.getTransaction(transactionDTO.id(), account2_id, user2_id);
+		long diffMillis = Math.abs(Duration.between(transactionDTO.timestamp(), actual.timestamp()).toMillis());
+		long diffMillis2 = Math.abs(Duration.between(transactionDTO.timestamp(), actual2.timestamp()).toMillis());
 
-		assertEquals(transactionDTO.id(), actual.id());
-		assertEquals(transactionDTO.senderId(), actual.senderId());
-		assertEquals(transactionDTO.receiverId(), actual.receiverId());
-		assertEquals(transactionDTO.amount(), actual.amount());
-		assertEquals(transactionDTO.currency(), actual.currency());
-		assertTrue(diffMillis < 1);
+		assertTrue(transactionDTO.id() == actual.id() && transactionDTO.id() == actual2.id());
+		assertTrue(transactionDTO.senderId() == actual.senderId() && transactionDTO.senderId() == actual2.senderId());
+		assertTrue(transactionDTO.receiverId() == actual.receiverId() && transactionDTO.receiverId() == actual2.receiverId());
+		assertTrue(transactionDTO.amount().compareTo(actual.amount()) == 0 && transactionDTO.amount().compareTo(actual2.amount()) == 0);
+		assertTrue(transactionDTO.currency().equals(actual.currency()) && transactionDTO.currency().equals(actual2.currency()));
+		assertTrue(diffMillis < 1 && diffMillis2 < 1);
 
 		assertThrows(TransactionNotFoundException.class, () -> {
 			transactionService.getTransaction(400L, account_id, user_id); 

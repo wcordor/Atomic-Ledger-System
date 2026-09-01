@@ -11,7 +11,7 @@ import com.github.wcordor.ledger.entity.Account;
 import com.github.wcordor.ledger.entity.IdempotencyKey;
 import com.github.wcordor.ledger.entity.User;
 import com.github.wcordor.ledger.exception.IdempotencyKeyAlreadyExistsException;
-import com.github.wcordor.ledger.exception.NullUserNameException;
+import com.github.wcordor.ledger.exception.NullPatchFieldException;
 import com.github.wcordor.ledger.exception.UserDeletionFailureException;
 import com.github.wcordor.ledger.exception.UserNotFoundException;
 import com.github.wcordor.ledger.mapper.UserMapper;
@@ -36,10 +36,6 @@ public class UserService {
         User user = repository.findWithLockingById(id).orElseThrow(() -> new UserNotFoundException(id));
         user.setFirstName(userDTO.firstName());
         user.setLastName(userDTO.lastName());
-
-        if (userDTO.firstName() == null || userDTO.lastName() == null) {
-            throw new NullUserNameException();
-        }
 
         @SuppressWarnings("null")
         List<String> accounts = user.getAccounts().stream().map(Account::getName).toList();
@@ -104,10 +100,18 @@ public class UserService {
 
         if (userDTO.getFirstName().isPresent()) {
             user.setFirstName(userDTO.getFirstName().get());
+
+            if (userDTO.getFirstName().get() == null || userDTO.getFirstName().get().isBlank()) {
+                throw new NullPatchFieldException();
+            };
         }
 
         if (userDTO.getLastName().isPresent()) {
             user.setLastName(userDTO.getLastName().get());
+
+            if (userDTO.getLastName().get() == null || userDTO.getLastName().get().isBlank()) {
+                throw new NullPatchFieldException();
+            };
         }
 
         IdempotencyKey newKey = new IdempotencyKey(idempotencyKey, LocalDateTime.now().plusHours(24));

@@ -6,8 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.*;
 
 @Entity
@@ -37,11 +35,9 @@ public class Account {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "sender", orphanRemoval = true)
     private Set<Transaction> sent = new HashSet<>();
 
-    @JsonIgnore
     @OneToMany(mappedBy = "receiver", orphanRemoval = true)
     private Set<Transaction> received = new HashSet<>();
 
@@ -114,6 +110,10 @@ public class Account {
 
     public void debit(BigDecimal amount) {
         balance = balance.subtract(amount);
+    }
+
+    public String getInfo() {
+        return String.format("name: %s, id: %d, balance: %,.2f %s", name, id, balance, currency);
     }
 
     @Override

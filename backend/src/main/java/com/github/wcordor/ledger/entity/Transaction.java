@@ -5,9 +5,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.github.wcordor.ledger.Status;
-
 import jakarta.persistence.*;
 
 @Entity
@@ -16,15 +13,15 @@ public class Transaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "transaction_seq")
-    @SequenceGenerator(name = "transaction_seq", sequenceName = "transaction_seq", allocationSize = 50) // check for any potential issues with allocationSize
+    @SequenceGenerator(name = "transaction_seq", sequenceName = "transaction_seq", allocationSize = 50)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "sender_id")
+    @JoinColumn(name = "sender_id", nullable = false)
     private Account sender;
 
     @ManyToOne
-    @JoinColumn(name = "receiver_id")
+    @JoinColumn(name = "receiver_id", nullable = false)
     private Account receiver;
 
     private BigDecimal amount;
@@ -34,10 +31,6 @@ public class Transaction {
 
     private String currency;
 
-    @JsonIgnore
-    private Status status;
-
-    @JsonIgnore
     private List<Long> accountIds = new ArrayList<>();
 
     protected Transaction() {}
@@ -71,10 +64,6 @@ public class Transaction {
         return currency;
     }
 
-    public Status getStatus() {
-        return status;
-    }
-
     public Long getSenderId() {
         return sender.getId();
     }
@@ -91,6 +80,14 @@ public class Transaction {
             accountIds.add(receiver.getId());
         }
         return accountIds;
+    }
+
+    public String getAmountAndCurrency() {
+        return String.format("Amount: %,.2f %s, Timestamp: %s", amount, currency, timestamp);
+    }
+
+    public Instant getTimestamp() {
+        return timestamp;
     }
 
     @Override

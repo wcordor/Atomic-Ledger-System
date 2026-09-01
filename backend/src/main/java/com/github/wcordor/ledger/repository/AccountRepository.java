@@ -8,11 +8,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import com.github.wcordor.ledger.entity.Account;
 
 import jakarta.persistence.LockModeType;
 
+@Repository
 public interface AccountRepository extends JpaRepository<Account, Long> {
     
     @Lock(LockModeType.PESSIMISTIC_WRITE)
@@ -29,9 +31,11 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     List<Account> findByUser_Id(Long id);
     
     @EntityGraph(attributePaths = {"sent", "received"})
-    @Query("SELECT a FROM Account a WHERE a.id = :id")
-    Optional<Account> findByIdAndUser_Id(@Param("id") Long accountId, @Param("user_Id") Long userId);
+    @Query("SELECT a FROM Account a WHERE a.id = :id AND a.user.id = :userId")
+    Optional<Account> findByIdAndUser_Id(@Param("id") Long accountId, @Param("userId") Long userId);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    Optional<Account> findWithLockingByIdAndUser_Id(Long accountId, Long userId);
+    @EntityGraph(attributePaths = {"sent", "received"})
+    @Query("SELECT a FROM Account a WHERE a.id = :id AND a.user.id = :userId")
+    Optional<Account> findWithLockingByIdAndUser_Id(@Param("id") Long accountId, @Param("userId") Long userId);
 }

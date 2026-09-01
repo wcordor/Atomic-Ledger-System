@@ -2,16 +2,19 @@ package com.github.wcordor.ledger.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.github.wcordor.ledger.dtos.userDTO.*;
+import com.github.wcordor.ledger.entity.Account;
 import com.github.wcordor.ledger.entity.IdempotencyKey;
 import com.github.wcordor.ledger.entity.User;
 import com.github.wcordor.ledger.exception.IdempotencyKeyAlreadyExistsException;
+import com.github.wcordor.ledger.exception.NullPatchFieldException;
 import com.github.wcordor.ledger.exception.UserDeletionFailureException;
 import com.github.wcordor.ledger.exception.UserNotFoundException;
+import com.github.wcordor.ledger.mapper.UserMapper;
 import com.github.wcordor.ledger.repository.IdempotencyKeyRepository;
 import com.github.wcordor.ledger.repository.UserRepository;
 
@@ -20,26 +23,32 @@ public class UserService {
     
     private final UserRepository repository;
     private final IdempotencyKeyRepository idempotencyKeyRepository;
+    private final UserMapper userMapper;
 
-    public UserService(UserRepository repository, IdempotencyKeyRepository idempotencyKeyRepository) {
+    public UserService(UserRepository repository, IdempotencyKeyRepository idempotencyKeyRepository, UserMapper userMapper) {
         this.repository = repository;
         this.idempotencyKeyRepository = idempotencyKeyRepository;
+        this.userMapper = userMapper;
     }
 
     @Transactional
-    public User changeName(Long id, String firstName, String lastName) {
+    public UserResponseDTO changeName(Long id, UserCreationDTO userDTO) {
         User user = repository.findWithLockingById(id).orElseThrow(() -> new UserNotFoundException(id));
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
+        user.setFirstName(userDTO.firstName());
+        user.setLastName(userDTO.lastName());
+
+        @SuppressWarnings("null")
+        List<String> accounts = user.getAccounts().stream().map(Account::getName).toList();
         
-        return repository.save(user);
+        return new UserResponseDTO(user.getFirstName(), user.getLastName(), accounts, id);
     }
 
-    public List<User> getAll() {
-        return repository.findAll();
+    @SuppressWarnings("null")
+    public List<String> getAll() {
+        return repository.findAll().stream().map(User::getName).toList();
     }
 
-    public User createUser(String idempotencyKey, String firstName, String lastName) {
+    public UserResponseDTO createUser(String idempotencyKey, UserCreationDTO userDTO) {
         IdempotencyKey savedKey = idempotencyKeyRepository.findByKey(idempotencyKey).orElse(null);
 
         if (savedKey != null) {
@@ -50,20 +59,21 @@ public class UserService {
             }
         }
 
-        User user = new User(firstName, lastName);
+        User user = repository.save(userMapper.toUser(userDTO));
 
         IdempotencyKey newKey = new IdempotencyKey(idempotencyKey, LocalDateTime.now().plusHours(24));
         idempotencyKeyRepository.save(newKey);
         
-        return repository.save(user);
+        return userMapper.toDTO(user);
     }
 
-    public User getUser(Long id) {
-        return repository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+    public UserResponseDTO getUser(Long id) {
+        User user = repository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+        return userMapper.toDTO(user);
     }
 
     public void deleteUser(Long id) {
-        User user = getUser(id);
+        User user = repository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
 
         if (user.getAccounts().size() == 0) {
             repository.deleteById(id);
@@ -75,7 +85,7 @@ public class UserService {
     }
 
     @Transactional
-    public User updateUser(String idempotencyKey, Long id, Map<String, Object> updates) {
+    public UserResponseDTO updateUser(String idempotencyKey, Long id, UserPatchDTO userDTO) {
         IdempotencyKey savedKey = idempotencyKeyRepository.findByKey(idempotencyKey).orElse(null);
 
         if (savedKey != null) {
@@ -88,21 +98,26 @@ public class UserService {
 
         User user = repository.findWithLockingById(id).orElseThrow(() -> new UserNotFoundException(id));
 
-        updates.forEach((key, value) -> {
-            switch (key) {
-                case "firstName":
-                    user.setFirstName((String) value);
-                    break;
-                case "lastName":
-                    user.setLastName((String) value);
-                    break;
-            }
-        });
+        if (userDTO.getFirstName().isPresent()) {
+            user.setFirstName(userDTO.getFirstName().get());
+
+            if (userDTO.getFirstName().get() == null || userDTO.getFirstName().get().isBlank()) {
+                throw new NullPatchFieldException();
+            };
+        }
+
+        if (userDTO.getLastName().isPresent()) {
+            user.setLastName(userDTO.getLastName().get());
+
+            if (userDTO.getLastName().get() == null || userDTO.getLastName().get().isBlank()) {
+                throw new NullPatchFieldException();
+            };
+        }
 
         IdempotencyKey newKey = new IdempotencyKey(idempotencyKey, LocalDateTime.now().plusHours(24));
         idempotencyKeyRepository.save(newKey);
 
-        return repository.save(user);
+        return userMapper.toDTO(user);
     }
     
 }

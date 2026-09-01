@@ -4,10 +4,10 @@ import jakarta.validation.constraints.NotBlank;
 
 public record UserCreationDTO(
 
-    @NotBlank
+    @NotBlank(message = "First name must not be blank.")
     String firstName,
     
-    @NotBlank
+    @NotBlank(message = "Last name must not be blank.")
     String lastName
 
 ) {}

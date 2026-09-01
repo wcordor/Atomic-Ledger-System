@@ -20,6 +20,8 @@ import com.github.wcordor.ledger.dtos.transactionDTO.*;
 import com.github.wcordor.ledger.dtos.userDTO.*;
 import com.github.wcordor.ledger.service.*;
 
+import jakarta.validation.Valid;
+
 @RestController
 public class UserController {
 
@@ -42,7 +44,7 @@ public class UserController {
 	}
 
     @PostMapping("/users")
-	public ResponseEntity<?> newUser(@RequestHeader("Idempotency-Key") String idempotencyKey, @RequestBody UserCreationDTO userDTO) {
+	public ResponseEntity<?> newUser(@RequestHeader("Idempotency-Key") String idempotencyKey, @Valid @RequestBody UserCreationDTO userDTO) {
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(idempotencyKey, userDTO));
 	}
@@ -54,7 +56,7 @@ public class UserController {
 	}
 
 	@PutMapping("/users/{id}")
-	public ResponseEntity<?> replaceUser(@PathVariable Long id, @RequestBody UserCreationDTO userDTO) {
+	public ResponseEntity<?> replaceUser(@PathVariable Long id, @Valid @RequestBody UserCreationDTO userDTO) {
 		
 		return ResponseEntity.ok(userService.changeName(id, userDTO));
 	}
@@ -89,7 +91,7 @@ public class UserController {
 	
 	@PostMapping("users/{id}/accounts")
 	public ResponseEntity<?> newAccount(@RequestHeader("Idempotency-Key") String idempotencyKey,
-		@PathVariable("id") Long userId, @RequestBody AccountCreationDTO accountDTO) {
+		@PathVariable("id") Long userId, @Valid @RequestBody AccountCreationDTO accountDTO) {
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(accountService.createAccount(idempotencyKey, userId, accountDTO));
 	}
@@ -113,7 +115,7 @@ public class UserController {
 
 	@PostMapping("users/{id}/accounts/{accountId}/money-transfer")
 	public ResponseEntity<?> newTransaction(@RequestHeader("Idempotency-Key") String idempotencyKey,
-		@PathVariable("id") Long userId, @PathVariable("accountId") Long accountId, @RequestBody TransactionCreationDTO transactionDTO) {
+		@PathVariable("id") Long userId, @PathVariable("accountId") Long accountId, @Valid @RequestBody TransactionCreationDTO transactionDTO) {
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(
 			transactionService.moneyTransfer(idempotencyKey, userId, accountId, transactionDTO)

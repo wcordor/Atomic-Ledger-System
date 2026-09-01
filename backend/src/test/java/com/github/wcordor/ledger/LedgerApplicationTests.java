@@ -151,6 +151,18 @@ class LedgerApplicationTests {
 	}
 
 	@Test
+	void checkAccountDTOFields() {
+
+		assertEquals(account_id, accountDTO.id());
+		assertEquals("Account I", accountDTO.name());
+		assertEquals(new BigDecimal("1000.00"), accountDTO.balance());
+		assertEquals("USD", accountDTO.currency());
+		assertEquals("Account Owner I", accountDTO.userName());
+		assertTrue(accountDTO.transactions().isEmpty());
+
+	}
+
+	@Test
 	void testAccountRepositoryFunctions() {
 
 		assertEquals(1, accountRepository.findByName("Account I").size());
@@ -256,6 +268,17 @@ class LedgerApplicationTests {
 		assertTrue(2 == userAccs.size());
 		assertTrue(userAccs.contains(account) && userAccs.contains(account3));
 		
+	}
+
+	@Test
+	void checkUserDTOFields() {
+
+		assertEquals(user_id, userDTO.id());
+		assertEquals("Account", userDTO.firstName());
+		assertEquals("Owner I", userDTO.lastName());
+		assertTrue(userDTO.accounts().contains(account.getInfo()));
+		assertEquals(1, userDTO.accounts().size());
+
 	}
 
 	@Test
@@ -374,6 +397,21 @@ class LedgerApplicationTests {
 		List<Long> transactionAccIds = transaction.getAccountIds();
 		assertEquals(2, transactionAccIds.size());
 		assertTrue(transactionAccIds.contains(account_id) && transactionAccIds.contains(account2_id));
+	}
+
+	@Test
+	void checkTransactionDTOFields() {
+
+		TransactionResponseDTO transactionDTO = requestFactory.demoMoneyTransfer(user_id, account_id, account2_id,
+			new BigDecimal("400.00"), "USD");
+
+		assertNotNull(transactionDTO.id());
+		assertEquals(account_id, transactionDTO.senderId());
+		assertEquals(account2_id, transactionDTO.receiverId());
+		assertEquals(new BigDecimal("400.00"), transactionDTO.amount());
+		assertEquals("USD", transactionDTO.currency());
+		assertNotNull(transactionDTO.timestamp());
+
 	}
 
 	@Test

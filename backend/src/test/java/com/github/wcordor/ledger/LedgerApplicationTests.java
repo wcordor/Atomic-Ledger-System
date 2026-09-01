@@ -29,6 +29,7 @@ import com.github.wcordor.ledger.entity.Transaction;
 import com.github.wcordor.ledger.entity.User;
 import com.github.wcordor.ledger.exception.*;
 import com.github.wcordor.ledger.mapper.AccountMapper;
+import com.github.wcordor.ledger.mapper.TransactionMapper;
 import com.github.wcordor.ledger.mapper.UserMapper;
 import com.github.wcordor.ledger.repository.*;
 import com.github.wcordor.ledger.service.*;
@@ -72,6 +73,9 @@ class LedgerApplicationTests {
 
 	@Autowired
 	UserMapper userMapper;
+
+	@Autowired
+	TransactionMapper transactionMapper;
 
     private AccountResponseDTO accountDTO;
     private Account account;

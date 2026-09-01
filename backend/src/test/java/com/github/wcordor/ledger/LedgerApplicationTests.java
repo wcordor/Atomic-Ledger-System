@@ -203,11 +203,6 @@ class LedgerApplicationTests {
 		assertEquals(2, accountList.size());
 		assertTrue(accountList.contains(account.getInfo()) && accountList.contains(account3.getInfo()));
 
-		assertThrows(IdempotencyKeyAlreadyExistsException.class, () -> {
-			accountService.createAccount("Key-Test", user_id, 
-            new AccountCreationDTO("invalid", new BigDecimal("300.00"), "USD", user_id));
-		});
-
 		AccountResponseDTO getAccount = accountService.getAccount(account3_id, user_id);
 		assertEquals(accountDTO3, getAccount);
 

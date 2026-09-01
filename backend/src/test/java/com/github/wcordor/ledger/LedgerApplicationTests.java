@@ -244,6 +244,10 @@ class LedgerApplicationTests {
 		assertThrows(InvalidUserIdException.class, () -> {
 			accountService.createAccount(UUID.randomUUID().toString(), user2_id, mismatch);
 		});
+
+		assertThrows(UserNotFoundException.class, () -> {
+			accountService.createAccount(UUID.randomUUID().toString(), 99L, creationDTO);
+		});
 	}
 
 	@Test

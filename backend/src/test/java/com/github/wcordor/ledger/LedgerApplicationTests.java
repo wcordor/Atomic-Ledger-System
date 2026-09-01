@@ -335,9 +335,27 @@ class LedgerApplicationTests {
 		assertEquals("Owner", userDTO.firstName());
 		assertEquals("PATCH", userDTO.lastName());
 
-		assertThrows(NullUserNameException.class, () -> {
-			userService.changeName(user_id, new UserCreationDTO(null, null));
+		UserPatchDTO patchDTO2 = new UserPatchDTO(JsonNullable.of("User"), JsonNullable.undefined());
+		userDTO = userService.updateUser(UUID.randomUUID().toString(), user_id, patchDTO2);
+
+		assertEquals("User", userDTO.firstName());
+		assertEquals("PATCH", userDTO.lastName());
+
+		UserPatchDTO nullPatch = new UserPatchDTO(JsonNullable.of(null), JsonNullable.undefined());
+		assertThrows(NullPatchFieldException.class, () -> {
+			userService.updateUser(UUID.randomUUID().toString(), user_id, nullPatch);
 		});
+
+		UserPatchDTO nullPatch2 = new UserPatchDTO(JsonNullable.of(" "), JsonNullable.undefined());
+		assertThrows(NullPatchFieldException.class, () -> {
+			userService.updateUser(UUID.randomUUID().toString(), user_id, nullPatch2);
+		});
+
+		UserPatchDTO nullPatch3 = new UserPatchDTO(JsonNullable.undefined(), JsonNullable.of(" "));
+		assertThrows(NullPatchFieldException.class, () -> {
+			userService.updateUser(UUID.randomUUID().toString(), user_id, nullPatch3);
+		});
+
 	}
 
 	@Test

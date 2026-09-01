@@ -191,8 +191,10 @@ class LedgerApplicationTests {
 	@Test
 	void testAccountServiceFunctions() {
 
-		AccountResponseDTO accountDTO3 = accountService.createAccount("Key-Test", user_id,
-            new AccountCreationDTO("Account III", new BigDecimal("300.00"), "USD", user_id));
+		AccountCreationDTO creationDTO = new AccountCreationDTO("Account III", new BigDecimal("300.00"),
+			"USD", user_id);
+			
+		AccountResponseDTO accountDTO3 = accountService.createAccount("Key-Test", user_id, creationDTO);
 
 		Long account3_id = accountDTO3.id();
 		Account account3 = requestFactory.getDemoAccount(account3_id, user_id);
@@ -209,18 +211,29 @@ class LedgerApplicationTests {
 		AccountResponseDTO getAccount = accountService.getAccount(account3_id, user_id);
 		assertEquals(accountDTO3, getAccount);
 
+		AccountPatchDTO patchDTO = new AccountPatchDTO(JsonNullable.of("Savings"));
 		accountDTO3 = accountService.changeName(UUID.randomUUID().toString(),
-			account3_id, user_id, new AccountPatchDTO(JsonNullable.of("Savings")));
+			account3_id, user_id, patchDTO);
 
 		assertEquals("Savings", accountDTO3.name());
+
+		AccountPatchDTO nullPatch = new AccountPatchDTO(JsonNullable.of(null));
+		assertThrows(NullPatchFieldException.class, () -> {
+			accountService.changeName(UUID.randomUUID().toString(), account3_id, user_id, nullPatch);
+		});
+
+		AccountPatchDTO blankPatch = new AccountPatchDTO(JsonNullable.of(" "));
+		assertThrows(NullPatchFieldException.class, () -> {
+			accountService.changeName(UUID.randomUUID().toString(), account3_id, user_id, blankPatch);
+		});
 
 		assertThrows(AccountDeletionFailureException.class, () -> {
 			accountService.deleteAccount(account3_id, user_id);
 		});
 
-		transactionService.moneyTransfer(UUID.randomUUID().toString(), user_id, account3_id,
-			new TransactionCreationDTO(account_id, new BigDecimal("300.00"), "USD"));
-		
+		TransactionCreationDTO transferDTO = new TransactionCreationDTO(account_id, new BigDecimal("300.00"), "USD");
+		transactionService.moneyTransfer(UUID.randomUUID().toString(), user_id, account3_id, transferDTO);
+
 		accountService.deleteAccount(account3_id, user_id);
 
 		accountList = accountService.getAccounts(user_id);	
@@ -295,15 +308,15 @@ class LedgerApplicationTests {
 	@Test
 	void testUserServiceFunctions() {
 
-		userDTO = userService.changeName(user_id, new UserCreationDTO("Owner", "of Account I"));
+		UserCreationDTO creationDTO = new UserCreationDTO("Owner", "of Account I");
+		userDTO = userService.changeName(user_id, creationDTO);
 		assertEquals("Owner", userDTO.firstName());
 		assertEquals("of Account I", userDTO.lastName());
 		assertThrows(UserDeletionFailureException.class, () -> {
 			userService.deleteUser(user_id);
 		});
 
-		UserResponseDTO delete = userService.createUser(UUID.randomUUID().toString(), 
-			new UserCreationDTO("To", "Delete"));
+		UserResponseDTO delete = userService.createUser(UUID.randomUUID().toString(), creationDTO);
 
 		List<String> userList = userService.getAll();
 		assertEquals(3, userList.size());
@@ -317,8 +330,8 @@ class LedgerApplicationTests {
 		userList = userService.getAll();
 		assertEquals(2, userList.size());
 
-		userDTO = userService.updateUser(UUID.randomUUID().toString(), user_id,
-			new UserPatchDTO(JsonNullable.undefined(), JsonNullable.of("PATCH")));
+		UserPatchDTO patchDTO = new UserPatchDTO(JsonNullable.undefined(), JsonNullable.of("PATCH"));
+		userDTO = userService.updateUser(UUID.randomUUID().toString(), user_id, patchDTO);
 
 		assertEquals("Owner", userDTO.firstName());
 		assertEquals("PATCH", userDTO.lastName());
@@ -332,9 +345,8 @@ class LedgerApplicationTests {
 	void testMoneyTransfers() {
 
 		// acc balance: $1,000, acc2 balance: $200
-		TransactionResponseDTO transactionDTO = 
-			transactionService.moneyTransfer(UUID.randomUUID().toString(), user_id, account_id,
-			new TransactionCreationDTO(account2_id, new BigDecimal("400.00"), "USD"));
+		TransactionCreationDTO creationDTO = new TransactionCreationDTO(account2_id, new BigDecimal("400.00"), "USD");
+		TransactionResponseDTO transactionDTO = transactionService.moneyTransfer(UUID.randomUUID().toString(), user_id, account_id, creationDTO);
 
 		accountDTO = accountService.getAccount(account_id, user_id);
 		accountDTO2 = accountService.getAccount(account2_id, user2_id);
@@ -342,14 +354,13 @@ class LedgerApplicationTests {
 		assertEquals(new BigDecimal("600.00"), accountDTO2.balance());
 		assertEquals(new BigDecimal("600.00"), accountDTO.balance());
 		
+		TransactionCreationDTO insufficient = new TransactionCreationDTO(account2_id, new BigDecimal("4000.00"), "USD");
 		assertThrows(InsufficientFundsException.class, () -> {
-			transactionService.moneyTransfer(UUID.randomUUID().toString(), user_id, account_id,
-				new TransactionCreationDTO(account2_id, new BigDecimal("4000.00"), "USD"));
+			transactionService.moneyTransfer(UUID.randomUUID().toString(), user_id, account_id, insufficient);
 		});
 
 		try {
-			transactionService.moneyTransfer(UUID.randomUUID().toString(), user_id, account_id,
-				new TransactionCreationDTO(account2_id, new BigDecimal("800.00"), "USD"));
+			transactionService.moneyTransfer(UUID.randomUUID().toString(), user_id, account_id, insufficient);
 		} catch (InsufficientFundsException e) {
 			logger.error("ERROR: " + e.getMessage());
 		}
@@ -372,6 +383,7 @@ class LedgerApplicationTests {
         assertEquals(1, a2_transactions.size());
 		assertTrue(a_transactions.contains(transaction) && a2_transactions.contains(transaction));
 
+		TransactionCreationDTO sameId = new TransactionCreationDTO(account_id, new BigDecimal("80.00"), "USD");
 		assertThrows(InvalidTransferException.class, () -> {
 			transactionService.moneyTransfer(UUID.randomUUID().toString(), user_id, account_id,
 				new TransactionCreationDTO(account_id, new BigDecimal("80.00"), "USD"));
@@ -417,10 +429,9 @@ class LedgerApplicationTests {
 	@Test
 	void testTransactionServiceFunctions() {
 
-		TransactionResponseDTO transactionDTO = 
-			transactionService.moneyTransfer(UUID.randomUUID().toString(), user_id, account_id, 
-			new TransactionCreationDTO(account2_id, new BigDecimal("400.00"), "USD"));
-		
+		TransactionCreationDTO creationDTO = new TransactionCreationDTO(account2_id, new BigDecimal("400.00"), "USD");
+		TransactionResponseDTO transactionDTO = transactionService.moneyTransfer(UUID.randomUUID().toString(), user_id, account_id, creationDTO);
+
 		List<String> transactions = transactionService.getTransactions(account_id, user_id);
 		assertEquals(1, transactions.size());
 
@@ -448,13 +459,13 @@ class LedgerApplicationTests {
 	void testConcurrencySufficient() {
 
 		List<CompletableFuture<Void>> futures = new ArrayList<>();
+		TransactionCreationDTO creationDTO = new TransactionCreationDTO(account2_id, new BigDecimal("10.00"), "USD");
 
 		// generate 50 CompletableFutures
 		for (int i = 0; i < 50; i++) {
 			CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
 				try {
-					transactionService.moneyTransfer(UUID.randomUUID().toString(), user_id, account_id,
-						new TransactionCreationDTO(account2_id, new BigDecimal("10.00"), "USD"));
+					transactionService.moneyTransfer(UUID.randomUUID().toString(), user_id, account_id, creationDTO);
 				} catch (InsufficientFundsException e) {
 					logger.error("ERROR: " + e.getMessage());
 				}
@@ -481,11 +492,12 @@ class LedgerApplicationTests {
 		AtomicInteger successCount = new AtomicInteger(0);
 		AtomicInteger failCount = new AtomicInteger(0);
 
+		TransactionCreationDTO creationDTO = new TransactionCreationDTO(account2_id, new BigDecimal("30.00"), "USD");
+
 		for (int i = 0; i < 50; i++) {
 			CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
 				try {
-					transactionService.moneyTransfer(UUID.randomUUID().toString(), user_id, account_id, 
-						new TransactionCreationDTO(account2_id, new BigDecimal("30.00"), "USD"));
+					transactionService.moneyTransfer(UUID.randomUUID().toString(), user_id, account_id, creationDTO);
 						
 					successCount.incrementAndGet();
 				} catch (InsufficientFundsException e) {
@@ -530,6 +542,11 @@ class LedgerApplicationTests {
 		assertEquals(creationDTO.initialDeposit(), account3.getBalance());
 		assertEquals(creationDTO.currency(), account3.getCurrency());
 		assertEquals(creationDTO.userId(), account3.getUserId());
+
+		AccountCreationDTO nonexistent = new AccountCreationDTO("Nonexistent User", new BigDecimal("0.00"), "USD", 99L);
+		assertThrows(UserNotFoundException.class, () -> {
+			accountMapper.toAccount(nonexistent);
+		});
 
 	}
 

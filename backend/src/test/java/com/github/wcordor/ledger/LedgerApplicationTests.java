@@ -632,4 +632,51 @@ class LedgerApplicationTests {
 		assertEquals(creationDTO.lastName(), user3.getLastName());
 	}
 
+	@Test
+	void testTransactionMapperMethods() {
+
+		Transaction transaction = new Transaction(account2, account, new BigDecimal("800.00"), "USD");
+		TransactionResponseDTO transactionDTO = transactionMapper.toDTO(transaction);
+
+		assertEquals(transaction.getId(), transactionDTO.id());
+		assertEquals(transaction.getSenderId(), transactionDTO.senderId());
+		assertEquals(transaction.getReceiverId(), transactionDTO.receiverId());
+		assertEquals(transaction.getAmount(), transactionDTO.amount());
+		assertEquals(transaction.getCurrency(), transactionDTO.currency());
+		assertEquals(transaction.getTimestamp(), transactionDTO.timestamp());
+	}
+
+	@Test
+	void testDuplicateIdempotencyKeyException() {
+	
+		String idempotencyKey = UUID.randomUUID().toString();
+
+		UserCreationDTO userCreationDTO = new UserCreationDTO("Idempotent", "User");
+		userService.createUser(idempotencyKey, userCreationDTO);
+
+		assertThrows(IdempotencyKeyAlreadyExistsException.class, () -> {
+			userService.createUser(idempotencyKey, userCreationDTO);
+		});
+
+		AccountCreationDTO accountCreationDTO = new AccountCreationDTO("Idempotent Account", new BigDecimal("100.00"), "USD", user_id);
+		assertThrows(IdempotencyKeyAlreadyExistsException.class, () -> {
+			accountService.createAccount(idempotencyKey, user_id, accountCreationDTO);
+		});
+		
+		UserPatchDTO userPatchDTO = new UserPatchDTO(JsonNullable.of("Idempotent"), JsonNullable.undefined());
+		assertThrows(IdempotencyKeyAlreadyExistsException.class, () -> {
+			userService.updateUser(idempotencyKey, user_id, userPatchDTO);
+		});
+
+		AccountPatchDTO accountPatchDTO = new AccountPatchDTO(JsonNullable.of("Idempotent Account"));
+		assertThrows(IdempotencyKeyAlreadyExistsException.class, () -> {
+			accountService.changeName(idempotencyKey, account_id, user_id, accountPatchDTO);
+		});
+
+		TransactionCreationDTO transactionCreationDTO = new TransactionCreationDTO(account2_id, new BigDecimal("50.00"), "USD");
+		assertThrows(IdempotencyKeyAlreadyExistsException.class, () -> {
+			transactionService.moneyTransfer(idempotencyKey, user_id, account_id, transactionCreationDTO);
+		});
+	}
+
 }

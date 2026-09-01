@@ -402,8 +402,20 @@ class LedgerApplicationTests {
 
 		TransactionCreationDTO sameId = new TransactionCreationDTO(account_id, new BigDecimal("80.00"), "USD");
 		assertThrows(InvalidTransferException.class, () -> {
-			transactionService.moneyTransfer(UUID.randomUUID().toString(), user_id, account_id,
-				new TransactionCreationDTO(account_id, new BigDecimal("80.00"), "USD"));
+			transactionService.moneyTransfer(UUID.randomUUID().toString(), user_id, account_id, sameId);
+		});
+
+		assertThrows(AccountNotFoundException.class, () -> {
+			transactionService.moneyTransfer(UUID.randomUUID().toString(), user_id, 99L, creationDTO);
+		});
+
+		assertThrows(AccountNotFoundException.class, () -> {
+			transactionService.moneyTransfer(UUID.randomUUID().toString(), 99L, account_id, creationDTO);
+		});
+
+		TransactionCreationDTO nonexistent = new TransactionCreationDTO(99L, new BigDecimal("80.00"), "USD");
+		assertThrows(EntityNotFoundException.class, () -> {
+			transactionService.moneyTransfer(UUID.randomUUID().toString(), user_id, account_id, nonexistent);
 		});
 	
 	}

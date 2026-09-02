@@ -1,0 +1,8 @@
+.git
+.gitignore
+backend/.gradle
+backend/build
+backend/bin
+backend/.vscode
+README.md
+BUG_LOG.md

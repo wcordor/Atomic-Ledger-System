@@ -136,16 +136,16 @@ Server starts on `http://localhost:8080`
 ### Run in Docker
 
 ```bash
-# Build JAR
-./gradlew build
-
-# Prepare Docker build context
-mkdir -p target/dependency
-cd target/dependency && jar -xf ../libs/*.jar && cd ../..
+export DB_PASSWORD="your-database-password"
 
 # Build and run Docker image
 docker build -t ledger-service .
-docker run -p 8080:8080 ledger-service
+docker run --rm \
+  --add-host=host.docker.internal:host-gateway \
+  -e DB_HOST=host.docker.internal \
+  -e DB_PASSWORD="$DB_PASSWORD" \
+  -p 8080:8080 \
+  ledger-service
 ```
 
 ---

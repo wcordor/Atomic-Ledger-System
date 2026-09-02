@@ -1,8 +1,20 @@
-FROM eclipse-temurin:21
-RUN addgroup --system spring && adduser --system spring -ingroup spring
-USER spring:spring
-ARG DEPENDENCY=target/dependency
-COPY ${DEPENDENCY}/BOOT-INF/lib /app/lib
-COPY ${DEPENDENCY}/META-INF /app/META-INF
-COPY ${DEPENDENCY}/BOOT-INF/classes /app
-ENTRYPOINT ["java", "-cp", "app:app/lib/*", "com.github.wcordor.ledger.LedgerApplication"]
+FROM eclipse-temurin:21-jdk AS build
+
+WORKDIR /workspace
+COPY backend/ ./
+
+RUN ./gradlew bootJar --no-daemon \
+    && cp "$(find build/libs -maxdepth 1 -type f -name '*.jar' ! -name '*-plain.jar' -print -quit)" \
+     /tmp/ledger-service.jar
+
+FROM eclipse-temurin:21-jre
+
+RUN useradd --system --create-home spring
+
+WORKDIR /app
+COPY --from=build /tmp/ledger-service.jar app.jar
+
+USER spring
+EXPOSE 8080
+
+ENTRYPOINT ["java", "-jar", "app.jar"]

@@ -1,1 +1,1 @@
-rootProject.name = "atomic-ledger-system"
+rootProject.name = "the-ledger-service"

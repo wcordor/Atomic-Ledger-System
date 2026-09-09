@@ -58,7 +58,7 @@ public class UserController {
 	@PutMapping("/users/{id}")
 	public ResponseEntity<?> replaceUser(@PathVariable Long id, @Valid @RequestBody UserCreationDTO userDTO) {
 		
-		return ResponseEntity.ok(userService.changeName(id, userDTO));
+		return ResponseEntity.ok(userService.replaceUser(id, userDTO));
 	}
 
 	@PatchMapping("/users/{id}")

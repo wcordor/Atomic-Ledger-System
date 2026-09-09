@@ -158,14 +158,14 @@ class LedgerControllerTests {
 
         UserCreationDTO mockBody = new UserCreationDTO("Mock", "Body");
 
-        when(userService.changeName(eq(3L), any(UserCreationDTO.class))).thenReturn(mockDTO);
+        when(userService.replaceUser(eq(3L), any(UserCreationDTO.class))).thenReturn(mockDTO);
 
         restTestClient.put().uri("/users/3").body(mockBody).exchange().expectStatus().isOk().expectHeader()
             .contentType(MediaType.APPLICATION_JSON).expectBody().jsonPath("firstName").isEqualTo("Mock")
             .jsonPath("lastName").isEqualTo("PUT").jsonPath("accounts")
             .isEqualTo(mockAccounts);
 
-        when(userService.changeName(eq(15L), any(UserCreationDTO.class))).thenThrow(new UserNotFoundException(15L));
+        when(userService.replaceUser(eq(15L), any(UserCreationDTO.class))).thenThrow(new UserNotFoundException(15L));
 
         restTestClient.put().uri("/users/15").body(mockBody).exchange().expectStatus().isNotFound().expectHeader()
             .contentTypeCompatibleWith(MediaType.TEXT_PLAIN).expectBody(String.class)

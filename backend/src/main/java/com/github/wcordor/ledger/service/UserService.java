@@ -32,8 +32,8 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponseDTO changeName(Long id, UserCreationDTO userDTO) {
-        User user = repository.findWithLockingById(id).orElseThrow(() -> new UserNotFoundException(id));
+    public UserResponseDTO replaceUser(Long id, UserCreationDTO userDTO) {
+        LedgerUser user = repository.findWithLockingById(id).orElseThrow(() -> new UserNotFoundException(id));
         user.setFirstName(userDTO.firstName());
         user.setLastName(userDTO.lastName());
 

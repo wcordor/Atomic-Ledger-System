@@ -307,8 +307,8 @@ class LedgerApplicationTests {
 	@Test
 	void testUserServiceFunctions() {
 
-		UserCreationDTO creationDTO = new UserCreationDTO("Owner", "of Account I");
-		userDTO = userService.changeName(user_id, creationDTO);
+		UserCreationDTO creationDTO = new UserCreationDTO("Owner", "of Account I","owner2", "t");
+		userDTO = userService.replaceUser(user_id, creationDTO);
 		assertEquals("Owner", userDTO.firstName());
 		assertEquals("of Account I", userDTO.lastName());
 		assertThrows(UserDeletionFailureException.class, () -> {

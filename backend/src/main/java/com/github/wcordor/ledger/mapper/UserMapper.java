@@ -15,6 +15,7 @@ public class UserMapper {
     public UserResponseDTO toDTO(LedgerUser user) {
         String firstName = user.getFirstName();
         String lastName = user.getLastName();
+        String username = user.getUsername();
         
         @SuppressWarnings("null")
         List<String> accounts = user.getAccounts()

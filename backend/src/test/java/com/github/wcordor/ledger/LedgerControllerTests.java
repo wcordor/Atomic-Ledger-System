@@ -99,7 +99,7 @@ class LedgerControllerTests {
         UserResponseDTO mockDTO = new UserResponseDTO("Mock", "POST", 
             null, 3L);
         
-        UserCreationDTO mockBody = new UserCreationDTO("Mock", "Body");
+        UserCreationDTO mockBody = new UserCreationDTO("Mock", "Body", "mockuser", "mockpassword");
 
         when(userService.createUser(eq("key"), any(UserCreationDTO.class))).thenReturn(mockDTO);
         
@@ -119,32 +119,32 @@ class LedgerControllerTests {
         String lastNameInvalid = "Last name must not be blank.";
 
         restTestClient.post().uri("/users").header("Idempotency-Key", "key")
-            .body(new UserCreationDTO(null, "1")).exchange().expectStatus().isBadRequest()
+            .body(new UserCreationDTO(null, "1", "x", "p")).exchange().expectStatus().isBadRequest()
             .expectHeader().contentTypeCompatibleWith(MediaType.TEXT_PLAIN).expectBody(String.class)
             .isEqualTo(firstNameInvalid);
 
         restTestClient.post().uri("/users").header("Idempotency-Key", "key")
-            .body(new UserCreationDTO(" ", "1")).exchange().expectStatus().isBadRequest()
+            .body(new UserCreationDTO(" ", "1", "mockuser", "mockpassword")).exchange().expectStatus().isBadRequest()
             .expectHeader().contentTypeCompatibleWith(MediaType.TEXT_PLAIN).expectBody(String.class)
             .isEqualTo(firstNameInvalid);
 
         restTestClient.post().uri("/users").header("Idempotency-Key", "key")
-            .body(new UserCreationDTO("User", null)).exchange().expectStatus().isBadRequest()
+            .body(new UserCreationDTO("User", null, "mockuser", "mockpassword")).exchange().expectStatus().isBadRequest()
             .expectHeader().contentTypeCompatibleWith(MediaType.TEXT_PLAIN).expectBody(String.class)
             .isEqualTo(lastNameInvalid);
 
         restTestClient.post().uri("/users").header("Idempotency-Key", "key")
-            .body(new UserCreationDTO("User", " ")).exchange().expectStatus().isBadRequest()
+            .body(new UserCreationDTO("User", " ", "mockuser", "mockpassword")).exchange().expectStatus().isBadRequest()
             .expectHeader().contentTypeCompatibleWith(MediaType.TEXT_PLAIN).expectBody(String.class)
             .isEqualTo(lastNameInvalid);
         
         restTestClient.post().uri("/users").header("Idempotency-Key", "key")
-            .body(new UserCreationDTO(null, null)).exchange().expectStatus().isBadRequest()
+            .body(new UserCreationDTO(null, null, "mockuser", "mockpassword")).exchange().expectStatus().isBadRequest()
             .expectHeader().contentTypeCompatibleWith(MediaType.TEXT_PLAIN).expectBody(String.class)
             .value(message -> assertTrue(message.contains(lastNameInvalid) && message.contains(firstNameInvalid)));
 
         restTestClient.post().uri("/users").header("Idempotency-Key", "key")
-            .body(new UserCreationDTO(" ", " ")).exchange().expectStatus().isBadRequest()
+            .body(new UserCreationDTO(" ", " ", "mockuser", "mockpassword")).exchange().expectStatus().isBadRequest()
             .expectHeader().contentTypeCompatibleWith(MediaType.TEXT_PLAIN).expectBody(String.class)
             .value(message -> assertTrue(message.contains(lastNameInvalid) && message.contains(firstNameInvalid)));
     }
@@ -156,7 +156,7 @@ class LedgerControllerTests {
         UserResponseDTO mockDTO = new UserResponseDTO("Mock", "PUT", 
             mockAccounts, 3L);
 
-        UserCreationDTO mockBody = new UserCreationDTO("Mock", "Body");
+        UserCreationDTO mockBody = new UserCreationDTO("Mock", "Body", "mockuser", "mockpassword");
 
         when(userService.replaceUser(eq(3L), any(UserCreationDTO.class))).thenReturn(mockDTO);
 
@@ -174,29 +174,29 @@ class LedgerControllerTests {
         String firstNameInvalid = "First name must not be blank.";
         String lastNameInvalid = "Last name must not be blank.";
 
-        restTestClient.put().uri("/users/1").body(new UserCreationDTO(null, "1")).exchange()
+        restTestClient.put().uri("/users/1").body(new UserCreationDTO(null, "1", "mockuser", "mockpassword")).exchange()
             .expectStatus().isBadRequest().expectHeader().contentTypeCompatibleWith(MediaType.TEXT_PLAIN)
             .expectBody(String.class).isEqualTo(firstNameInvalid);
 
-        restTestClient.put().uri("/users/1").body(new UserCreationDTO(" ", "1")).exchange()
+        restTestClient.put().uri("/users/1").body(new UserCreationDTO(" ", "1", "mockuser", "mockpassword")).exchange()
             .expectStatus().isBadRequest().expectHeader().contentTypeCompatibleWith(MediaType.TEXT_PLAIN)
             .expectBody(String.class).isEqualTo(firstNameInvalid);
 
-        restTestClient.put().uri("/users/13").body(new UserCreationDTO("User", null)).exchange()
+        restTestClient.put().uri("/users/13").body(new UserCreationDTO("User", null, "mockuser", "mockpassword")).exchange()
             .expectStatus().isBadRequest().expectHeader().contentTypeCompatibleWith(MediaType.TEXT_PLAIN)
             .expectBody(String.class).isEqualTo(lastNameInvalid);
 
-        restTestClient.put().uri("/users/13").body(new UserCreationDTO("User", " ")).exchange()
+        restTestClient.put().uri("/users/13").body(new UserCreationDTO("User", " ", "mockuser", "mockpassword")).exchange()
             .expectStatus().isBadRequest().expectHeader().contentTypeCompatibleWith(MediaType.TEXT_PLAIN)
             .expectBody(String.class).isEqualTo(lastNameInvalid);
         
-        restTestClient.put().uri("/users/32").body(new UserCreationDTO(null, null)).exchange()
+        restTestClient.put().uri("/users/32").body(new UserCreationDTO(null, null, "mockuser", "mockpassword")).exchange()
             .expectStatus().isBadRequest().expectHeader().contentTypeCompatibleWith(MediaType.TEXT_PLAIN)
             .expectBody(String.class).value(message -> assertTrue(message.contains(lastNameInvalid)
                 && message.contains(firstNameInvalid))
             );
 
-        restTestClient.put().uri("/users/32").body(new UserCreationDTO(" ", " ")).exchange()
+        restTestClient.put().uri("/users/32").body(new UserCreationDTO(" ", " ", "mockuser", "mockpassword")).exchange()
             .expectStatus().isBadRequest().expectHeader().contentTypeCompatibleWith(MediaType.TEXT_PLAIN)
             .expectBody(String.class).value(message -> assertTrue(message.contains(lastNameInvalid)
                 && message.contains(firstNameInvalid))
@@ -210,7 +210,7 @@ class LedgerControllerTests {
         UserResponseDTO mockDTO = new UserResponseDTO("Mock", "PATCH", 
             accounts, 5L);
 
-        UserCreationDTO mockBody = new UserCreationDTO("Mock", "Body");
+        UserCreationDTO mockBody = new UserCreationDTO("Mock", "Body", "mockuser", "mockpassword");
 
         when(userService.updateUser(eq("key"), eq(5L), any(UserPatchDTO.class)))
             .thenReturn(mockDTO);

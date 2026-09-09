@@ -45,7 +45,7 @@ public class DemoRequestFactory {
     public UserResponseDTO createDemoUser(String firstName, String lastName) {
 
         return userService.createUser(UUID.randomUUID().toString(),
-			new UserCreationDTO(firstName, lastName));
+			new UserCreationDTO(firstName, lastName, username, password));
     }
 
     public AccountResponseDTO createDemoAccount(Long userId, String name, BigDecimal initialDeposit, String currency) {

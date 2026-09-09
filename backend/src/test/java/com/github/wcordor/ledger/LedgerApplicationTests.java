@@ -625,8 +625,8 @@ class LedgerApplicationTests {
 		assertTrue(user.getAccounts().contains(account) && userDTO3.accounts().contains(account.getInfo()));
 		assertEquals(user.getId(), userDTO3.id());
 
-		UserCreationDTO creationDTO = new UserCreationDTO("New", "User");
-		User user3 = userMapper.toUser(creationDTO);
+		UserCreationDTO creationDTO = new UserCreationDTO("New", "User","owner3", "t");
+		LedgerUser user3 = userMapper.toUser(creationDTO);
 
 		assertEquals(creationDTO.firstName(), user3.getFirstName());
 		assertEquals(creationDTO.lastName(), user3.getLastName());
@@ -651,7 +651,7 @@ class LedgerApplicationTests {
 	
 		String idempotencyKey = UUID.randomUUID().toString();
 
-		UserCreationDTO userCreationDTO = new UserCreationDTO("Idempotent", "User");
+		UserCreationDTO userCreationDTO = new UserCreationDTO("Idempotent", "User", "owner2", "i");
 		userService.createUser(idempotencyKey, userCreationDTO);
 
 		assertThrows(IdempotencyKeyAlreadyExistsException.class, () -> {

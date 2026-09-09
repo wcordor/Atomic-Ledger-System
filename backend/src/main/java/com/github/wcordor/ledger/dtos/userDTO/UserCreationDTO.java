@@ -8,6 +8,12 @@ public record UserCreationDTO(
     String firstName,
     
     @NotBlank(message = "Last name must not be blank.")
-    String lastName
+    String lastName,
+
+    @NotBlank(message = "Username must not be blank.")
+    String username,
+
+    @NotBlank(message = "Password must not be blank.")
+    String password
 
 ) {}

@@ -10,22 +10,24 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.github.wcordor.ledger.entity.User;
+import com.github.wcordor.ledger.entity.LedgerUser;
 
 import jakarta.persistence.LockModeType;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<LedgerUser, Long> {
 
-    List<User> findByLastName(String lastName);
+    List<LedgerUser> findByLastName(String lastName);
 
     @EntityGraph(attributePaths = {"accounts"})
-    @Query("SELECT u FROM User u WHERE u.id = :id")
-    Optional<User> findById(@Param("id") Long id);
+    @Query("SELECT u FROM LedgerUser u WHERE u.id = :id")
+    Optional<LedgerUser> findById(@Param("id") Long id);
     
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @EntityGraph(attributePaths = {"accounts"})
-    @Query("SELECT u FROM User u WHERE u.id = :id")
-    Optional<User> findWithLockingById(Long id);
+    @Query("SELECT u FROM LedgerUser u WHERE u.id = :id")
+    Optional<LedgerUser> findWithLockingById(Long id);
+
+    Optional<LedgerUser> findByUsername(String username);
 }
      

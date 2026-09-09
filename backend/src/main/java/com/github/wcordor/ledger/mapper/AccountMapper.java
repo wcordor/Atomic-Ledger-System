@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 import com.github.wcordor.ledger.dtos.accountDTO.AccountCreationDTO;
 import com.github.wcordor.ledger.dtos.accountDTO.AccountResponseDTO;
 import com.github.wcordor.ledger.entity.Account;
+import com.github.wcordor.ledger.entity.LedgerUser;
 import com.github.wcordor.ledger.entity.Transaction;
-import com.github.wcordor.ledger.entity.User;
 import com.github.wcordor.ledger.exception.UserNotFoundException;
 import com.github.wcordor.ledger.repository.UserRepository;
 
@@ -32,7 +32,7 @@ public class AccountMapper {
             .map(Transaction::getAmountAndCurrency).toList();
         
         Long userId = account.getUserId();
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        LedgerUser user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
 
         String owner = user.getName();
         Long id = account.getId();
@@ -43,7 +43,7 @@ public class AccountMapper {
     public Account toAccount(AccountCreationDTO accountDTO) {
 
         Long userId = accountDTO.userId();
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        LedgerUser user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
 
         return new Account(user, accountDTO.name(), accountDTO.initialDeposit(), accountDTO.currency());
     }

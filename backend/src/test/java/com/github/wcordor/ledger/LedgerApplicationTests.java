@@ -26,7 +26,7 @@ import com.github.wcordor.ledger.dtos.transactionDTO.*;
 import com.github.wcordor.ledger.dtos.userDTO.*;
 import com.github.wcordor.ledger.entity.Account;
 import com.github.wcordor.ledger.entity.Transaction;
-import com.github.wcordor.ledger.entity.User;
+import com.github.wcordor.ledger.entity.LedgerUser;
 import com.github.wcordor.ledger.exception.*;
 import com.github.wcordor.ledger.mapper.AccountMapper;
 import com.github.wcordor.ledger.mapper.TransactionMapper;
@@ -85,10 +85,10 @@ class LedgerApplicationTests {
     private Long account2_id;
 
     private UserResponseDTO userDTO;
-    private User user;
+    private LedgerUser user;
     private Long user_id;
     private UserResponseDTO userDTO2;
-    private User user2;
+    private LedgerUser user2;
     private Long user2_id;
 
 	@BeforeEach
@@ -597,7 +597,7 @@ class LedgerApplicationTests {
 		assertEquals(account.getId(), accountDTO3.id());
 
 		Long id = account.getUserId();
-        User user3 = requestFactory.getDemoUser(id);
+        LedgerUser user3 = requestFactory.getDemoUser(id);
 		assertEquals(accountDTO3.userName(), user3.getName());
 
 		AccountCreationDTO creationDTO = new AccountCreationDTO("New Account", new BigDecimal("10.00"), "USD", user_id);

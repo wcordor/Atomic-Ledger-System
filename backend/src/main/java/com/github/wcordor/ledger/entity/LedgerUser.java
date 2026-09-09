@@ -1,13 +1,17 @@
 package com.github.wcordor.ledger.entity;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "users")
-public class User {
+@Table(name = "ledger_user")
+public class LedgerUser implements UserDetails {
     
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
@@ -16,14 +20,20 @@ public class User {
     private String firstName;
     private String lastName;
 
+    private String username;
+    private String password;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE, orphanRemoval = true)
     private List<Account> accounts = new ArrayList<>();
 
-    protected User() {}
+    protected LedgerUser() {}
 
-    public User(String firstName, String lastName) {
+    public LedgerUser(String firstName, String lastName, String username, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
+        this.username = username;
+        this.password = password;
+
     }
 
     @Override
@@ -33,6 +43,21 @@ public class User {
 
     public Long getId() {
         return id;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
     }
 
     public String getName() {
@@ -82,7 +107,7 @@ public class User {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        User other = (User) obj;
+        LedgerUser other = (LedgerUser) obj;
         if (id == null) {
             if (other.id != null)
                 return false;

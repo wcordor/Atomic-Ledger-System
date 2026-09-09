@@ -11,8 +11,8 @@ import com.github.wcordor.ledger.dtos.transactionDTO.*;
 import com.github.wcordor.ledger.dtos.userDTO.UserCreationDTO;
 import com.github.wcordor.ledger.dtos.userDTO.UserResponseDTO;
 import com.github.wcordor.ledger.entity.Account;
+import com.github.wcordor.ledger.entity.LedgerUser;
 import com.github.wcordor.ledger.entity.Transaction;
-import com.github.wcordor.ledger.entity.User;
 import com.github.wcordor.ledger.exception.AccountNotFoundException;
 import com.github.wcordor.ledger.exception.TransactionNotFoundException;
 import com.github.wcordor.ledger.exception.UserNotFoundException;
@@ -55,7 +55,7 @@ public class DemoRequestFactory {
         );    
     }
 
-    public User getDemoUser(Long id) {
+    public LedgerUser getDemoUser(Long id) {
         
         return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
     }

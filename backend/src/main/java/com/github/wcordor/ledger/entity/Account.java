@@ -23,7 +23,7 @@ public class Account {
 
     protected Account() {}
 
-    public Account(User user, String name, BigDecimal initialDeposit, String currency) {
+    public Account(LedgerUser user, String name, BigDecimal initialDeposit, String currency) {
         this.name = name;
         balance = initialDeposit;
         this.currency = currency;
@@ -33,7 +33,7 @@ public class Account {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private LedgerUser user;
 
     @OneToMany(mappedBy = "sender", orphanRemoval = true)
     private Set<Transaction> sent = new HashSet<>();
@@ -98,7 +98,7 @@ public class Account {
         return user.getId();
     }
 
-    public void setUser(User user) {
+    public void setUser(LedgerUser user) {
         if (this.user == null) {
             this.user = user;
         }

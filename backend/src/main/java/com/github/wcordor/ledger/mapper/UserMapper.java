@@ -7,12 +7,12 @@ import org.springframework.stereotype.Component;
 import com.github.wcordor.ledger.dtos.userDTO.UserResponseDTO;
 import com.github.wcordor.ledger.dtos.userDTO.UserCreationDTO;
 import com.github.wcordor.ledger.entity.Account;
-import com.github.wcordor.ledger.entity.User;
+import com.github.wcordor.ledger.entity.LedgerUser;
 
 @Component
 public class UserMapper {
     
-    public UserResponseDTO toDTO(User user) {
+    public UserResponseDTO toDTO(LedgerUser user) {
         String firstName = user.getFirstName();
         String lastName = user.getLastName();
         

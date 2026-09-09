@@ -99,7 +99,7 @@ class LedgerApplicationTests {
 		transactionRepository.deleteAll();
 		idempotencyKeyRepository.deleteAll();
 
-        userDTO = requestFactory.createDemoUser("Account", "Owner I");
+        userDTO = requestFactory.createDemoUser("Account", "Owner I", "owner1", "p");
         user_id = userDTO.id();
 
         accountDTO = requestFactory.createDemoAccount(user_id, "Account I",
@@ -109,7 +109,7 @@ class LedgerApplicationTests {
 
         userDTO = userService.getUser(user_id);
        
-        userDTO2 = requestFactory.createDemoUser("Account", "Owner II");
+        userDTO2 = requestFactory.createDemoUser("Account", "Owner II","owner2", "a");
         user2_id = userDTO2.id();
 
         accountDTO2 = requestFactory.createDemoAccount(user2_id, "Account II", new BigDecimal("200.00"), "USD");

@@ -26,7 +26,11 @@ public class UserMapper {
         return new UserResponseDTO(firstName, lastName, username, accounts, id);
     }
 
-    public User toUser(UserCreationDTO userDTO) {
-        return new User(userDTO.firstName(), userDTO.lastName());
+    public LedgerUser toUser(UserCreationDTO userDTO) {
+        LedgerUser user = new LedgerUser(userDTO.firstName(), userDTO.lastName(), userDTO.username(), userDTO.password());
+        
+        user.setFirstName(userDTO.firstName());
+        user.setLastName(userDTO.lastName());
+        return user;
     }
 }

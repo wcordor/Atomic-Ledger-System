@@ -47,7 +47,6 @@ import jakarta.persistence.EntityNotFoundException;
 
 @WebMvcTest(UserController.class)
 @AutoConfigureRestTestClient
-//@ActiveProfiles("test")
 class LedgerControllerTests {
     
     @Autowired

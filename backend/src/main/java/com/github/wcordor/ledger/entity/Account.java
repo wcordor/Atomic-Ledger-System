@@ -9,7 +9,7 @@ import java.util.Set;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "accounts")
+@Table(name = "account")
 public class Account {
     
     private BigDecimal balance;

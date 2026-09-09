@@ -42,7 +42,7 @@ public class DemoRequestFactory {
         this.transactionService = transactionService;
     }
     
-    public UserResponseDTO createDemoUser(String firstName, String lastName) {
+    public UserResponseDTO createDemoUser(String firstName, String lastName, String username, String password) {
 
         return userService.createUser(UUID.randomUUID().toString(),
 			new UserCreationDTO(firstName, lastName, username, password));

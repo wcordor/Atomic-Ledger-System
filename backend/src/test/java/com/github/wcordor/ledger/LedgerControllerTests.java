@@ -77,7 +77,7 @@ class LedgerControllerTests {
     void testUserGetRequest_Single() {
 
         List<String> mockAccounts = new ArrayList<String>(List.of("Account 1 information", "Account 2 information"));
-        UserResponseDTO mockUser = new UserResponseDTO("Mock", "GET", mockAccounts, 1L);
+        UserResponseDTO mockUser = new UserResponseDTO("Mock", "GET", "mockuser", mockAccounts, 1L);
 
         when(userService.getUser(eq(1L))).thenReturn(mockUser);
 
@@ -96,9 +96,7 @@ class LedgerControllerTests {
     @Test
     void testUserPostRequest() {
 
-        UserResponseDTO mockDTO = new UserResponseDTO("Mock", "POST", 
-            null, 3L);
-        
+        UserResponseDTO mockDTO = new UserResponseDTO("Mock", "POST", "mockuser", null, 3L);        
         UserCreationDTO mockBody = new UserCreationDTO("Mock", "Body", "mockuser", "mockpassword");
 
         when(userService.createUser(eq("key"), any(UserCreationDTO.class))).thenReturn(mockDTO);
@@ -153,8 +151,7 @@ class LedgerControllerTests {
     void testUserPutRequest() {
 
         List<String> mockAccounts = new ArrayList<String>(List.of("Account information"));
-        UserResponseDTO mockDTO = new UserResponseDTO("Mock", "PUT", 
-            mockAccounts, 3L);
+        UserResponseDTO mockDTO = new UserResponseDTO("Mock", "PUT", "mockuser",  mockAccounts, 3L);
 
         UserCreationDTO mockBody = new UserCreationDTO("Mock", "Body", "mockuser", "mockpassword");
 
@@ -207,8 +204,7 @@ class LedgerControllerTests {
     void testUserPatchRequest() {
 
         List<String> accounts = new ArrayList<>(List.of("Account 1"));
-        UserResponseDTO mockDTO = new UserResponseDTO("Mock", "PATCH", 
-            accounts, 5L);
+        UserResponseDTO mockDTO = new UserResponseDTO("Mock", "PATCH", "patchuser", accounts, 5L);
 
         UserCreationDTO mockBody = new UserCreationDTO("Mock", "Body", "mockuser", "mockpassword");
 

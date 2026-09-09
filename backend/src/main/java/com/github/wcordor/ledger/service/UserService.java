@@ -40,7 +40,7 @@ public class UserService {
         @SuppressWarnings("null")
         List<String> accounts = user.getAccounts().stream().map(Account::getName).toList();
         
-        return new UserResponseDTO(user.getFirstName(), user.getLastName(), accounts, id);
+        return new UserResponseDTO(user.getFirstName(), user.getLastName(), user.getUsername(), accounts, id);
     }
 
     @SuppressWarnings("null")

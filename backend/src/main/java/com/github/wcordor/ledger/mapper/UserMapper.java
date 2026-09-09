@@ -22,7 +22,7 @@ public class UserMapper {
 
         Long id = user.getId();
         
-        return new UserResponseDTO(firstName, lastName, accounts, id);
+        return new UserResponseDTO(firstName, lastName, username, accounts, id);
     }
 
     public User toUser(UserCreationDTO userDTO) {
